@@ -44,7 +44,9 @@ public class MapGenerator : MonoBehaviour
 
         Map map = new Map(width, lenght);
         map.CreateGameObjectMap(cube, materials, platform, noiseArray);
-        map.MakeLake(System.Convert.ToInt32(lakeSize.x), System.Convert.ToInt32(lakeSize.y), materials, noiseArray);        
+        map.MakeLake(System.Convert.ToInt32(lakeSize.x), System.Convert.ToInt32(lakeSize.y), materials, noiseArray);
+        map.PlaceFood((int)foodPercent, materials);
+        map.PaintMap(materials, noiseArray);
     }
 
     class Map
@@ -61,15 +63,52 @@ public class MapGenerator : MonoBehaviour
             Lenght = lenght;
         }
 
-        public void CreateDigitalMap()
+        public void PlaceFood(int foodPercent, Material[] materials)
         {
-            digitalMap = new int[Width, Lenght];
             System.Random rnd = new System.Random();
             for (int i = 0; i < Width; i++)
             {
                 for (int j = 0; j < Lenght; j++)
                 {
-                    digitalMap[i, j] = rnd.Next(0, 4);
+                    if (digitalMap[i, j] != 1)
+                    {
+                        digitalMap[i, j] = (rnd.Next(0, 100) < foodPercent / 10) ? 2 : 0;                        
+                    }
+                }
+            }
+        }
+
+        public void PaintMap(Material[] materials, float[,] noiseArray)
+        {
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Lenght; j++)
+                {
+                    renderer = objectMap[i, j].GetComponent<Renderer>();
+                    switch (digitalMap[i, j])
+                    {
+                        case 0:
+                            {
+                                renderer.material = materials[0];
+                                break;
+                            }
+                        case 1:
+                            {
+                                objectMap[i, j].transform.position = new Vector3(i, GetMinNoise(noiseArray), j);
+                                renderer.material = materials[1];
+                                break;
+                            }
+                        case 2:
+                            {
+                                renderer.material = materials[2];
+                                break;
+                            }
+                        case 3:
+                            {
+                                renderer.material = materials[3];
+                                break;
+                            }
+                    }
                 }
             }
         }
@@ -77,8 +116,9 @@ public class MapGenerator : MonoBehaviour
         public void CreateGameObjectMap(GameObject gameObject, Material[] materials, Transform platform, float[,] noiseArray)
         {
             System.Random rnd = new System.Random();
-            CreateDigitalMap();
+            digitalMap = new int[Width, Lenght];
             objectMap = new GameObject[Width, Lenght];
+
             for (int i = 0; i < Width; i++)
             {
                 for (int j = 0; j < Lenght; j++)
@@ -88,15 +128,10 @@ public class MapGenerator : MonoBehaviour
 
                     if (System.Math.Round(noiseArray[i, j], 1) > 0.1 && System.Math.Round(noiseArray[i, j], 1) < 0.3)
                     {
-                        objectMap[i, j].transform.position = new Vector3(i, GetMinNoise(noiseArray), j);
-                        renderer = objectMap[i, j].GetComponent<Renderer>();
-                        renderer.material = materials[1];
                         digitalMap[i, j] = 1;
                     }
                     else
                     {
-                        renderer = objectMap[i, j].GetComponent<Renderer>();
-                        renderer.material = materials[0];
                         digitalMap[i, j] = 0;
                     }
                 }
@@ -131,16 +166,12 @@ public class MapGenerator : MonoBehaviour
         }
        
         private void Loop(int iStart, int iEnd, int jStart, int jEnd, Material[] materials, float[,] noiseArray)
-        {
-            Renderer renderer;
+        {            
             for (int i = iStart; i < iEnd; i++)
             {
                 for (int j = jStart; j < jEnd; j++)
                 {
                     digitalMap[i, j] = 1;
-                    objectMap[i, j].transform.position = new Vector3(i, GetMinNoise(noiseArray), j);
-                    renderer = objectMap[i, j].GetComponent<Renderer>();
-                    renderer.material = materials[1];
                 }
             }
         }
