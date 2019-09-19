@@ -12,7 +12,7 @@ public static class Noise
         {
             float offsetX = prng.Next(-100000, 100000) + offset.x;
             float offsetY = prng.Next(-100000, 100000) + offset.y;
-            octaveOffsets[1] = new Vector2(offsetX, offsetY);
+            octaveOffsets[i] = new Vector2(offsetX, offsetY);
         }
 
         if (scale <= 0)

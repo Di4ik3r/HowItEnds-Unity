@@ -108,7 +108,7 @@ public class MapGenerator : MonoBehaviour
                 {
                     if (digitalMap[i, j] != 1)
                     {
-                        digitalMap[i, j] = (rnd.Next(0, 100) < foodPercent / 10) ? 2 : 0;                        
+                        digitalMap[i, j] = (rnd.Next(0, 100) < foodPercent / 15) ? 2 : 0;                        
                     }
                 }
             }
@@ -123,7 +123,7 @@ public class MapGenerator : MonoBehaviour
                 {
                     if (digitalMap[i, j] != 1 && digitalMap[i, j] != 2)
                     {
-                        digitalMap[i, j] = (rnd.Next(0, 100) < decorationPercent / 10) ? 3 : 0;
+                        digitalMap[i, j] = (rnd.Next(0, 100) < decorationPercent / 15) ? 3 : 0;
                     }
                 }
             }
