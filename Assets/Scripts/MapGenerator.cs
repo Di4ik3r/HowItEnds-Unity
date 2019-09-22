@@ -21,17 +21,51 @@ public class MapGenerator : MonoBehaviour
     public GameObject cube;
     public Material[] materials;
 
+    private Map map;
+
+    private static float TIME = 0;
+    private static float TIME_STEP = .1f;
+
+    private List<Creature> creatures;
+
     void Start()
     {
         GenerateMap();
+
+        Creature.digitalMap = getDigitalMap();
+        Creature.objectMap = getObjectMap();
+
+        creatures = new List<Creature>();
+
+        Creature c1 = new Creature(new Vector2(2, 20), 1);
+        Creature c2 = new Creature(new Vector2(8, 25), 1);
+
+        creatures.Add(c1);
+        creatures.Add(c2);
+    }
+
+    void Update() {
+        // if(MapGenerator.TIME % 2 == 0) {
+        if(System.Math.Round(MapGenerator.TIME, 1) % 2 == 0) {
+            creatureCycle();
+        }
+            
+
+        MapGenerator.TIME += MapGenerator.TIME_STEP;
+    }
+
+    private void creatureCycle() {
+        foreach(Creature creature in creatures) {
+            creature.MakeMove();
+        }
     }
 
     public void GenerateMap()
     {
         string holderName = "Platform";
-        if (transform.FindChild(holderName))
+        if (transform.Find(holderName))
         {
-            DestroyImmediate(transform.FindChild(holderName).gameObject);
+            DestroyImmediate(transform.Find(holderName).gameObject);
         }
 
         Transform platform = new GameObject(holderName).transform;
@@ -42,12 +76,20 @@ public class MapGenerator : MonoBehaviour
 
         float[,] noiseArray = Noise.GenerateNoiseMap(width, lenght, seed, noiseScale, octaves, persistence, lacunarity, offset);
 
-        Map map = new Map(width, lenght);
+        map = new Map(width, lenght);
         map.CreateGameObjectMap(cube, platform, noiseArray);
         map.MakeLake(System.Convert.ToInt32(lakeSize.x), System.Convert.ToInt32(lakeSize.y), noiseArray);
         map.PlaceFood((int)foodPercent);
         map.PlaceDecoration((int)decorationPercent);
         map.PaintMap(materials, noiseArray);
+    }
+
+    public int[,] getDigitalMap(){ 
+        return this.map.digitalMap;
+    }
+
+    public GameObject[,] getObjectMap() {
+        return this.map.objectMap;
     }
 
     class Map
