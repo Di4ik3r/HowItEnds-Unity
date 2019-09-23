@@ -34,8 +34,10 @@ public class MapGenerator : MonoBehaviour
     {
         GenerateMap();
 
-        Creature.digitalMap = getDigitalMap();
-        Creature.objectMap = getObjectMap();
+        // Creature.digitalMap = getDigitalMap();
+        // Creature.objectMap = getObjectMap();
+        Creature.digitalMap = this.map.digitalMap;
+        Creature.objectMap = this.map.objectMap;
 
         creatures = new List<Creature>();
 
@@ -62,6 +64,14 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    public int[,] getDigitalMap(){ 
+        return this.map.digitalMap;
+    }
+
+    public GameObject[,] getObjectMap() {
+        return this.map.objectMap;
+    }
+
     public void GenerateMap()
     {
         string holderName = "Platform";
@@ -78,19 +88,11 @@ public class MapGenerator : MonoBehaviour
 
         float[,] noiseArray = Noise.GenerateNoiseMap(width, lenght, seed, noiseScale, octaves, persistence, lacunarity, offset);
 
-        Map map = new Map(width, lenght);
+        map = new Map(width, lenght);
         map.CreateGameObjectMap(cube, platform, noiseArray, noiseScale, heightDifference);        
         map.PlaceFood((int)foodPercent);
         map.PlaceDecoration((int)decorationPercent);
         map.PaintMap(materials, noiseArray, heightDifference);
-    }
-
-    public int[,] getDigitalMap(){ 
-        return this.map.digitalMap;
-    }
-
-    public GameObject[,] getObjectMap() {
-        return this.map.objectMap;
     }
 
     class Map
