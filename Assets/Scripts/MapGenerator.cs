@@ -38,7 +38,7 @@ public class MapGenerator : MonoBehaviour
         creatures = new List<Creature>();
 
         Creature c1 = new Creature(new Vector2(2, 20), 1);
-        Creature c2 = new Creature(new Vector2(8, 25), 1);
+        Creature c2 = new Creature(new Vector2(2, 21), 1);
 
         creatures.Add(c1);
         creatures.Add(c2);

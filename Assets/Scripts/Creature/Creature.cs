@@ -95,6 +95,10 @@ public class Creature {
         float   x = this.position.x,
                 y = this.position.y,
                 z = this.position.z;
+
+
+        Creature.digitalMap[(int)x, (int)z] = 0;
+        
         Vector3 result;
 
         Vector2[] possibleChoices = new Vector2[8];
@@ -123,7 +127,7 @@ public class Creature {
         bool available = Creature.digitalMap[(int)provedChoices[choice].x, (int)provedChoices[choice].y] == 0;
 
         while(!available) {
-            choice = Random.Range(0, 7);
+            choice = Random.Range(0, provedChoices.Count - 1);
             available = Creature.digitalMap[(int)provedChoices[choice].x, (int)provedChoices[choice].y] == 0;
         }
 
@@ -164,6 +168,8 @@ public class Creature {
         //     if(this.position.z == 0)
         //         z = 1;
         //     else z = 0;
+
+        Creature.digitalMap[(int)x, (int)z] = 9;
 
         result = new Vector3(x, y, z);
 
