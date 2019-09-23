@@ -23,11 +23,15 @@ public class MapGenerator : MonoBehaviour
     public GameObject cube;
     public Material[] materials;
 
+    private Map map;
+
+    //Running when the app starts
     void Start()
     {
         GenerateMap();
     }
 
+    //The main method where everything is created, method take needed values
     public void GenerateMap()
     {
         string holderName = "Platform";
@@ -44,13 +48,14 @@ public class MapGenerator : MonoBehaviour
 
         float[,] noiseArray = Noise.GenerateNoiseMap(width, lenght, seed, noiseScale, octaves, persistence, lacunarity, offset);
 
-        Map map = new Map(width, lenght);
+        map = new Map(width, lenght);
         map.CreateGameObjectMap(cube, platform, noiseArray, noiseScale, heightDifference);        
         map.PlaceFood((int)foodPercent);
         map.PlaceDecoration((int)decorationPercent);
         map.PaintMap(materials, noiseArray, heightDifference);
     }
 
+    //Class for making map
     class Map
     {
         public int Width { get; set; }
@@ -65,6 +70,11 @@ public class MapGenerator : MonoBehaviour
             Lenght = lenght;
         }
 
+        //Depending on the digital map value paint the cube in particular color
+        //0 - earth
+        //1 - water
+        //2 - food
+        //3 - decoration
         public void PaintMap(Material[] materials, float[,] noiseArray, float heightDifference)
         {
             for (int i = 0; i < Width; i++)
@@ -99,6 +109,8 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
+
+        //Randomly placing food on the map
         public void PlaceFood(int foodPercent)
         {
             System.Random rnd = new System.Random();
@@ -113,7 +125,8 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        
+
+        //Randomly placing decoration on the map
         public void PlaceDecoration(int decorationPercent)
         {
             System.Random rnd = new System.Random();
@@ -129,6 +142,8 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
+        //Initializing digital and object arrays with values
+        //Instantiating cubes, making map visible
         public void CreateGameObjectMap(GameObject gameObject, Transform platform, float[,] noiseArray, float noiseScale, float heightDifference)
         {
             System.Random rnd = new System.Random();
@@ -155,6 +170,7 @@ public class MapGenerator : MonoBehaviour
         }      
     }
 
+    //Finding min noise value from array
     public static float GetMinNoise(float[,] noiseArray)
     {
         float min = noiseArray[0, 0];

@@ -5,6 +5,7 @@ using UnityEditor;
 [CustomEditor(typeof(MapGenerator))]
 public class TilePRNGMapGeneratorEditor : Editor
 {
+    //Runs when anything is changed
     public override void OnInspectorGUI()
     {
         MapGenerator map = target as MapGenerator;

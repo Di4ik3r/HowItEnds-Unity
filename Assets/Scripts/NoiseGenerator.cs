@@ -2,6 +2,7 @@
 
 public static class Noise
 {
+    //Generating float 2D array with random numbers from 0 to 1
     public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float scale, int octaves, float persistence, float lacunarity, Vector2 offset)
     {
         float[,] noiseMap = new float[mapWidth, mapHeight];
