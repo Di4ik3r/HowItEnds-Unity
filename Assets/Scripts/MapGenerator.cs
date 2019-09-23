@@ -14,6 +14,8 @@ public class MapGenerator : MonoBehaviour
     public float lacunarity;
     public Vector2 offset;
     public int seed;
+    [Range(0.1f, 15)]
+    public float heightDifference;
     [Range(0, 100)]
     public float foodPercent;
     [Range(0, 100)]
@@ -76,12 +78,11 @@ public class MapGenerator : MonoBehaviour
 
         float[,] noiseArray = Noise.GenerateNoiseMap(width, lenght, seed, noiseScale, octaves, persistence, lacunarity, offset);
 
-        map = new Map(width, lenght);
-        map.CreateGameObjectMap(cube, platform, noiseArray);
-        map.MakeLake(System.Convert.ToInt32(lakeSize.x), System.Convert.ToInt32(lakeSize.y), noiseArray);
+        Map map = new Map(width, lenght);
+        map.CreateGameObjectMap(cube, platform, noiseArray, noiseScale, heightDifference);        
         map.PlaceFood((int)foodPercent);
         map.PlaceDecoration((int)decorationPercent);
-        map.PaintMap(materials, noiseArray);
+        map.PaintMap(materials, noiseArray, heightDifference);
     }
 
     public int[,] getDigitalMap(){ 
@@ -106,7 +107,7 @@ public class MapGenerator : MonoBehaviour
             Lenght = lenght;
         }
 
-        public void PaintMap(Material[] materials, float[,] noiseArray)
+        public void PaintMap(Material[] materials, float[,] noiseArray, float heightDifference)
         {
             for (int i = 0; i < Width; i++)
             {
@@ -122,7 +123,7 @@ public class MapGenerator : MonoBehaviour
                             }
                         case 1:
                             {
-                                objectMap[i, j].transform.position = new Vector3(i, GetMinNoise(noiseArray), j);
+                                objectMap[i, j].transform.position = new Vector3(i, (GetMinNoise(noiseArray) + heightDifference * 0.3f), j);
                                 renderer.material = materials[1];
                                 break;
                             }
@@ -140,7 +141,6 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-
         public void PlaceFood(int foodPercent)
         {
             System.Random rnd = new System.Random();
@@ -171,7 +171,7 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        public void CreateGameObjectMap(GameObject gameObject, Transform platform, float[,] noiseArray)
+        public void CreateGameObjectMap(GameObject gameObject, Transform platform, float[,] noiseArray, float noiseScale, float heightDifference)
         {
             System.Random rnd = new System.Random();
             digitalMap = new int[Width, Lenght];
@@ -181,10 +181,10 @@ public class MapGenerator : MonoBehaviour
             {
                 for (int j = 0; j < Lenght; j++)
                 {
-                    objectMap[i, j] = Instantiate(gameObject, new Vector3(i, noiseArray[i, j], j), Quaternion.identity);
+                    objectMap[i, j] = Instantiate(gameObject, new Vector3(i, noiseArray[i, j] * heightDifference, j), Quaternion.identity);
                     objectMap[i, j].transform.parent = platform;
 
-                    if (System.Math.Round(noiseArray[i, j], 1) > 0.1 && System.Math.Round(noiseArray[i, j], 1) < 0.3)
+                    if (System.Math.Round(noiseArray[i, j], 1) < 0.4)
                     {
                         digitalMap[i, j] = 1;
                     }
@@ -194,45 +194,7 @@ public class MapGenerator : MonoBehaviour
                     }
                 }
             }
-        }
-
-        public void MakeLake(int lakeLenght, int lakeWidth, float[,] noiseArray)
-        {
-            System.Random rnd = new System.Random();
-            int posX = rnd.Next(0, Width);
-            int posY = rnd.Next(0, Lenght);
-
-            int differenceX = System.Math.Abs(Width - (lakeWidth + posX));
-            int differenceY = System.Math.Abs(Lenght - (lakeLenght + posY));
-
-            if (lakeWidth + posX >= Width && lakeLenght + posY <= Lenght)
-            {
-                Loop(posX - differenceX, Width, posY, posY + lakeLenght, noiseArray);
-            }
-            else if (lakeLenght + posY >= Lenght && lakeWidth + posX < Width)
-            {
-                Loop(posX, posX + lakeWidth, posY - differenceY, Lenght, noiseArray);
-            }
-            else if (lakeLenght + posY >= Lenght && lakeWidth + posX >= Width)
-            {
-                Loop(posX - differenceX, Width, posY - differenceY, Lenght, noiseArray);
-            }
-            else
-            {
-                Loop(posX, posX + lakeWidth, posY, posY + lakeLenght, noiseArray);
-            }
-        }
-       
-        private void Loop(int iStart, int iEnd, int jStart, int jEnd, float[,] noiseArray)
-        {            
-            for (int i = iStart; i < iEnd; i++)
-            {
-                for (int j = jStart; j < jEnd; j++)
-                {
-                    digitalMap[i, j] = 1;
-                }
-            }
-        }
+        }      
     }
 
     public static float GetMinNoise(float[,] noiseArray)
