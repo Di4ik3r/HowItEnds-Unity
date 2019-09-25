@@ -4,45 +4,70 @@ using UnityEngine;
 
 public class Creature {
 
-    [SerializeField]
+    // Основне поле класу, яке тримає в собі основні компоненти Юніті (такі як Трансформ) і куда можна
+    // добавити нові компоненти (такі як МешРендерер, МешФільтр і тд)
     private GameObject gameObject;
+    // Властивість, яка дозволяє звертатись до Трансформ геймОбджекта даного класу
     public Transform transform { get{ return this.gameObject.transform; } }
+    // Властивість, яка дозволяє звертатись до Позиції геймОбджекта даного класу
     public Vector3 position { get{ return this.gameObject.transform.position; }  set { this.gameObject.transform.position = value; } }
 
+    // Статичне поле даного класу, яке дозволяє відслідковувати і обробляти ідентифікатори для кожного
+    // юніта
     public static int ID_COUNTER = 0;
+    // Статичне поле даного класу, яке дозволяє тримати ІНТовський масив карти
     public static int[,] digitalMap;
+    // Статичне поле даного класу, яке дозволяє тримати масив кубів карти    
     public static GameObject[,] objectMap;
 
+    // Статичне поле даного класу, яке дозволяє визначити мінімальну і максимальну кількість днів в межах
+    // якої буде обиратись скільки Юніт проживе (в днях)
     private static Vector2 DEATH_RANGE = new Vector2(6, 15);
+    // Ліміт, при досягненні якого - Юніт буде шукати їжу. Крок, який буде додаватись до загального показника
+    // голоду
     private static float HUNGER_LIMIT = .6f, HUNGER_STEP = .08f;
+    // Ліміт, при досягненні якого - Юніт буде шукати воду. Крок, який буде додаватись до загального показника
+    // спраги
     private static float THIRST_LIMIT = .4f, THIRST_STEP = .06f;
 
+    // Ідентифікатор Юніта
     private int     id;
+    // Булівське значення, що відображає чи живий Юніт
     private bool    isAlive;
+    // Показник голоду
     private float   hunger;
+    // Показник спраги
     private float   thirst;
+    // День, коли Юніт був створений
     private int     birthDay;
+    // День, коли юніт помре природньою смертю (День народження + Рандом.Рендж(ДЕАД_РЕНДЖ.х, ДЕАД_РЕНДЖ.у))
     private int     deathDay;
+    // Швидкість
     private float   speed;
+    // Маса
     private float   weight;
+    // Відображає чи Юніт рухається
     private bool    isMoving;
+    // Клітка мапи, до якої прямує Юніт, якщо він відчуває голод або спрагу ((-1, -1), якщо ні до чого не прямує)
     private Vector2 lookingForCell;
-    private bool    isLookingFor;
 
+    // Меш для Юніта (його завнішній вигляд)
     private Mesh mesh;
+    // Висота Меша. Потрібно для того щоб юніт правильно ставав на блоки по висоті
     private float meshHeight;
 
+    // Властивість, що відображає чи відчуває голод Юніт
     private bool isHunger { get { return this.hunger >= Creature.HUNGER_LIMIT ? true : false; } }
+    // Властивість, що відображає чи відчуває спрагу Юніт
     private bool isThirst { get { return this.thirst >= Creature.THIRST_LIMIT ? true : false; } }
 
     public Creature(Vector2 position, int birthDay) {
+        // За допомогою стягнутого класу ПрімітівХелпер - стягує меш з куба
         this.mesh = PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cube);
-        implementComponents();
-        // this.mesh = Resources.Load<GameObject>("Prefab/CreaturePrefab");
-        // this.mesh = PrimitiveType.Sphere;
-        // this.mesh = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        // this.mesh = (GameObject)Resources.Load("CreaturePrefab");
+        // Фукнція, що додає до геймОбджекта потрібні нам компоненти і правильно інціалізує їх
+        ImplementComponents();
 
+        // Ініціалізація полів
         this.id = Creature.ID_COUNTER++;
         this.hunger = 0;
         this.thirst = 0;
@@ -51,7 +76,7 @@ public class Creature {
         this.speed = 0;
         this.weight = 0;
         this.isMoving = false;
-        this.isLookingFor = false;
+        // this.isLookingFor = false;
         this.lookingForCell = new Vector2(position.x, position.y);
         this.isAlive = true;
 
@@ -62,36 +87,56 @@ public class Creature {
                                     position.y);
     }
 
-    private void implementComponents() {
+    // Додає до геймОбджекта потрібні нам компоненти і правильно інціалізує їх
+    private void ImplementComponents() {
+        // Створює екземпляр ГеймОбджекта
         this.gameObject = new GameObject("Creature");
 
-        // this.gameObject.AddComponent<Transform>();
+        // Додає компонент МешФільтр, який тримає в собі меш
         this.gameObject.AddComponent<MeshFilter>();
+        // Додає компонент МешРендерер, який тримає в собі параметри, потрібні для відображення
+        // такі, як матеріал, колір, параметри освітлення і тд.
         this.gameObject.AddComponent<MeshRenderer>();
-
+        
+        // Присвоюю мешу компонента МешФільтра меш Юніта
         this.gameObject.GetComponent<MeshFilter>().mesh = this.mesh;
+        // Присвою матеріал компоненту Рендерер
+        this.gameObject.GetComponent<Renderer>().materials[0] = Resources.Load("BasicMaterial", typeof(Material)) as Material;
     }
 
+
+    // Логіка руху Юніта
     public void MakeMove() {
-        if(this.isMoving || !this.isAlive)
+        // Якщо мертвий - нічого не робимо
+        if(!this.isAlive)
             return;
+
+        // Якщо Юніт рухається
+        if(this.isMoving) {
+            
+        }
         
+        // Якщо голодний - шукаємо їжу
         if(isHunger)
             FindFood();
+        // Якщо Юніт відчуває спрагу - шукаємо воду
         if(isThirst)
             FindWater();
 
+        // Виконуємо рух
         Jump();
     }
 
+    // Рух, при виконані якого - збільшується голод та спрага
     private void Jump() {
-        this.position = moveLogic();
+        this.position = MoveLogic();
 
         this.hunger += HUNGER_STEP;
         this.thirst += THIRST_STEP;
     }
 
-    private Vector3 moveLogic() {
+    // Логіка вибору клітка, на яку ступить Юніт
+    private Vector3 MoveLogic() {
         float   x = this.position.x,
                 y = this.position.y,
                 z = this.position.z;
@@ -123,7 +168,6 @@ public class Creature {
 
         choice = Random.Range(0, provedChoices.Count - 1);
 
-        // bool available = Creature.digitalMap[(int)possibleChoices[choice].x, (int)possibleChoices[choice].y] == 0;
         bool available = Creature.digitalMap[(int)provedChoices[choice].x, (int)provedChoices[choice].y] == 0;
 
         while(!available) {
@@ -131,43 +175,10 @@ public class Creature {
             available = Creature.digitalMap[(int)provedChoices[choice].x, (int)provedChoices[choice].y] == 0;
         }
 
-        // while(!available) {
-        //     choice = Random.Range(0, 7);
-        //     Debug.Log(choice + ":_ " + (int)possibleChoices[choice].x + " : " + (int)possibleChoices[choice].y + " = " + Creature.digitalMap[(int)possibleChoices[choice].x, (int)possibleChoices[choice].y]);
-        //     Debug.Log(Creature.digitalMap.GetLength(0) + " : " + Creature.digitalMap.GetLength(1));            
-        //     available = Creature.digitalMap[(int)possibleChoices[choice].x, (int)possibleChoices[choice].y] == 0;
-        // }
-
-        // x = possibleChoices[choice].x;
-        // z = possibleChoices[choice].y;
-
         x = provedChoices[choice].x;
         z = provedChoices[choice].y;
 
-        // switch(choice) {
-        //     case 1: { x = this.position.x - 1;  z = this.position.z + 1;    break; }
-        //     case 2: { x = this.position.x;      z = this.position.z + 1;    break; }
-        //     case 3: { x = this.position.x + 1;  z = this.position.z + 1;    break; }
-        //     case 4: { x = this.position.x + 1;  z = this.position.z;        break; }
-        //     case 5: { x = this.position.x + 1;  z = this.position.z - 1;    break; }
-        //     case 6: { x = this.position.x;      z = this.position.z - 1;    break; }
-        //     case 7: { x = this.position.x - 1;  z = this.position.z - 1;    break; }
-        //     case 8: { x = this.position.x - 1;  z = this.position.z;        break; }
-        // }
-
-        // x = normalizeX(x);
-        // z = normalizeZ(z);
-
         y = Creature.objectMap[(int)x, (int)z].transform.position.y + this.meshHeight;
-
-        // if(x < 0)
-        //     if(this.position.x == 0)
-        //         x = 1;
-        //     else x = 0;
-        // if(z < 0) 
-        //     if(this.position.z == 0)
-        //         z = 1;
-        //     else z = 0;
 
         Creature.digitalMap[(int)x, (int)z] = 9;
 
@@ -175,50 +186,6 @@ public class Creature {
 
         return result;
     }
-
-    private float normalizeX(int x) {
-        if(x < 0)
-            return 0;
-        if(x >= Creature.digitalMap.GetLength(0))
-            return Creature.digitalMap.GetLength(0) - 1;
-
-        return 0;
-    }
-
-    private float normalizeZ(int z) {
-        if(z < 0)
-            return 0;
-        if(z >= Creature.digitalMap.GetLength(1))
-            return Creature.digitalMap.GetLength(1) - 1;
-
-        return 0;
-    }
-
-    // private float normalizeX(float x) {
-    //     if(x < 0)
-    //         if(this.position.x == 0)
-    //             return 1;
-    //         else 
-    //             return x;
-    //     if(x + 1 >= Creature.digitalMap.GetLength(1))
-    //         if(this.position.x == Creature.digitalMap.GetLength(1))
-    //             return Creature.digitalMap.GetLength(1) - 1;
-    //     return x;
-    //     // return x < 0 ? this.position.x == 0 ? 1 : 0 : x;
-    // }
-
-    // private float normalizeZ(float z) {
-    //     if(z < 0)
-    //         if(this.position.z == 0)
-    //             return 1;
-    //         else 
-    //             return z;
-    //     if(z + 1 >= Creature.digitalMap.GetLength(0))
-    //         if(this.position.z == Creature.digitalMap.GetLength(0))
-    //             return Creature.digitalMap.GetLength(0) - 1;
-    //     return z;
-    //     // return z < 0 ? this.position.z == 0 ? 1 : 0 : z;
-    // }
 
     private void FindWater() {
 
