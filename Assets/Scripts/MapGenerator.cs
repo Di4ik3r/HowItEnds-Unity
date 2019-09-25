@@ -24,6 +24,10 @@ public class MapGenerator : MonoBehaviour
     public Material[] materials;
 
     private Map map;
+    private List<Vector3> groundCoordinates;
+    private List<Vector3> waterCoordinates;
+    private List<Vector3> foodCoordinates;
+    private List<Vector3> decorationCoordinates;
 
     //Running when the app starts
     void Start()
@@ -52,7 +56,7 @@ public class MapGenerator : MonoBehaviour
         map.CreateGameObjectMap(cube, platform, noiseArray, noiseScale, heightDifference);        
         map.PlaceFood((int)foodPercent);
         map.PlaceDecoration((int)decorationPercent);
-        map.PaintMap(materials, noiseArray, heightDifference);
+        map.PaintMap(materials, noiseArray, heightDifference, groundCoordinates, waterCoordinates, decorationCoordinates, foodCoordinates);
     }
 
     //Class for making map
@@ -75,7 +79,7 @@ public class MapGenerator : MonoBehaviour
         //1 - water
         //2 - food
         //3 - decoration
-        public void PaintMap(Material[] materials, float[,] noiseArray, float heightDifference)
+        public void PaintMap(Material[] materials, float[,] noiseArray, float heightDifference, List<Vector3> gc, List<Vector3> wc, List<Vector3> dc, List<Vector3> fc)
         {
             for (int i = 0; i < Width; i++)
             {
@@ -87,22 +91,26 @@ public class MapGenerator : MonoBehaviour
                         case 0:
                             {
                                 renderer.material = materials[0];
+                                gc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                         case 1:
                             {
-                                objectMap[i, j].transform.position = new Vector3(i, (GetMinNoise(noiseArray) + heightDifference * 0.3f), j);
+                                objectMap[i, j].transform.position = new Vector3(-Width / 2 + 0.5f + i, (GetMinNoise(noiseArray) + heightDifference * 0.3f), -Lenght / 2 + 0.5f + j);
                                 renderer.material = materials[1];
+                                wc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                         case 2:
                             {
                                 renderer.material = materials[2];
+                                fc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                         case 3:
                             {
                                 renderer.material = materials[3];
+                                dc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                     }
@@ -154,7 +162,7 @@ public class MapGenerator : MonoBehaviour
             {
                 for (int j = 0; j < Lenght; j++)
                 {
-                    objectMap[i, j] = Instantiate(gameObject, new Vector3(i, noiseArray[i, j] * heightDifference, j), Quaternion.identity);
+                    objectMap[i, j] = Instantiate(gameObject, new Vector3(-Width / 2 + 0.5f + i, noiseArray[i, j] * heightDifference, -Lenght / 2 + 0.5f + j), Quaternion.identity);
                     objectMap[i, j].transform.parent = platform;
 
                     if (System.Math.Round(noiseArray[i, j], 1) < 0.4)
@@ -167,7 +175,12 @@ public class MapGenerator : MonoBehaviour
                     }
                 }
             }
-        }      
+        }   
+        
+        public void GetPostionVectors()
+        {
+
+        }
     }
 
     //Finding min noise value from array
