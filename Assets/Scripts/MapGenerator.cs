@@ -38,6 +38,11 @@ public class MapGenerator : MonoBehaviour
     //The main method where everything is created, method take needed values
     public void GenerateMap()
     {
+        groundCoordinates = new List<Vector3>();
+        waterCoordinates = new List<Vector3>();
+        foodCoordinates = new List<Vector3>();
+        decorationCoordinates = new List<Vector3>();
+
         string holderName = "Platform";
         if (transform.Find(holderName))
         {
