@@ -30,19 +30,42 @@ public class MapGenerator : MonoBehaviour
 
     private List<Creature> creatures;
 
+
+    // private GameObject[,] text;
+    // private void GenerateText() {
+    //     text = new GameObject[(int)mapSize.x, (int)mapSize.y];
+    //     for(int x = 0; x < mapSize.x; x++) {
+    //         for(int z = 0; z < mapSize.y; z++) {
+    //             text[x, z] = new GameObject("Text");
+    //             text[x, z].transform.position = new Vector3(x, 20, z + .5f);
+    //             TextMesh textMesh = text[x, z].AddComponent<TextMesh>();
+    //             textMesh.text = "0";
+    //             textMesh.transform.localEulerAngles += new Vector3(90, 0, 0);
+    //             textMesh.fontSize = 10;
+    //         }
+    //     }
+    // }
+    // private void UpdateText() {
+    //     int[,] dm = getDigitalMap();
+    //     for(int x = 0; x < mapSize.x; x++) {
+    //         for(int z = 0; z < mapSize.y; z++) {
+    //             TextMesh t = text[x, z].GetComponent<TextMesh>();
+    //             t.text = dm[x, z].ToString();
+    //         }
+    //     }
+    // }
+
     void Start()
     {
         GenerateMap();
 
-        // Creature.digitalMap = getDigitalMap();
-        // Creature.objectMap = getObjectMap();
         Creature.digitalMap = this.map.digitalMap;
         Creature.objectMap = this.map.objectMap;
 
         creatures = new List<Creature>();
 
-        Creature c1 = new Creature(new Vector2(2, 20), 1);
-        Creature c2 = new Creature(new Vector2(2, 21), 1);
+        Creature c1 = new Creature(new Vector2(34, 8), 1);
+        Creature c2 = new Creature(new Vector2(0, 1), 1);
 
         creatures.Add(c1);
         creatures.Add(c2);
@@ -53,8 +76,7 @@ public class MapGenerator : MonoBehaviour
         if(System.Math.Round(MapGenerator.TIME, 1) % 2 == 0) {
             creatureCycle();
         }
-            
-
+        
         MapGenerator.TIME += MapGenerator.TIME_STEP;
     }
 
