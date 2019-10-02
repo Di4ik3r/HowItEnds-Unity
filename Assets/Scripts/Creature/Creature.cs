@@ -79,7 +79,8 @@ public class Creature {
     // Статичний масив можливих напрямків
     private static Direction[] DIRECTIONS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
     // Ліміт максимально можливих ходів в даному напрямку
-    private static int MOVES_LIMIT = 8;
+    private static int MOVES_LIMIT_MIN = 3;
+    private static int MOVES_LIMIT_MAX = 12;
 
     public Creature(Vector2 position, int birthDay) {
         // За допомогою стягнутого класу ПрімітівХелпер - стягує меш з куба
@@ -319,7 +320,7 @@ public class Creature {
         }
 
         // Випадкове задання ліміту кроків в даному напрямку
-        this.limitMoveCount = Random.Range(1, MOVES_LIMIT);
+        this.limitMoveCount = Random.Range(MOVES_LIMIT_MIN, MOVES_LIMIT_MAX);
         // Занулення кількості вже зроблених кроків
         this.currentMoveCount = 0;
 
@@ -373,11 +374,11 @@ public class Creature {
         switch(this.moveDirection) {
             case Direction.UP: {
             // Лівий верхній кут
-                // result.Add(new Vector2(this.position.x - 1,   this.position.z + 1));
+                result.Add(new Vector2(this.position.x - 1,   this.position.z + 1));
             // Середньо-верхня клітка
                 result.Add(new Vector2(this.position.x,       this.position.z + 1));
             // Правий верхній кут
-                // result.Add(new Vector2(this.position.x + 1,   this.position.z + 1));
+                result.Add(new Vector2(this.position.x + 1,   this.position.z + 1));
                 break;
             }
             case Direction.RIGHT: {
@@ -391,11 +392,11 @@ public class Creature {
             }
             case Direction.DOWN: {
             // Правий нижній кут
-                // result.Add(new Vector2(this.position.x + 1,   this.position.z - 1));
+                result.Add(new Vector2(this.position.x + 1,   this.position.z - 1));
             // Середньо-нижня клітка
                 result.Add(new Vector2(this.position.x,       this.position.z - 1));
             // Лівий нижній кут
-                // result.Add(new Vector2(this.position.x - 1,   this.position.z - 1));
+                result.Add(new Vector2(this.position.x - 1,   this.position.z - 1));
                 break;
             }    
             case Direction.LEFT: {
@@ -420,11 +421,11 @@ public class Creature {
         switch(direction) {
             case Direction.UP: {
             // Лівий верхній кут
-                // result.Add(new Vector2(this.position.x - 1,   this.position.z + 1));
+                result.Add(new Vector2(this.position.x - 1,   this.position.z + 1));
             // Середньо-верхня клітка
                 result.Add(new Vector2(this.position.x,       this.position.z + 1));
             // Правий верхній кут
-                // result.Add(new Vector2(this.position.x + 1,   this.position.z + 1));
+                result.Add(new Vector2(this.position.x + 1,   this.position.z + 1));
                 break;
             }
             case Direction.RIGHT: {
@@ -438,11 +439,11 @@ public class Creature {
             }
             case Direction.DOWN: {
             // Правий нижній кут
-                // result.Add(new Vector2(this.position.x + 1,   this.position.z - 1));
+                result.Add(new Vector2(this.position.x + 1,   this.position.z - 1));
             // Середньо-нижня клітка
                 result.Add(new Vector2(this.position.x,       this.position.z - 1));
             // Лівий нижній кут
-                // result.Add(new Vector2(this.position.x - 1,   this.position.z - 1));
+                result.Add(new Vector2(this.position.x - 1,   this.position.z - 1));
                 break;
             }    
             case Direction.LEFT: {

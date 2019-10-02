@@ -55,6 +55,12 @@ public class MapGenerator : MonoBehaviour
     //     }
     // }
 
+    private List<Vector3> groundCoordinates;
+    private List<Vector3> waterCoordinates;
+    private List<Vector3> foodCoordinates;
+    private List<Vector3> decorationCoordinates;
+
+    //Running when the app starts
     void Start()
     {
         GenerateMap();
@@ -62,22 +68,44 @@ public class MapGenerator : MonoBehaviour
         Creature.digitalMap = this.map.digitalMap;
         Creature.objectMap = this.map.objectMap;
 
-        creatures = new List<Creature>();
-
-        Creature c1 = new Creature(new Vector2(20, 30), 1);
-        Creature c2 = new Creature(new Vector2(80, 20), 1);
-
-        creatures.Add(c1);
-        creatures.Add(c2);
+        // creatures = new List<Creature>();
+        // creatures.Add(new Creature(new Vector2(0, 0), 0));
+        // creatures.Add(new Creature(new Vector2(0, 5), 0));
+        // creatures.Add(new Creature(new Vector2(5, 0), 0));
+        creatures = CreateCreatures(15);
     }
 
     void Update() {
         // if(MapGenerator.TIME % 2 == 0) {
-        if(System.Math.Round(MapGenerator.TIME, 1) % 2 == 0) {
+        if(System.Math.Round(MapGenerator.TIME, 1) % 0.5f == 0) {
             creatureCycle();
         }
         
         MapGenerator.TIME += MapGenerator.TIME_STEP;
+    }
+
+    private List<Creature> CreateCreatures(int amount) {
+        List<Creature> result = new List<Creature>();
+        // List<Vector2> takenCells = new List<Vector2>();
+        
+        for(int i = 0; i < amount; i++) {
+            Vector3 pickedGroundCoordinates = groundCoordinates[Random.Range(0, groundCoordinates.Count)];
+            Vector2 position = new Vector2(pickedGroundCoordinates.x, pickedGroundCoordinates.z);
+            // int indexer = 0;
+            // while(takenCells.Contains(pickedGroundCoordinates)) {
+            //     pickedGroundCoordinates = groundCoordinates[Random.Range(0, groundCoordinates.Count)];
+            //     if(indexer > 15) {
+            //         Debug.Log("breaked");
+            //         break;
+            //     }
+            //     indexer++;
+            // }
+            // takenCells.Add(position);
+            Creature creature = new Creature(position, 0);
+            result.Add(creature);
+        }
+
+        return result;
     }
 
     private void creatureCycle() {
@@ -94,8 +122,14 @@ public class MapGenerator : MonoBehaviour
         return this.map.objectMap;
     }
 
+    //The main method where everything is created, method take needed values
     public void GenerateMap()
     {
+        groundCoordinates = new List<Vector3>();
+        waterCoordinates = new List<Vector3>();
+        foodCoordinates = new List<Vector3>();
+        decorationCoordinates = new List<Vector3>();
+
         string holderName = "Platform";
         if (transform.Find(holderName))
         {
@@ -114,9 +148,10 @@ public class MapGenerator : MonoBehaviour
         map.CreateGameObjectMap(cube, platform, noiseArray, noiseScale, heightDifference);        
         map.PlaceFood((int)foodPercent);
         map.PlaceDecoration((int)decorationPercent);
-        map.PaintMap(materials, noiseArray, heightDifference);
+        map.PaintMap(materials, noiseArray, heightDifference, groundCoordinates, waterCoordinates, decorationCoordinates, foodCoordinates);
     }
 
+    //Class for making map
     class Map
     {
         public int Width { get; set; }
@@ -131,7 +166,12 @@ public class MapGenerator : MonoBehaviour
             Lenght = lenght;
         }
 
-        public void PaintMap(Material[] materials, float[,] noiseArray, float heightDifference)
+        //Depending on the digital map value paint the cube in particular color
+        //0 - earth
+        //1 - water
+        //2 - food
+        //3 - decoration
+        public void PaintMap(Material[] materials, float[,] noiseArray, float heightDifference, List<Vector3> gc, List<Vector3> wc, List<Vector3> dc, List<Vector3> fc)
         {
             for (int i = 0; i < Width; i++)
             {
@@ -143,28 +183,35 @@ public class MapGenerator : MonoBehaviour
                         case 0:
                             {
                                 renderer.material = materials[0];
+                                gc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                         case 1:
                             {
+                                // objectMap[i, j].transform.position = new Vector3(-Width / 2 + 0.5f + i, (GetMinNoise(noiseArray) + heightDifference * 0.3f), -Lenght / 2 + 0.5f + j);
                                 objectMap[i, j].transform.position = new Vector3(i, (GetMinNoise(noiseArray) + heightDifference * 0.3f), j);
                                 renderer.material = materials[1];
+                                wc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                         case 2:
                             {
                                 renderer.material = materials[2];
+                                fc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                         case 3:
                             {
                                 renderer.material = materials[3];
+                                dc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                     }
                 }
             }
         }
+
+        //Randomly placing food on the map
         public void PlaceFood(int foodPercent)
         {
             System.Random rnd = new System.Random();
@@ -179,7 +226,8 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        
+
+        //Randomly placing decoration on the map
         public void PlaceDecoration(int decorationPercent)
         {
             System.Random rnd = new System.Random();
@@ -195,6 +243,8 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
+        //Initializing digital and object arrays with values
+        //Instantiating cubes, making map visible
         public void CreateGameObjectMap(GameObject gameObject, Transform platform, float[,] noiseArray, float noiseScale, float heightDifference)
         {
             System.Random rnd = new System.Random();
@@ -218,9 +268,15 @@ public class MapGenerator : MonoBehaviour
                     }
                 }
             }
-        }      
+        }   
+        
+        public void GetPostionVectors()
+        {
+
+        }
     }
 
+    //Finding min noise value from array
     public static float GetMinNoise(float[,] noiseArray)
     {
         float min = noiseArray[0, 0];
