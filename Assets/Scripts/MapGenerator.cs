@@ -72,15 +72,15 @@ public class MapGenerator : MonoBehaviour
         // creatures.Add(new Creature(new Vector2(0, 0), 0));
         // creatures.Add(new Creature(new Vector2(0, 5), 0));
         // creatures.Add(new Creature(new Vector2(5, 0), 0));
-        creatures = CreateCreatures(15);
+        creatures = CreateCreatures(10);
     }
 
     void Update() {
         // if(MapGenerator.TIME % 2 == 0) {
-        if(System.Math.Round(MapGenerator.TIME, 1) % 0.5f == 0) {
+        // if(System.Math.Round(MapGenerator.TIME, 1) % 0.5f == 0) {
             creatureCycle();
-        }
-        
+        // }
+
         MapGenerator.TIME += MapGenerator.TIME_STEP;
     }
 
