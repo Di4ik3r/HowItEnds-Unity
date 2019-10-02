@@ -13,5 +13,9 @@ public class TilePRNGMapGeneratorEditor : Editor
         {
             map.GenerateMap();
         }
+
+        // Creature.digitalMap = map.getDigitalMap();
+        // Creature.objectMap = map.getObjectMap();
+
     }
 }

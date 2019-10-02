@@ -22,8 +22,40 @@ public class MapGenerator : MonoBehaviour
     public float decorationPercent;
     public GameObject cube;
     public Material[] materials;
-
+    public GameObject sun;
+    public GameObject moon;
     private Map map;
+
+    private static float TIME = 0;
+    private static float TIME_STEP = .1f;
+
+    private List<Creature> creatures;
+
+
+    // private GameObject[,] text;
+    // private void GenerateText() {
+    //     text = new GameObject[(int)mapSize.x, (int)mapSize.y];
+    //     for(int x = 0; x < mapSize.x; x++) {
+    //         for(int z = 0; z < mapSize.y; z++) {
+    //             text[x, z] = new GameObject("Text");
+    //             text[x, z].transform.position = new Vector3(x, 20, z + .5f);
+    //             TextMesh textMesh = text[x, z].AddComponent<TextMesh>();
+    //             textMesh.text = "0";
+    //             textMesh.transform.localEulerAngles += new Vector3(90, 0, 0);
+    //             textMesh.fontSize = 10;
+    //         }
+    //     }
+    // }
+    // private void UpdateText() {
+    //     int[,] dm = getDigitalMap();
+    //     for(int x = 0; x < mapSize.x; x++) {
+    //         for(int z = 0; z < mapSize.y; z++) {
+    //             TextMesh t = text[x, z].GetComponent<TextMesh>();
+    //             t.text = dm[x, z].ToString();
+    //         }
+    //     }
+    // }
+
     private List<Vector3> groundCoordinates;
     private List<Vector3> waterCoordinates;
     private List<Vector3> foodCoordinates;
@@ -33,6 +65,95 @@ public class MapGenerator : MonoBehaviour
     void Start()
     {
         GenerateMap();
+
+        Creature.digitalMap = this.map.digitalMap;
+        Creature.objectMap = this.map.objectMap;
+
+        // creatures = new List<Creature>();
+        // creatures.Add(new Creature(new Vector2(0, 0), 0));
+        // creatures.Add(new Creature(new Vector2(0, 5), 0));
+        // creatures.Add(new Creature(new Vector2(5, 0), 0));
+        creatures = CreateCreatures(10);
+        CreateSpheres();
+    }
+    public void CreateSpheres()
+    {
+        sun = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sun.name = "sun";
+        
+        sun.GetComponent<Renderer>().material.color = Color.yellow;
+        sun.AddComponent<Light>().type = LightType.Directional;
+        sun.GetComponent<Light>().shadows = LightShadows.Hard;
+        sun.GetComponent<Light>().color = new Color(1, 1, 0.5f);
+
+        moon = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        moon.name = "moon";
+        moon.GetComponent<Renderer>().material.color = new Color(0.75f, 0.75f, 0.75f);
+        moon.AddComponent<Light>().type = LightType.Directional;
+        moon.GetComponent<Light>().shadows = LightShadows.Hard;
+        moon.GetComponent<Light>().color = Color.black;
+        moon.GetComponent<Light>().intensity = 2f;
+    }
+    void Update() {
+        // if(MapGenerator.TIME % 2 == 0) {
+        // if(System.Math.Round(MapGenerator.TIME, 1) % 0.5f == 0) {
+            creatureCycle();
+        // }
+
+        MapGenerator.TIME += MapGenerator.TIME_STEP;
+        timeRT = (timeRT + Time.deltaTime) % gameDayRLSeconds;
+        float sunangle = TimeOfDay * 360;
+        float moonangle = TimeOfDay * 360 + 180;
+        Vector3 midpoint = new Vector3(mapSize.x / 2, mapSize.y / 2, 0);
+        sun.transform.position = midpoint + Quaternion.Euler(0, 0, sunangle) * (mapSize.x * Vector3.right);
+        sun.transform.LookAt(midpoint);
+        moon.transform.position = midpoint + Quaternion.Euler(0, 0, moonangle) * (mapSize.x * Vector3.right);
+        moon.transform.LookAt(midpoint);
+    }
+    void OnGUI()
+    {
+        Rect rect = new Rect(10, 10, 120, 20);
+        GUI.Label(rect, "time: " + TimeOfDay); rect.y += 20;
+        GUI.Label(rect, "timeRT: " + timeRT);
+        rect = new Rect(120, 10, 200, 10);
+        TimeOfDay = GUI.HorizontalSlider(rect, TimeOfDay, 0, 1);
+    }
+    private List<Creature> CreateCreatures(int amount) {
+        List<Creature> result = new List<Creature>();
+        // List<Vector2> takenCells = new List<Vector2>();
+        
+        for(int i = 0; i < amount; i++) {
+            Vector3 pickedGroundCoordinates = groundCoordinates[Random.Range(0, groundCoordinates.Count)];
+            Vector2 position = new Vector2(pickedGroundCoordinates.x, pickedGroundCoordinates.z);
+            // int indexer = 0;
+            // while(takenCells.Contains(pickedGroundCoordinates)) {
+            //     pickedGroundCoordinates = groundCoordinates[Random.Range(0, groundCoordinates.Count)];
+            //     if(indexer > 15) {
+            //         Debug.Log("breaked");
+            //         break;
+            //     }
+            //     indexer++;
+            // }
+            // takenCells.Add(position);
+            Creature creature = new Creature(position, 0);
+            result.Add(creature);
+        }
+
+        return result;
+    }
+
+    private void creatureCycle() {
+        foreach(Creature creature in creatures) {
+            creature.MakeMove();
+        }
+    }
+
+    public int[,] getDigitalMap(){ 
+        return this.map.digitalMap;
+    }
+
+    public GameObject[,] getObjectMap() {
+        return this.map.objectMap;
     }
 
     //The main method where everything is created, method take needed values
@@ -63,7 +184,19 @@ public class MapGenerator : MonoBehaviour
         map.PlaceDecoration((int)decorationPercent);
         map.PaintMap(materials, noiseArray, heightDifference, groundCoordinates, waterCoordinates, decorationCoordinates, foodCoordinates);
     }
-
+   
+    public const float daytimeRLSeconds = 0.5f * 60;
+    public const float duskRLSeconds = 0.05f * 60;
+    public const float nighttimeRLSeconds = 1.0f * 60;
+    public const float sunsetRLSeconds = 0.5f * 60;
+    public const float gameDayRLSeconds = daytimeRLSeconds + duskRLSeconds + nighttimeRLSeconds + sunsetRLSeconds;
+   
+    private float timeRT = 0;
+    public float TimeOfDay // game time 0 .. 1
+    {
+        get { return timeRT / gameDayRLSeconds; }
+        set { timeRT = value * gameDayRLSeconds; }
+    }
     //Class for making map
     class Map
     {
@@ -101,7 +234,8 @@ public class MapGenerator : MonoBehaviour
                             }
                         case 1:
                             {
-                                objectMap[i, j].transform.position = new Vector3(-Width / 2 + 0.5f + i, (GetMinNoise(noiseArray) + heightDifference * 0.3f), -Lenght / 2 + 0.5f + j);
+                                // objectMap[i, j].transform.position = new Vector3(-Width / 2 + 0.5f + i, (GetMinNoise(noiseArray) + heightDifference * 0.3f), -Lenght / 2 + 0.5f + j);
+                                objectMap[i, j].transform.position = new Vector3(i, (GetMinNoise(noiseArray) + heightDifference * 0.3f), j);
                                 renderer.material = materials[1];
                                 wc.Add(objectMap[i, j].transform.position);
                                 break;
@@ -167,7 +301,7 @@ public class MapGenerator : MonoBehaviour
             {
                 for (int j = 0; j < Lenght; j++)
                 {
-                    objectMap[i, j] = Instantiate(gameObject, new Vector3(-Width / 2 + 0.5f + i, noiseArray[i, j] * heightDifference, -Lenght / 2 + 0.5f + j), Quaternion.identity);
+                    objectMap[i, j] = Instantiate(gameObject, new Vector3(i, noiseArray[i, j] * heightDifference, j), Quaternion.identity);
                     objectMap[i, j].transform.parent = platform;
 
                     if (System.Math.Round(noiseArray[i, j], 1) < 0.4)
