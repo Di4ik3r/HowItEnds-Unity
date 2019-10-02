@@ -88,10 +88,29 @@ public class MapGenerator : MonoBehaviour
 
         public void LocateDecorations(GameObject[] decorations, List<Vector3> dc, Transform decoratinonsPlatform)
         {
+            Vector3 vector3 = new Vector3();
             for (int i = 0; i < dc.Count; i++)
             {
-                int rnd = Random.Range(0, 1);
-                Instantiate(decorations[rnd], new Vector3(dc[i].x, dc[i].y + decorations[rnd].transform.lossyScale.y, dc[i].z), Quaternion.identity).transform.parent = decoratinonsPlatform;
+                int rnd = Random.Range(0, decorations.Length);
+                switch (rnd)
+                {
+                    case 0:
+                        {
+                            vector3 = new Vector3(dc[i].x, dc[i].y + 1/*decorations[rnd].transform.lossyScale.y*/, dc[i].z);
+                            break;
+                        }
+                    case 1:
+                        {
+                            vector3 = new Vector3(dc[i].x, dc[i].y + 0.5f, dc[i].z);
+                            break;
+                        }
+                    case 2:
+                        {
+                            vector3 = new Vector3(dc[i].x, dc[i].y + 2f, dc[i].z);
+                            break;
+                        }
+                }
+                Instantiate(decorations[rnd], vector3, Quaternion.identity).transform.parent = decoratinonsPlatform;
                 Debug.Log(dc[i]);
             }
         }
@@ -126,13 +145,13 @@ public class MapGenerator : MonoBehaviour
                             }
                         case 2:
                             {
-                                renderer.material = materials[2];
+                                renderer.material = materials[0];
                                 fc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                         case 3:
                             {
-                                renderer.material = materials[3];
+                                renderer.material = materials[0];
                                 dc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
