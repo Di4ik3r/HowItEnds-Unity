@@ -23,11 +23,13 @@ public class MapGenerator : MonoBehaviour
     public GameObject cube;
     public Material[] materials;
 
+    public GameObject[] decorations;
+
     private Map map;
-    private List<Vector3> groundCoordinates;
-    private List<Vector3> waterCoordinates;
-    private List<Vector3> foodCoordinates;
-    private List<Vector3> decorationCoordinates;
+    private List<Vector3> groundCoordinates = new List<Vector3>();
+    private List<Vector3> waterCoordinates = new List<Vector3>();
+    private List<Vector3> foodCoordinates = new List<Vector3>();
+    private List<Vector3> decorationCoordinates = new List<Vector3>();
 
     //Running when the app starts
     void Start()
@@ -38,12 +40,7 @@ public class MapGenerator : MonoBehaviour
     //The main method where everything is created, method take needed values
     public void GenerateMap()
     {
-        groundCoordinates = new List<Vector3>();
-        waterCoordinates = new List<Vector3>();
-        foodCoordinates = new List<Vector3>();
-        decorationCoordinates = new List<Vector3>();
-
-        string holderName = "Platform";
+        string holderName = "Map";
         if (transform.Find(holderName))
         {
             DestroyImmediate(transform.Find(holderName).gameObject);
@@ -51,6 +48,15 @@ public class MapGenerator : MonoBehaviour
 
         Transform platform = new GameObject(holderName).transform;
         platform.parent = transform;
+
+        string decorationsHolder = "Decorations";
+        if (transform.Find(decorationsHolder))
+        {
+            DestroyImmediate(transform.Find(decorationsHolder).gameObject);
+        }
+
+        Transform decorationsPlatform = new GameObject(decorationsHolder).transform;
+        decorationsPlatform.parent = transform;
 
         int width = System.Convert.ToInt32(mapSize.x);
         int lenght = System.Convert.ToInt32(mapSize.y);
@@ -62,6 +68,7 @@ public class MapGenerator : MonoBehaviour
         map.PlaceFood((int)foodPercent);
         map.PlaceDecoration((int)decorationPercent);
         map.PaintMap(materials, noiseArray, heightDifference, groundCoordinates, waterCoordinates, decorationCoordinates, foodCoordinates);
+        map.LocateDecorations(decorations, decorationCoordinates, decorationsPlatform);
     }
 
     //Class for making map
@@ -79,6 +86,16 @@ public class MapGenerator : MonoBehaviour
             Lenght = lenght;
         }
 
+        public void LocateDecorations(GameObject[] decorations, List<Vector3> dc, Transform decoratinonsPlatform)
+        {
+            for (int i = 0; i < dc.Count; i++)
+            {
+                int rnd = Random.Range(0, 1);
+                Instantiate(decorations[rnd], new Vector3(dc[i].x, dc[i].y + decorations[rnd].transform.lossyScale.y, dc[i].z), Quaternion.identity).transform.parent = decoratinonsPlatform;
+                Debug.Log(dc[i]);
+            }
+        }
+
         //Depending on the digital map value paint the cube in particular color
         //0 - earth
         //1 - water
@@ -86,6 +103,7 @@ public class MapGenerator : MonoBehaviour
         //3 - decoration
         public void PaintMap(Material[] materials, float[,] noiseArray, float heightDifference, List<Vector3> gc, List<Vector3> wc, List<Vector3> dc, List<Vector3> fc)
         {
+            dc.Clear();
             for (int i = 0; i < Width; i++)
             {
                 for (int j = 0; j < Lenght; j++)
@@ -180,12 +198,7 @@ public class MapGenerator : MonoBehaviour
                     }
                 }
             }
-        }   
-        
-        public void GetPostionVectors()
-        {
-
-        }
+        }         
     }
 
     //Finding min noise value from array
