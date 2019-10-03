@@ -55,4 +55,7 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-/[Aa]ssets/[Ss]cenes/
+
+
+!Assets/[Ss]cenes/**/*.meta
+!Assets/[Ss]cenes/**/*.unity
