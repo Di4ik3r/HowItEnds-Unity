@@ -55,4 +55,4 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-Assets/Scenes/
+/Assets/Scenes/
