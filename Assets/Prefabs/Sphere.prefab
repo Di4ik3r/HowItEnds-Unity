@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 7680389987606175241, guid: f3ad7a7315cf58848bddb0447f83e93a,
         type: 3}
       propertyPath: m_Name
-      value: Sphere
+      value: Luna
       objectReference: {fileID: 0}
     - target: {fileID: 762807254738049521, guid: f3ad7a7315cf58848bddb0447f83e93a,
         type: 3}
