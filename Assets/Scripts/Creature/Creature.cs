@@ -94,7 +94,7 @@ public class Creature {
         this.thirst = 0;
         this.birthDay = birthDay;
         this.deathDay = (int)Random.Range(DEATH_RANGE.x, DEATH_RANGE.y);
-        this.speed = Random.Range(0.7f, 2); 
+        this.speed = Random.Range(0.7f, 3); 
         this.weight = 0;
         this.isMoving = false;
         // this.isLookingFor = false;
@@ -168,7 +168,7 @@ public class Creature {
     }
 
     private float moveTime;
-    private float moveArcHeight = 2f;
+    private float moveArcHeight = 1f;
     Vector3 moveStartPos;
     Vector3 moveTargetPos;
     void AnimateMove () {
