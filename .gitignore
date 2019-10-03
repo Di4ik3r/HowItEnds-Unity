@@ -57,5 +57,5 @@ crashlytics-build.properties
 
 
 
-!Assets/[Ss]cenes/**/*.meta
-!Assets/[Ss]cenes/**/*.unity
+Assets/[Ss]cenes/**/*.meta
+Assets/[Ss]cenes/**/*.unity
