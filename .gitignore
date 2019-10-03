@@ -1,3 +1,6 @@
+
+Assets/[Ss]cenes/**/*.unity
+
 .vscode
 /[Ll]ibrary/
 /[Tt]emp/
@@ -55,7 +58,3 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-
-
-Assets/[Ss]cenes/**/*.meta
-Assets/[Ss]cenes/**/*.unity
