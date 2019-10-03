@@ -72,7 +72,7 @@ public class MapGenerator : MonoBehaviour
         // creatures.Add(new Creature(new Vector2(0, 0), 0));
         // creatures.Add(new Creature(new Vector2(0, 5), 0));
         // creatures.Add(new Creature(new Vector2(5, 0), 0));
-        creatures = CreateCreatures(10);
+        creatures = CreateCreatures(50);
     }
 
     void Update() {
