@@ -46,28 +46,11 @@ public class MapGenerator : MonoBehaviour
         Creature.digitalMap = this.map.digitalMap;
         Creature.objectMap = this.map.objectMap;
         creatures = CreateCreatures(10);
-        // CreateSpheres();
-        Test();
+    
     }
     void Update() {
         creatureCycle();
         MapGenerator.TIME += MapGenerator.TIME_STEP;
-        timeRT = (timeRT + Time.deltaTime) % gameDayRLSeconds;
-        float sunangle = TimeOfDay * 360;
-        float moonangle = TimeOfDay * 360 + 180;
-        Vector3 midpoint = new Vector3(mapSize.x / 2, mapSize.y / 2, 0);
-        //sun.transform.position = midpoint + Quaternion.Euler(0, 0, sunangle) * (mapSize.x * Vector3.right);
-        //sun.transform.LookAt(midpoint);
-        //moon.transform.position = midpoint + Quaternion.Euler(0, 0, moonangle) * (mapSize.x * Vector3.right);
-        //moon.transform.LookAt(midpoint);
-    }
-    void OnGUI()
-    {
-        Rect rect = new Rect(10, 10, 120, 20);
-        GUI.Label(rect, "time: " + TimeOfDay); rect.y += 20;
-        GUI.Label(rect, "timeRT: " + timeRT);
-        rect = new Rect(120, 10, 200, 10);
-        TimeOfDay = GUI.HorizontalSlider(rect, TimeOfDay, 0, 1);
     }
     private List<Creature> CreateCreatures(int amount) {
         List<Creature> result = new List<Creature>();
@@ -123,21 +106,6 @@ public class MapGenerator : MonoBehaviour
         map.PlaceFood((int)foodPercent);
         map.PlaceDecoration((int)decorationPercent);
         map.PaintMap(materials, noiseArray, heightDifference, groundCoordinates, waterCoordinates, decorationCoordinates, foodCoordinates);
-    }
-   
-    public const float daytimeRLSeconds = 0.5f * 60;
-    public const float duskRLSeconds = 0.05f * 60;
-    public const float nighttimeRLSeconds = 1.0f * 60;
-    public const float sunsetRLSeconds = 0.5f * 60;
-    public const float gameDayRLSeconds = daytimeRLSeconds + duskRLSeconds + nighttimeRLSeconds + sunsetRLSeconds;
-   
-    private float timeRT = 0;
-    private Shperes a;
-
-    public float TimeOfDay // game time 0 .. 1
-    {
-        get { return timeRT / gameDayRLSeconds; }
-        set { timeRT = value * gameDayRLSeconds; }
     }
     //Class for making map
     class Map
@@ -280,45 +248,4 @@ public class MapGenerator : MonoBehaviour
         }
         return min;
     }
-    //
-    public void Test()
-    {
-        a = new Shperes(Sun,Moon);
-        a.CreateSun(Sun);
-    }
-    class Shperes
-    {
-        public GameObject sunlight;
-        public GameObject moonlight;
-
-        public Shperes(GameObject sun,GameObject moon)
-        {
-            sunlight = sun;
-            moonlight = moon;
-        }
-        public GameObject CreateSun(GameObject sun)
-        {
-            sun.name = "Sunlight";
-            sun = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            return sun;
-        }
-    }
-    //public void CreateSpheres()
-    //{
-    //    sun = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-    //    sun.name = "sun";
-
-    //    sun.GetComponent<Renderer>().material.color = Color.yellow;
-    //    sun.AddComponent<Light>().type = LightType.Directional;
-    //    sun.GetComponent<Light>().shadows = LightShadows.Hard;
-    //    sun.GetComponent<Light>().color = new Color(1, 1, 0.5f);
-
-    //    moon = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-    //    moon.name = "moon";
-    //    moon.GetComponent<Renderer>().material.color = new Color(0.75f, 0.75f, 0.75f);
-    //    moon.AddComponent<Light>().type = LightType.Directional;
-    //    moon.GetComponent<Light>().shadows = LightShadows.Hard;
-    //    moon.GetComponent<Light>().color = Color.black;
-    //    moon.GetComponent<Light>().intensity = 2f;
-    //}
 }
