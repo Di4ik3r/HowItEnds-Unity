@@ -1,5 +1,5 @@
 
-Assets/[Ss]cenes/**/*.unity
+Assets/[Ss]cenes/*.unity
 
 .vscode
 /[Ll]ibrary/
