@@ -94,7 +94,7 @@ public class Creature {
         this.thirst = 0;
         this.birthDay = birthDay;
         this.deathDay = (int)Random.Range(DEATH_RANGE.x, DEATH_RANGE.y);
-        this.speed = Random.Range(0.7f, 2); 
+        this.speed = Random.Range(0.7f, 3); 
         this.weight = 0;
         this.isMoving = false;
         // this.isLookingFor = false;
@@ -156,35 +156,33 @@ public class Creature {
     // Рух, при виконані якого - збільшується голод та спрага
     private void Jump() {
         if(isMoving)
-            AnimateMove();
+            AnimateMoving();
         else {
-            this.moveStartPos = this.position;
-            this.moveTargetPos = MoveLogic();
-            this.isMoving = true;
+            StartMoving();
         }
         // При кожному ході - збільшення показників відчуття голоду та спраги
         this.hunger += HUNGER_STEP;
         this.thirst += THIRST_STEP;
     }
 
+    private void StartMoving() {
+        this.moveStartPosition = this.position;
+        this.moveTargetPosition = MoveLogic();
+        this.isMoving = true;
+    }
+
+    // Змінні які потрібні для анімованого руху
     private float moveTime;
-    private float moveArcHeight = 2f;
-    Vector3 moveStartPos;
-    Vector3 moveTargetPos;
-    void AnimateMove () {
-        // Move in an arc from start to end tile
+    private float moveArcHeight = 1f;
+    Vector3 moveStartPosition;
+    Vector3 moveTargetPosition;
+    void AnimateMoving () {
         moveTime = Mathf.Min (1, moveTime + Time.deltaTime * speed);
         float height = (1 - 4 * (moveTime - .5f) * (moveTime - .5f)) * moveArcHeight;
-        this.position = Vector3.Lerp (moveStartPos, moveTargetPos, moveTime) + Vector3.up * height;
+        this.position = Vector3.Lerp (moveStartPosition, moveTargetPosition, moveTime) + Vector3.up * height;
 
-        // Finished moving
         if (moveTime >= 1) {
-            // Environment.RegisterMove (this, coord, moveTargetCoord);
-            // coord = moveTargetCoord;
-
-            // animatingMovement = false;
             moveTime = 0;
-            // ChooseNextAction ();
             this.isMoving = false;
         }
     }
