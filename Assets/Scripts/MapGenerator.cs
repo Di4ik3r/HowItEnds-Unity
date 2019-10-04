@@ -22,44 +22,22 @@ public class MapGenerator : MonoBehaviour
     public float decorationPercent;
     public GameObject cube;
     public Material[] materials;
-
     public GameObject[] decorations;
 
+    public GameObject Sun;
+    public GameObject Moon;
+
     private Map map;
-    private List<Vector3> groundCoordinates = new List<Vector3>();
-    private List<Vector3> waterCoordinates = new List<Vector3>();
-    private List<Vector3> foodCoordinates = new List<Vector3>();
-    private List<Vector3> decorationCoordinates = new List<Vector3>();
 
     private static float TIME = 0;
     private static float TIME_STEP = .1f;
 
     private List<Creature> creatures;
 
-
-    // private GameObject[,] text;
-    // private void GenerateText() {
-    //     text = new GameObject[(int)mapSize.x, (int)mapSize.y];
-    //     for(int x = 0; x < mapSize.x; x++) {
-    //         for(int z = 0; z < mapSize.y; z++) {
-    //             text[x, z] = new GameObject("Text");
-    //             text[x, z].transform.position = new Vector3(x, 20, z + .5f);
-    //             TextMesh textMesh = text[x, z].AddComponent<TextMesh>();
-    //             textMesh.text = "0";
-    //             textMesh.transform.localEulerAngles += new Vector3(90, 0, 0);
-    //             textMesh.fontSize = 10;
-    //         }
-    //     }
-    // }
-    // private void UpdateText() {
-    //     int[,] dm = getDigitalMap();
-    //     for(int x = 0; x < mapSize.x; x++) {
-    //         for(int z = 0; z < mapSize.y; z++) {
-    //             TextMesh t = text[x, z].GetComponent<TextMesh>();
-    //             t.text = dm[x, z].ToString();
-    //         }
-    //     }
-    // }
+    private List<Vector3> groundCoordinates;
+    private List<Vector3> waterCoordinates;
+    private List<Vector3> foodCoordinates;
+    private List<Vector3> decorationCoordinates;
 
     //Running when the app starts
     void Start()
@@ -75,33 +53,16 @@ public class MapGenerator : MonoBehaviour
         // creatures.Add(new Creature(new Vector2(5, 0), 0));
         creatures = CreateCreatures(100);
     }
-
     void Update() {
-        // if(MapGenerator.TIME % 2 == 0) {
-        // if(System.Math.Round(MapGenerator.TIME, 1) % 0.5f == 0) {
-            creatureCycle();
-        // }
-
+        creatureCycle();
         MapGenerator.TIME += MapGenerator.TIME_STEP;
     }
-
     private List<Creature> CreateCreatures(int amount) {
         List<Creature> result = new List<Creature>();
-        // List<Vector2> takenCells = new List<Vector2>();
         
         for(int i = 0; i < amount; i++) {
             Vector3 pickedGroundCoordinates = groundCoordinates[Random.Range(0, groundCoordinates.Count)];
             Vector2 position = new Vector2(pickedGroundCoordinates.x, pickedGroundCoordinates.z);
-            // int indexer = 0;
-            // while(takenCells.Contains(pickedGroundCoordinates)) {
-            //     pickedGroundCoordinates = groundCoordinates[Random.Range(0, groundCoordinates.Count)];
-            //     if(indexer > 15) {
-            //         Debug.Log("breaked");
-            //         break;
-            //     }
-            //     indexer++;
-            // }
-            // takenCells.Add(position);
             Creature creature = new Creature(position, 0);
             result.Add(creature);
         }
@@ -126,7 +87,12 @@ public class MapGenerator : MonoBehaviour
     //The main method where everything is created, method take needed values
     public void GenerateMap()
     {
-        string holderName = "Map";
+        groundCoordinates = new List<Vector3>();
+        waterCoordinates = new List<Vector3>();
+        foodCoordinates = new List<Vector3>();
+        decorationCoordinates = new List<Vector3>();
+
+        string holderName = "Platform";
         if (transform.Find(holderName))
         {
             DestroyImmediate(transform.Find(holderName).gameObject);
@@ -134,15 +100,6 @@ public class MapGenerator : MonoBehaviour
 
         Transform platform = new GameObject(holderName).transform;
         platform.parent = transform;
-
-        string decorationsHolder = "Decorations";
-        if (transform.Find(decorationsHolder))
-        {
-            DestroyImmediate(transform.Find(decorationsHolder).gameObject);
-        }
-
-        Transform decorationsPlatform = new GameObject(decorationsHolder).transform;
-        decorationsPlatform.parent = transform;
 
         int width = System.Convert.ToInt32(mapSize.x);
         int lenght = System.Convert.ToInt32(mapSize.y);
@@ -156,7 +113,6 @@ public class MapGenerator : MonoBehaviour
         map.PaintMap(materials, noiseArray, heightDifference, groundCoordinates, waterCoordinates, decorationCoordinates, foodCoordinates);
         map.LocateDecorations(decorations, decorationCoordinates, decorationsPlatform, cube);
     }
-
     //Class for making map
     class Map
     {
@@ -231,7 +187,6 @@ public class MapGenerator : MonoBehaviour
         //3 - decoration
         public void PaintMap(Material[] materials, float[,] noiseArray, float heightDifference, List<Vector3> gc, List<Vector3> wc, List<Vector3> dc, List<Vector3> fc)
         {
-            dc.Clear();
             for (int i = 0; i < Width; i++)
             {
                 for (int j = 0; j < Lenght; j++)
@@ -255,13 +210,13 @@ public class MapGenerator : MonoBehaviour
                             }
                         case 2:
                             {
-                                renderer.material = materials[0];
+                                renderer.material = materials[2];
                                 fc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                         case 3:
                             {
-                                renderer.material = materials[0];
+                                renderer.material = materials[3];
                                 dc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
@@ -327,7 +282,12 @@ public class MapGenerator : MonoBehaviour
                     }
                 }
             }
-        }         
+        }   
+        
+        public void GetPostionVectors()
+        {
+
+        }
     }
 
     //Finding min noise value from array
