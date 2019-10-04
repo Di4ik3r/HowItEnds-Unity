@@ -73,7 +73,7 @@ public class MapGenerator : MonoBehaviour
         // creatures.Add(new Creature(new Vector2(0, 0), 0));
         // creatures.Add(new Creature(new Vector2(0, 5), 0));
         // creatures.Add(new Creature(new Vector2(5, 0), 0));
-        creatures = CreateCreatures(10);
+        creatures = CreateCreatures(100);
     }
 
     void Update() {
@@ -154,7 +154,7 @@ public class MapGenerator : MonoBehaviour
         map.PlaceFood((int)foodPercent);
         map.PlaceDecoration((int)decorationPercent);
         map.PaintMap(materials, noiseArray, heightDifference, groundCoordinates, waterCoordinates, decorationCoordinates, foodCoordinates);
-        map.LocateDecorations(decorations, decorationCoordinates, decorationsPlatform);
+        map.LocateDecorations(decorations, decorationCoordinates, decorationsPlatform, cube);
     }
 
     //Class for making map
@@ -172,33 +172,56 @@ public class MapGenerator : MonoBehaviour
             Lenght = lenght;
         }
 
-        public void LocateDecorations(GameObject[] decorations, List<Vector3> dc, Transform decoratinonsPlatform)
+        public void LocateDecorations(GameObject[] decorations, List<Vector3> dc, Transform decoratinonsPlatform, GameObject cube)
         {
-            Vector3 vector3 = new Vector3();
+            float additionalHeight;
+            int rnd = Random.Range(0, decorations.Length);
+
+            renderer = decorations[rnd].GetComponent<Renderer>();
+            additionalHeight = renderer.bounds.size.y / 2;            
+            renderer = cube.GetComponent<Renderer>();            
+            additionalHeight += renderer.bounds.size.y / 2;
+
             for (int i = 0; i < dc.Count; i++)
-            {
-                int rnd = Random.Range(0, decorations.Length);
-                switch (rnd)
-                {
-                    case 0:
-                        {
-                            vector3 = new Vector3(dc[i].x, dc[i].y + 1/*decorations[rnd].transform.lossyScale.y*/, dc[i].z);
-                            break;
-                        }
-                    case 1:
-                        {
-                            vector3 = new Vector3(dc[i].x + 0.2f, dc[i].y + 0.5f, dc[i].z - 0.2f);
-                            break;
-                        }
-                    case 2:
-                        {
-                            vector3 = new Vector3(dc[i].x, dc[i].y + 2f, dc[i].z);
-                            break;
-                        }
-                }
-                Instantiate(decorations[rnd], vector3, Quaternion.identity).transform.parent = decoratinonsPlatform;
-                Debug.Log(dc[i]);
+            {                
+                Instantiate(decorations[rnd], new Vector3(dc[i].x, dc[i].y + additionalHeight, dc[i].z), Quaternion.identity).transform.parent = decoratinonsPlatform;
             }
+            //Vector3 vector3 = new Vector3();
+            //float additionalHeight;
+
+            //for (int i = 0; i < dc.Count; i++)
+            //{
+            //    int rnd = Random.Range(0, decorations.Length);
+            //    renderer = decorations[rnd].GetComponent<Renderer>();               
+            //    additionalHeight = renderer.bounds.size.y / 2;
+            //    Debug.Log("Decor height / 2 " + additionalHeight);
+            //    renderer = cube.GetComponent<Renderer>();
+            //    Debug.Log("Cube height / 2 " + renderer.bounds.size.y / 2);
+            //    additionalHeight += renderer.bounds.size.y / 2;
+            //    Debug.Log("Additional height " + additionalHeight);
+            //    switch (rnd)
+            //    {
+            //        case 0:
+            //            {                                                      
+            //                Debug.Log("dc[i].y " + dc[i].y);
+            //                vector3 = new Vector3(dc[i].x, dc[i].y + additionalHeight, dc[i].z);
+            //                break;
+            //            }
+            //        case 1:
+            //            {                            
+            //                Debug.Log("dc[i].y " + dc[i].y);                            
+            //                vector3 = new Vector3(dc[i].x + 0.2f, dc[i].y + additionalHeight, dc[i].z - 0.2f);
+            //                break;
+            //            }
+            //        case 2:
+            //            {                            
+            //                Debug.Log("dc[i].y " + dc[i].y);                                                       
+            //                vector3 = new Vector3(dc[i].x, dc[i].y + additionalHeight, dc[i].z);
+            //                break;
+            //            }
+            //    }
+            //    Instantiate(decorations[rnd], vector3, Quaternion.identity).transform.parent = decoratinonsPlatform;                
+            //}            
         }
 
         //Depending on the digital map value paint the cube in particular color
