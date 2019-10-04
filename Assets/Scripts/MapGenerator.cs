@@ -92,7 +92,7 @@ public class MapGenerator : MonoBehaviour
         foodCoordinates = new List<Vector3>();
         decorationCoordinates = new List<Vector3>();
 
-        string holderName = "Platform";
+        string holderName = "Map";
         if (transform.Find(holderName))
         {
             DestroyImmediate(transform.Find(holderName).gameObject);
@@ -100,6 +100,15 @@ public class MapGenerator : MonoBehaviour
 
         Transform platform = new GameObject(holderName).transform;
         platform.parent = transform;
+
+        holderName = "Decorations";
+        if (transform.Find(holderName))
+        {
+            DestroyImmediate(transform.Find(holderName).gameObject);
+        }
+
+        Transform decorationsPlatform = new GameObject(holderName).transform;
+        decorationsPlatform.parent = transform;
 
         int width = System.Convert.ToInt32(mapSize.x);
         int lenght = System.Convert.ToInt32(mapSize.y);
@@ -130,16 +139,16 @@ public class MapGenerator : MonoBehaviour
 
         public void LocateDecorations(GameObject[] decorations, List<Vector3> dc, Transform decoratinonsPlatform, GameObject cube)
         {
-            float additionalHeight;
-            int rnd = Random.Range(0, decorations.Length);
+            float additionalHeight = 0;           
 
-            renderer = decorations[rnd].GetComponent<Renderer>();
-            additionalHeight = renderer.bounds.size.y / 2;            
+            //renderer = decorations[rnd].GetComponent<Renderer>();
+            //additionalHeight = renderer.bounds.size.y / 2;            
             renderer = cube.GetComponent<Renderer>();            
             additionalHeight += renderer.bounds.size.y / 2;
 
             for (int i = 0; i < dc.Count; i++)
-            {                
+            {
+                int rnd = Random.Range(0, decorations.Length);
                 Instantiate(decorations[rnd], new Vector3(dc[i].x, dc[i].y + additionalHeight, dc[i].z), Quaternion.identity).transform.parent = decoratinonsPlatform;
             }
             //Vector3 vector3 = new Vector3();
@@ -210,13 +219,13 @@ public class MapGenerator : MonoBehaviour
                             }
                         case 2:
                             {
-                                renderer.material = materials[2];
+                                renderer.material = materials[0];//2
                                 fc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                         case 3:
                             {
-                                renderer.material = materials[3];
+                                renderer.material = materials[0];//3
                                 dc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
