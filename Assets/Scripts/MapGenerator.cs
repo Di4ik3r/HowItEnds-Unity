@@ -22,6 +22,10 @@ public class MapGenerator : MonoBehaviour
     public float decorationPercent;
     public GameObject cube;
     public Material[] materials;
+    public GameObject[] decorations;
+
+    public GameObject Sun;
+    public GameObject Moon;
 
     private Map map;
 
@@ -30,36 +34,11 @@ public class MapGenerator : MonoBehaviour
 
     private List<Creature> creatures;
 
-
-    // private GameObject[,] text;
-    // private void GenerateText() {
-    //     text = new GameObject[(int)mapSize.x, (int)mapSize.y];
-    //     for(int x = 0; x < mapSize.x; x++) {
-    //         for(int z = 0; z < mapSize.y; z++) {
-    //             text[x, z] = new GameObject("Text");
-    //             text[x, z].transform.position = new Vector3(x, 20, z + .5f);
-    //             TextMesh textMesh = text[x, z].AddComponent<TextMesh>();
-    //             textMesh.text = "0";
-    //             textMesh.transform.localEulerAngles += new Vector3(90, 0, 0);
-    //             textMesh.fontSize = 10;
-    //         }
-    //     }
-    // }
-    // private void UpdateText() {
-    //     int[,] dm = getDigitalMap();
-    //     for(int x = 0; x < mapSize.x; x++) {
-    //         for(int z = 0; z < mapSize.y; z++) {
-    //             TextMesh t = text[x, z].GetComponent<TextMesh>();
-    //             t.text = dm[x, z].ToString();
-    //         }
-    //     }
-    // }
-
     private List<Vector3> groundCoordinates;
     private List<Vector3> waterCoordinates;
     private List<Vector3> foodCoordinates;
     private List<Vector3> decorationCoordinates;
-
+    Cycle cycle = new Cycle();
     //Running when the app starts
     void Start()
     {
@@ -68,39 +47,106 @@ public class MapGenerator : MonoBehaviour
         Creature.digitalMap = this.map.digitalMap;
         Creature.objectMap = this.map.objectMap;
 
+        Sun = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Sun.transform.position = new Vector3(mapSize.x / 2,mapSize.y / 2, 10f);
+        Sun.GetComponent<Renderer>().material.color = Color.yellow;
+        Sun.AddComponent<Light>().type = LightType.Directional;
+        Sun.GetComponent<Light>().shadows = LightShadows.Soft;
+        Sun.GetComponent<Light>().intensity = 1f;
+
+        Moon = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Moon.transform.position = new Vector3(mapSize.x / 2, mapSize.y / 2, 10f);
+        Moon.GetComponent<Renderer>().material.color = Color.white;
+        Moon.AddComponent<Light>().type = LightType.Directional;
+        Moon.GetComponent<Light>().shadows = LightShadows.Soft;
+        Moon.GetComponent<Light>().intensity = 1f;
+        //cycle.CreateSphere(Sun,"Sun",Color.yellow,mapSize.x,mapSize.y);
+        //cycle.CreateSphere(Moon,"Moon",Color.white, mapSize.x, mapSize.y);
+        creatures = CreateCreatures(5);
+
         // creatures = new List<Creature>();
         // creatures.Add(new Creature(new Vector2(0, 0), 0));
         // creatures.Add(new Creature(new Vector2(0, 5), 0));
         // creatures.Add(new Creature(new Vector2(5, 0), 0));
         creatures = CreateCreatures(50);
     }
+  
+    public class Cycle
+    {
+        // Радіус між двома сферами
+        private float radius;
+        // Час ротації 
+       
 
-    void Update() {
-        // if(MapGenerator.TIME % 2 == 0) {
-        // if(System.Math.Round(MapGenerator.TIME, 1) % 0.5f == 0) {
-            creatureCycle();
-        // }
-
-        MapGenerator.TIME += MapGenerator.TIME_STEP;
+        public Cycle() { }
+        public GameObject CreateSphere(GameObject gameObject,string name,Color color,float sizeX,float sizeY)
+        {
+            gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            gameObject.transform.position = new Vector3(sizeX / 2,sizeY / 2, 10f);
+            gameObject.GetComponent<Renderer>().material.color = color;
+            gameObject.AddComponent<Light>().type = LightType.Directional;
+            gameObject.GetComponent<Light>().shadows = LightShadows.Soft;
+            gameObject.GetComponent<Light>().intensity = 2f;
+            return gameObject;
+        }
+        //public void TranformSpheres(GameObject gameObject1,GameObject gameObject2,float sizeX, float sizeY)
+        //{
+        //    timeRT = (timeRT + Time.deltaTime) % gameDayRLSeconds;
+        //    float sunangle = TimeOfDay * 360;
+        //    float moonangle = TimeOfDay * 360 + 180;
+        //    Vector3 midpoint = new Vector3(sizeX / 2, sizeY / 2, 0);
+        //    gameObject1.transform.position = midpoint + Quaternion.Euler(0, 0, sunangle) * (radius * Vector3.right);
+        //    gameObject1.transform.LookAt(midpoint);
+        //    gameObject2.transform.position = midpoint + Quaternion.Euler(0, 0, moonangle) * (radius * Vector3.right);
+        //    gameObject2.transform.LookAt(midpoint);
+        //}
+        
     }
+    public float timeRT = 0;
+    public const float daytimeRLSeconds = 10.0f * 60;
+    public const float duskRLSeconds = 1.5f * 60;
+    public const float nighttimeRLSeconds = 7.0f * 60;
+    public const float sunsetRLSeconds = 1.5f * 60;
+    public const float gameDayRLSeconds = daytimeRLSeconds + duskRLSeconds + nighttimeRLSeconds + sunsetRLSeconds;
 
+    public const float startOfDaytime = 0;
+    public const float startOfDusk = daytimeRLSeconds / gameDayRLSeconds;
+    public const float startOfNighttime = startOfDusk + duskRLSeconds / gameDayRLSeconds;
+    public const float startOfSunset = startOfNighttime + nighttimeRLSeconds / gameDayRLSeconds;
+    public float TimeOfDay
+    {
+        get { return timeRT / gameDayRLSeconds; }
+        set { timeRT = value * gameDayRLSeconds; }
+    }
+    void OnGUI()
+    {
+        Rect rect = new Rect(10, 10, 120, 20);
+        GUI.Label(rect, "time: " + TimeOfDay); rect.y += 20;
+        GUI.Label(rect, "timeRT: " + timeRT);
+        rect = new Rect(120, 10, 200, 10);
+        TimeOfDay = GUI.HorizontalSlider(rect, TimeOfDay, 0, 1);
+    }
+    void Update() {
+        creatureCycle();
+        MapGenerator.TIME += MapGenerator.TIME_STEP;
+        
+        
+        timeRT = (timeRT + Time.deltaTime) % gameDayRLSeconds;
+        float sunangle = TimeOfDay * 360;
+        float moonangle = TimeOfDay * 360 + 180;
+        Vector3 midpoint = new Vector3(mapSize.x / 2, mapSize.y / 2, 0);
+        Sun.transform.position = midpoint + Quaternion.Euler(0, 0, sunangle) * (20 * Vector3.right);
+        Sun.transform.LookAt(midpoint);
+        Moon.transform.position = midpoint + Quaternion.Euler(0, 0, moonangle) * (20 * Vector3.right);
+        Moon.transform.LookAt(midpoint);
+
+    }
     private List<Creature> CreateCreatures(int amount) {
         List<Creature> result = new List<Creature>();
-        // List<Vector2> takenCells = new List<Vector2>();
         
         for(int i = 0; i < amount; i++) {
             Vector3 pickedGroundCoordinates = groundCoordinates[Random.Range(0, groundCoordinates.Count)];
             Vector2 position = new Vector2(pickedGroundCoordinates.x, pickedGroundCoordinates.z);
-            // int indexer = 0;
-            // while(takenCells.Contains(pickedGroundCoordinates)) {
-            //     pickedGroundCoordinates = groundCoordinates[Random.Range(0, groundCoordinates.Count)];
-            //     if(indexer > 15) {
-            //         Debug.Log("breaked");
-            //         break;
-            //     }
-            //     indexer++;
-            // }
-            // takenCells.Add(position);
             Creature creature = new Creature(position, 0);
             result.Add(creature);
         }
@@ -130,7 +176,7 @@ public class MapGenerator : MonoBehaviour
         foodCoordinates = new List<Vector3>();
         decorationCoordinates = new List<Vector3>();
 
-        string holderName = "Platform";
+        string holderName = "Map";
         if (transform.Find(holderName))
         {
             DestroyImmediate(transform.Find(holderName).gameObject);
@@ -138,6 +184,15 @@ public class MapGenerator : MonoBehaviour
 
         Transform platform = new GameObject(holderName).transform;
         platform.parent = transform;
+
+        holderName = "Decorations";
+        if (transform.Find(holderName))
+        {
+            DestroyImmediate(transform.Find(holderName).gameObject);
+        }
+
+        Transform decorationsPlatform = new GameObject(holderName).transform;
+        decorationsPlatform.parent = transform;
 
         int width = System.Convert.ToInt32(mapSize.x);
         int lenght = System.Convert.ToInt32(mapSize.y);
@@ -149,8 +204,8 @@ public class MapGenerator : MonoBehaviour
         map.PlaceFood((int)foodPercent);
         map.PlaceDecoration((int)decorationPercent);
         map.PaintMap(materials, noiseArray, heightDifference, groundCoordinates, waterCoordinates, decorationCoordinates, foodCoordinates);
+        map.LocateDecorations(decorations, decorationCoordinates, decorationsPlatform, cube);
     }
-
     //Class for making map
     class Map
     {
@@ -164,6 +219,58 @@ public class MapGenerator : MonoBehaviour
         {
             Width = width;
             Lenght = lenght;
+        }
+
+        public void LocateDecorations(GameObject[] decorations, List<Vector3> dc, Transform decoratinonsPlatform, GameObject cube)
+        {
+            float additionalHeight = 0;           
+
+            //renderer = decorations[rnd].GetComponent<Renderer>();
+            //additionalHeight = renderer.bounds.size.y / 2;            
+            renderer = cube.GetComponent<Renderer>();            
+            additionalHeight += renderer.bounds.size.y / 2;
+
+            for (int i = 0; i < dc.Count; i++)
+            {
+                int rnd = Random.Range(0, decorations.Length);
+                Instantiate(decorations[rnd], new Vector3(dc[i].x, dc[i].y + additionalHeight, dc[i].z), Quaternion.identity).transform.parent = decoratinonsPlatform;
+            }
+            //Vector3 vector3 = new Vector3();
+            //float additionalHeight;
+
+            //for (int i = 0; i < dc.Count; i++)
+            //{
+            //    int rnd = Random.Range(0, decorations.Length);
+            //    renderer = decorations[rnd].GetComponent<Renderer>();               
+            //    additionalHeight = renderer.bounds.size.y / 2;
+            //    Debug.Log("Decor height / 2 " + additionalHeight);
+            //    renderer = cube.GetComponent<Renderer>();
+            //    Debug.Log("Cube height / 2 " + renderer.bounds.size.y / 2);
+            //    additionalHeight += renderer.bounds.size.y / 2;
+            //    Debug.Log("Additional height " + additionalHeight);
+            //    switch (rnd)
+            //    {
+            //        case 0:
+            //            {                                                      
+            //                Debug.Log("dc[i].y " + dc[i].y);
+            //                vector3 = new Vector3(dc[i].x, dc[i].y + additionalHeight, dc[i].z);
+            //                break;
+            //            }
+            //        case 1:
+            //            {                            
+            //                Debug.Log("dc[i].y " + dc[i].y);                            
+            //                vector3 = new Vector3(dc[i].x + 0.2f, dc[i].y + additionalHeight, dc[i].z - 0.2f);
+            //                break;
+            //            }
+            //        case 2:
+            //            {                            
+            //                Debug.Log("dc[i].y " + dc[i].y);                                                       
+            //                vector3 = new Vector3(dc[i].x, dc[i].y + additionalHeight, dc[i].z);
+            //                break;
+            //            }
+            //    }
+            //    Instantiate(decorations[rnd], vector3, Quaternion.identity).transform.parent = decoratinonsPlatform;                
+            //}            
         }
 
         //Depending on the digital map value paint the cube in particular color
@@ -196,13 +303,13 @@ public class MapGenerator : MonoBehaviour
                             }
                         case 2:
                             {
-                                renderer.material = materials[2];
+                                renderer.material = materials[0];//2
                                 fc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                         case 3:
                             {
-                                renderer.material = materials[3];
+                                renderer.material = materials[0];//3
                                 dc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
