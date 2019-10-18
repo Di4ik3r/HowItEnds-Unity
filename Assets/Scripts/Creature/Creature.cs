@@ -84,7 +84,7 @@ public class Creature {
 
     public Creature(Vector2 position, int birthDay) {
         // За допомогою стягнутого класу ПрімітівХелпер - стягує меш з куба
-        this.mesh = PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cube);
+        this.mesh = PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Sphere);
         // Фукнція, що додає до геймОбджекта потрібні нам компоненти і правильно інціалізує їх
         ImplementComponents();
 
