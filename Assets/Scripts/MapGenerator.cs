@@ -64,6 +64,11 @@ public class MapGenerator : MonoBehaviour
         //cycle.CreateSphere(Moon,"Moon",Color.white, mapSize.x, mapSize.y);
         creatures = CreateCreatures(5);
 
+        // creatures = new List<Creature>();
+        // creatures.Add(new Creature(new Vector2(0, 0), 0));
+        // creatures.Add(new Creature(new Vector2(0, 5), 0));
+        // creatures.Add(new Creature(new Vector2(5, 0), 0));
+        creatures = CreateCreatures(50);
     }
   
     public class Cycle
