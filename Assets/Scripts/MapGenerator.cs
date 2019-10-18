@@ -38,7 +38,7 @@ public class MapGenerator : MonoBehaviour
     private List<Vector3> waterCoordinates;
     private List<Vector3> foodCoordinates;
     private List<Vector3> decorationCoordinates;
-
+    Cycle cycle = new Cycle();
     //Running when the app starts
     void Start()
     {
@@ -47,15 +47,94 @@ public class MapGenerator : MonoBehaviour
         Creature.digitalMap = this.map.digitalMap;
         Creature.objectMap = this.map.objectMap;
 
-        // creatures = new List<Creature>();
-        // creatures.Add(new Creature(new Vector2(0, 0), 0));
-        // creatures.Add(new Creature(new Vector2(0, 5), 0));
-        // creatures.Add(new Creature(new Vector2(5, 0), 0));
-        creatures = CreateCreatures(100);
+        Sun = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Sun.transform.position = new Vector3(mapSize.x / 2,mapSize.y / 2, 10f);
+        Sun.GetComponent<Renderer>().material.color = Color.yellow;
+        Sun.AddComponent<Light>().type = LightType.Directional;
+        Sun.GetComponent<Light>().shadows = LightShadows.Soft;
+        Sun.GetComponent<Light>().intensity = 1f;
+
+        Moon = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Moon.transform.position = new Vector3(mapSize.x / 2, mapSize.y / 2, 10f);
+        Moon.GetComponent<Renderer>().material.color = Color.white;
+        Moon.AddComponent<Light>().type = LightType.Directional;
+        Moon.GetComponent<Light>().shadows = LightShadows.Soft;
+        Moon.GetComponent<Light>().intensity = 1f;
+        //cycle.CreateSphere(Sun,"Sun",Color.yellow,mapSize.x,mapSize.y);
+        //cycle.CreateSphere(Moon,"Moon",Color.white, mapSize.x, mapSize.y);
+        creatures = CreateCreatures(5);
+
+    }
+  
+    public class Cycle
+    {
+        // Радіус між двома сферами
+        private float radius;
+        // Час ротації 
+       
+
+        public Cycle() { }
+        public GameObject CreateSphere(GameObject gameObject,string name,Color color,float sizeX,float sizeY)
+        {
+            gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            gameObject.transform.position = new Vector3(sizeX / 2,sizeY / 2, 10f);
+            gameObject.GetComponent<Renderer>().material.color = color;
+            gameObject.AddComponent<Light>().type = LightType.Directional;
+            gameObject.GetComponent<Light>().shadows = LightShadows.Soft;
+            gameObject.GetComponent<Light>().intensity = 2f;
+            return gameObject;
+        }
+        //public void TranformSpheres(GameObject gameObject1,GameObject gameObject2,float sizeX, float sizeY)
+        //{
+        //    timeRT = (timeRT + Time.deltaTime) % gameDayRLSeconds;
+        //    float sunangle = TimeOfDay * 360;
+        //    float moonangle = TimeOfDay * 360 + 180;
+        //    Vector3 midpoint = new Vector3(sizeX / 2, sizeY / 2, 0);
+        //    gameObject1.transform.position = midpoint + Quaternion.Euler(0, 0, sunangle) * (radius * Vector3.right);
+        //    gameObject1.transform.LookAt(midpoint);
+        //    gameObject2.transform.position = midpoint + Quaternion.Euler(0, 0, moonangle) * (radius * Vector3.right);
+        //    gameObject2.transform.LookAt(midpoint);
+        //}
+        
+    }
+    public float timeRT = 0;
+    public const float daytimeRLSeconds = 10.0f * 60;
+    public const float duskRLSeconds = 1.5f * 60;
+    public const float nighttimeRLSeconds = 7.0f * 60;
+    public const float sunsetRLSeconds = 1.5f * 60;
+    public const float gameDayRLSeconds = daytimeRLSeconds + duskRLSeconds + nighttimeRLSeconds + sunsetRLSeconds;
+
+    public const float startOfDaytime = 0;
+    public const float startOfDusk = daytimeRLSeconds / gameDayRLSeconds;
+    public const float startOfNighttime = startOfDusk + duskRLSeconds / gameDayRLSeconds;
+    public const float startOfSunset = startOfNighttime + nighttimeRLSeconds / gameDayRLSeconds;
+    public float TimeOfDay
+    {
+        get { return timeRT / gameDayRLSeconds; }
+        set { timeRT = value * gameDayRLSeconds; }
+    }
+    void OnGUI()
+    {
+        Rect rect = new Rect(10, 10, 120, 20);
+        GUI.Label(rect, "time: " + TimeOfDay); rect.y += 20;
+        GUI.Label(rect, "timeRT: " + timeRT);
+        rect = new Rect(120, 10, 200, 10);
+        TimeOfDay = GUI.HorizontalSlider(rect, TimeOfDay, 0, 1);
     }
     void Update() {
         creatureCycle();
         MapGenerator.TIME += MapGenerator.TIME_STEP;
+        
+        
+        timeRT = (timeRT + Time.deltaTime) % gameDayRLSeconds;
+        float sunangle = TimeOfDay * 360;
+        float moonangle = TimeOfDay * 360 + 180;
+        Vector3 midpoint = new Vector3(mapSize.x / 2, mapSize.y / 2, 0);
+        Sun.transform.position = midpoint + Quaternion.Euler(0, 0, sunangle) * (20 * Vector3.right);
+        Sun.transform.LookAt(midpoint);
+        Moon.transform.position = midpoint + Quaternion.Euler(0, 0, moonangle) * (20 * Vector3.right);
+        Moon.transform.LookAt(midpoint);
+
     }
     private List<Creature> CreateCreatures(int amount) {
         List<Creature> result = new List<Creature>();
