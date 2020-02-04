@@ -42,6 +42,7 @@ public class MapGenerator : MonoBehaviour
     //Running when the app starts
     void Start()
     {
+        UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
         GenerateMap();
 
         Creature.digitalMap = this.map.digitalMap;
@@ -62,7 +63,7 @@ public class MapGenerator : MonoBehaviour
         Moon.GetComponent<Light>().intensity = 1f;
         //cycle.CreateSphere(Sun,"Sun",Color.yellow,mapSize.x,mapSize.y);
         //cycle.CreateSphere(Moon,"Moon",Color.white, mapSize.x, mapSize.y);
-        creatures = CreateCreatures(5);
+        creatures = CreateCreatures(80);
 
         // creatures = new List<Creature>();
         // creatures.Add(new Creature(new Vector2(0, 0), 0));
