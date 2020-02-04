@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
 public enum Direction {
     UP,
     RIGHT,
@@ -64,6 +65,8 @@ public class Creature {
     private Mesh mesh;
     // Висота Меша. Потрібно для того щоб юніт правильно ставав на блоки по висоті
     private float meshHeight;
+    private float scale;
+    private Vector2 speedLimit = new Vector2(0.6f, 2.4f);
 
     // Властивість, що відображає чи відчуває голод Юніт
     private bool isHunger { get { return this.hunger >= Creature.HUNGER_LIMIT ? true : false; } }
@@ -88,24 +91,8 @@ public class Creature {
         // Фукнція, що додає до геймОбджекта потрібні нам компоненти і правильно інціалізує їх
         ImplementComponents();
 
-        // Ініціалізація полів
-        this.id = Creature.ID_COUNTER++;
-        this.hunger = 0;
-        this.thirst = 0;
-        this.birthDay = birthDay;
-        this.deathDay = (int)Random.Range(DEATH_RANGE.x, DEATH_RANGE.y);
-        this.speed = Random.Range(0.7f, 3); 
-        this.weight = 0;
-        this.isMoving = false;
-        // this.isLookingFor = false;
-        this.lookingForCell = new Vector2(position.x, position.y);
-        this.isAlive = true;
-
-        this.meshHeight = 1;
-
-        this.position = new Vector3(position.x, 
-                                    Creature.objectMap[(int)position.x, (int)position.y].transform.position.y + this.meshHeight,
-                                    position.y);
+        InitProperties(position, birthDay);
+        
         // Позначення в глобальному масиві, що дана клітка зайнята
         Creature.digitalMap[(int)position.x, (int)position.y] = 9;
         // Вибір випадкового напрямку, кліток
@@ -127,7 +114,39 @@ public class Creature {
         this.gameObject.GetComponent<MeshFilter>().mesh = this.mesh;
         // Присвою матеріал компоненту Рендерер
         this.gameObject.GetComponent<Renderer>().materials[0] = Resources.Load("BasicMaterial", typeof(Material)) as Material;
-        this.gameObject.GetComponent<Renderer>().materials[0].color = Color.black;
+        // this.gameObject.GetComponent<Renderer>().materials[0].color = Color.black;
+        this.gameObject.GetComponent<Renderer>().materials[0].color = new Color(
+            Random.Range(0.2f, 0.7f), 
+            Random.Range(0.1f, 0.4f), 
+            0f
+            // Random.Range(0.0f, 1f)
+        );
+    }
+
+    private void InitProperties(Vector2 position, int birthDay) {
+        // Ініціалізація полів
+        this.id = Creature.ID_COUNTER++;
+        this.hunger = 0;
+        this.thirst = 0;
+        this.birthDay = birthDay;
+        this.deathDay = (int)Random.Range(DEATH_RANGE.x, DEATH_RANGE.y);
+        // this.speed = Random.Range(0.7f, 3); 
+        this.speed = Random.Range(this.speedLimit.x, this.speedLimit.y); 
+        this.weight = 0;
+        this.isMoving = false;
+        // this.isLookingFor = false;
+        this.lookingForCell = new Vector2(position.x, position.y);
+        this.isAlive = true;
+
+        this.meshHeight = 1;
+
+        this.position = new Vector3(position.x, 
+                                    Creature.objectMap[(int)position.x, (int)position.y].transform.position.y + this.meshHeight,
+                                    position.y);
+                                    
+        this.scale = 1 - this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.3f, 0.7f);
+        // Debug.Log($"{this.speed} = {this.scale}");
+        this.transform.localScale = new Vector3(this.scale, this.scale, this.scale);
     }
 
 
@@ -293,7 +312,8 @@ public class Creature {
             // Обираємо поточну і запамятовуємо її
             x = directionChoices[chioce].x;
             z = directionChoices[chioce].y;
-            y = Creature.objectMap[(int)x, (int)z].transform.position.y + this.meshHeight;
+            // y = Creature.objectMap[(int)x, (int)z].transform.position.y + this.meshHeight;
+            y = Creature.objectMap[(int)x, (int)z].transform.position.y + this.meshHeight - ((1 - this.scale) / 2);
         }
 
         // Позначаємо нашу позицію в глобальному масиві, щоб ніхто не зміг стати на цю позицію

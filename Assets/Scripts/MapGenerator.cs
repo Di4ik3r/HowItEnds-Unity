@@ -63,7 +63,7 @@ public class MapGenerator : MonoBehaviour
         Moon.GetComponent<Light>().intensity = 1f;
         //cycle.CreateSphere(Sun,"Sun",Color.yellow,mapSize.x,mapSize.y);
         //cycle.CreateSphere(Moon,"Moon",Color.white, mapSize.x, mapSize.y);
-        creatures = CreateCreatures(80);
+        creatures = CreateCreatures(13);
 
         // creatures = new List<Creature>();
         // creatures.Add(new Creature(new Vector2(0, 0), 0));
@@ -145,7 +145,8 @@ public class MapGenerator : MonoBehaviour
         List<Creature> result = new List<Creature>();
         
         for(int i = 0; i < amount; i++) {
-            Vector3 pickedGroundCoordinates = groundCoordinates[Random.Range(0, groundCoordinates.Count)];
+            var random = Random.Range(0, groundCoordinates.Count-1);
+            Vector3 pickedGroundCoordinates = groundCoordinates[random];
             Vector2 position = new Vector2(pickedGroundCoordinates.x, pickedGroundCoordinates.z);
             Creature creature = new Creature(position, 0);
             result.Add(creature);
