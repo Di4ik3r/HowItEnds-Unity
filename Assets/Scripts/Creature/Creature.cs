@@ -115,12 +115,6 @@ public class Creature {
         // Присвою матеріал компоненту Рендерер
         this.gameObject.GetComponent<Renderer>().materials[0] = Resources.Load("BasicMaterial", typeof(Material)) as Material;
         // this.gameObject.GetComponent<Renderer>().materials[0].color = Color.black;
-        this.gameObject.GetComponent<Renderer>().materials[0].color = new Color(
-            Random.Range(0.2f, 0.7f), 
-            Random.Range(0.1f, 0.4f), 
-            0f
-            // Random.Range(0.0f, 1f)
-        );
     }
 
     private void InitProperties(Vector2 position, int birthDay) {
@@ -147,6 +141,12 @@ public class Creature {
         this.scale = 1 - this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.3f, 0.7f);
         // Debug.Log($"{this.speed} = {this.scale}");
         this.transform.localScale = new Vector3(this.scale, this.scale, this.scale);
+
+
+        this.gameObject.GetComponent<Renderer>().materials[0].color = new Color(
+            this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.1f, 0.6f),
+            0f,
+            0f);
     }
 
 
