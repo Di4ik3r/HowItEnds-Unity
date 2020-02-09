@@ -563,3 +563,155 @@ public class Creature {
 
     }
 }
+
+
+
+
+public class PathFinding {
+
+    static int WALKABLE_VALUE = 0;
+
+    static int MOVE_COST = 10;
+    static int MOVE_D_COST = 10;
+
+    static int[,] digitalMap;
+
+    private Vector2 from;
+    private Vector2 to;
+
+    private ArrayList open;
+    private ArrayList close;
+
+    public PathFinding(Vector2 _from, Vector2 _to) {
+        PathFinding.digitalMap = Creature.digitalMap;
+
+        this.from = _from;
+        this.to = _to;
+
+        // return this;
+    }
+
+    private void findPath() {
+        this.open = new ArrayList();
+        this.close = new ArrayList();
+
+        var startingNode = new Node(this.from);
+        var endNode = new Node(this.to);
+
+        this.open.Add(startingNode);
+
+        var iteration = 0;
+        while(this.open.Count > 0) {
+            Node current = (Node)this.open[0];
+            for(int i = 1; i < open.Count; i++) {
+                if(((Node)open[i]).f < current.f || ((Node)open[i]).f == current.f && ((Node)open[i]).h < current.h) {
+                    current = ((Node)open[i]);
+                }
+            }
+
+            this.open.Remove(current);
+            this.close.Add(current);
+
+            if(current == endNode) {
+                
+                return;
+            }
+
+            foreach (var neighbour in current.getNeighbours()) {
+                if(!neighbour.isWalkable || close.Contains(neighbour)) {
+                    continue;
+                }
+
+                int newMovementCostToNeighbour = current.g + getDistance(current, neighbour);
+                if(newMovementCostToNeighbour < neighbour.g || !open.Contains(neighbour)) {
+                    neighbour.g = newMovementCostToNeighbour;
+                    neighbour.h = getDistance(neighbour, endNode);
+                    neighbour.parent = current;
+
+                    if(!open.Contains(neighbour)) {
+                        open.Add(neighbour);
+                    }
+                }
+            }
+        }
+    }
+
+    private int getDistance(Node a, Node b) {
+        int distanceX = Mathf.Abs((int)a.location.x - (int)b.location.x);
+        int distanceY = Mathf.Abs((int)a.location.y - (int)b.location.y);
+
+        if(distanceX > distanceY) {
+            return PathFinding.MOVE_D_COST * distanceY + PathFinding.MOVE_COST * (distanceX - distanceY);
+        }
+        return PathFinding.MOVE_D_COST * distanceX + PathFinding.MOVE_COST * (distanceY - distanceX);
+    }
+
+    
+    
+    class Node {
+
+        public int g;
+        public int h;
+        public int f {
+            get {
+                return g + h;
+            }
+        }
+
+        public Node parent;
+
+        public Vector2 location;
+        public bool isWalkable;
+
+        public Node(Vector2 _location) {
+            this.location = _location;
+            this.isWalkable = PathFinding.digitalMap[(int)_location.x, (int)_location.y] == PathFinding.WALKABLE_VALUE ? true : false;
+        }
+
+        public Node[] getNeighbours() {
+            var indexiesSum = this.location.x + this.location.y;
+            var amount = indexiesSum == 0 ? 
+                2 : indexiesSum == 1 ?
+                3 : 4
+            ;
+            var result = new Node[amount];
+            var resultIndexer = 0;
+
+            for(int x = -1; x <= 1; x++) {
+                for(int y = -1; y <= 1; y++) {
+                    if(x == 0 && y == 0)
+                        continue;
+                    int checkX = (int)this.location.x + x;
+                    int checkY = (int)this.location.y + y;
+
+                    if(checkX >= 0 && checkX < PathFinding.digitalMap.GetLength(0)
+                        && checkY >= 0 && checkY < PathFinding.digitalMap.GetLength(1))
+                    result[resultIndexer++] = new Node(new Vector2(checkX, checkY));
+                }
+            }
+
+            // var x1 = this.location.x - 1;
+            // var x2 = this.location.x + 1;
+            // var y1 = this.location.y - 1;
+            // var y2 = this.location.y + 1;
+
+            // if(x1 >= 0)
+            //     result[resultIndexer++] = new Node(x1, this.location.y);
+            // if(x2 >= 0)
+            //     result[resultIndexer++] = new Node(x2, this.location.y);
+            // if(y1 >= 0)
+            //     result[resultIndexer++] = new Node(this.location.x, y1);
+            // if(y2 >= 0)
+            //     result[resultIndexer++] = new Node(this.location.y, y2);
+
+            return result;
+        }
+
+        public bool Equals(Node obj) {
+            return this.location.x == obj.location.x ?
+                this.location.y == obj.location.y ? 
+                    true : false 
+                : false;
+        }
+    }
+}
