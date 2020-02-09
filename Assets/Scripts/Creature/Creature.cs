@@ -60,6 +60,7 @@ public class Creature {
     private bool    isMoving;
     // Клітка мапи, до якої прямує Юніт, якщо він відчуває голод або спрагу ((-1, -1), якщо ні до чого не прямує)
     private Vector2 lookingForCell;
+    private List<Node> pathToCell;
 
     // Меш для Юніта (його завнішній вигляд)
     private Mesh mesh;
@@ -157,8 +158,8 @@ public class Creature {
             return;
 
         // Якщо Юніт рухається
-        if(this.isMoving) {
-            
+        if(this.lookingForCell != null) {
+            Debug.Log("looking for cell");
         }
         
         // Якщо голодний - шукаємо їжу
@@ -591,7 +592,7 @@ public class PathFinding {
         // return this;
     }
 
-    private void findPath() {
+    private List<Node> findPath() {
         this.open = new ArrayList();
         this.close = new ArrayList();
 
@@ -613,8 +614,17 @@ public class PathFinding {
             this.close.Add(current);
 
             if(current == endNode) {
-                
-                return;
+                List<Node> path = new List<Node>();
+                Node current = this.to;
+
+                while(current != this.from) {
+                    path.Add(current);
+                    current = current.parent;
+                }
+
+                path.Reverse();
+
+                return path;
             }
 
             foreach (var neighbour in current.getNeighbours()) {
