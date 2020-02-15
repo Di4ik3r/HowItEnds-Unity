@@ -2,103 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-
-public enum Direction {
-    UP,
-    RIGHT,
-    DOWN,
-    LEFT,
-    Z_UNAVAILABLE
-}
-
-
-public class RegularMovement : IMovement {
+public abstract class DirectionMovement : Movement {
 
     // Напрямок в якому буде рухатись Юніт
-    private Direction moveDirection;
+    protected Direction moveDirection;
     // Список кліток даного напрямку
-    private List<Vector2> directionChoices;
+    protected List<Vector2> directionChoices;
     // Статичний масив можливих напрямків
-    private static Direction[] DIRECTIONS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
+    protected static Direction[] DIRECTIONS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
 
-    protected int pathIndex;
-    private Stack pathToCell;
-    private Vector2 lookingForCell;
-    public bool isMoving;
 
     // Випадквий ліміт ходів в даному напрямку та кількість вже зроблених кроків в даному напрямку
-    private int limitMoveCount, currentMoveCount;
-
-
-    // Змінні які потрібні для анімованого руху
-    public float moveTime;
-    public float moveArcHeight = 1f;
-    public Vector3 moveStartPosition;
-    public Vector3 moveTargetPosition;
+    protected int limitMoveCount, currentMoveCount;
 
 
     protected Creature creature;
-    public RegularMovement(Creature creature) {
+    public DirectionMovement(Creature creature) : base(creature) {
+        // Debug.Log(creature);
         this.creature = creature;
+        // base(creature);
 
-        this.isMoving = false;
-        
-        this.lookingForCell = new Vector2(
-            creature.transform.position.x,
-            creature.transform.position.y
-        );
-        
-        this.pathToCell = new Stack();
-
-        // this.RandomizeMove();
-    }
-
-    public void Jump() {
-        if(this.isMoving)
-            AnimateMoving();
-        else {
-            StartMoving();
-        }
-    }
-
-    void AnimateMoving () {
-        moveTime = Mathf.Min (1, moveTime + Time.deltaTime * this.creature.speed);
-        float height = (1 - 4 * (moveTime - .5f) * (moveTime - .5f)) * moveArcHeight;
-        this.creature.transform.position = Vector3.Lerp (moveStartPosition, moveTargetPosition, moveTime) + Vector3.up * height;
-
-        if (moveTime >= 1) {
-            moveTime = 0;
-            this.isMoving = false;
-        }
-    }
-
-    public void StartMoving() {
-        this.moveStartPosition = this.creature.transform.position;
-        // this.moveTargetPosition = MoveLogic();
-        // if(this.lookingForCell != null) {
-        // if(this.isStanding) {
-        if(this.pathIndex < this.pathToCell.Count) {
-            Debug.Log("looking for cell");
-            // this.lookingForCell = this.pathToCell[pathIndex++];
-            this.lookingForCell = (Vector2)this.pathToCell.Pop();
-            this.moveTargetPosition = MoveLogic((Vector2)this.lookingForCell);
-        } else {
-            this.moveTargetPosition = MoveLogic();
-        }
-        this.isMoving = true;
-
-        // При кожному ході - збільшення показників відчуття голоду та спраги
-        this.creature.hunger += this.creature.HUNGER_STEP;
-        this.creature.thirst += this.creature.THIRST_STEP;
-
-        // Debug.Log($"Hunger: {this.creature.hunger}; Thirst: {this.creature.thirst}");
     }
 
 
     // Логіка вибору клітки, на яку ступить Юніт
-    private Vector3 MoveLogic() {
+    protected override Vector3 MoveLogic() {
         // Якщо кількість кроків на даний напрямок не вичерпана або на даниий напрямок немає
         // доступних кліток
         if(this.currentMoveCount >= this.limitMoveCount || NoAvailableChioces()) {
@@ -113,7 +41,7 @@ public class RegularMovement : IMovement {
                 y = this.creature.transform.position.y,
                 z = this.creature.transform.position.z;
         // Занульовуємо поточну клітку, щоб залишити її вільною для ходу, т.я. ми вибиремо нову
-        Creature.digitalMap[(int)x, (int)z] = 0;
+        Creature.digitalMap[(int)x, (int)z] = this.movementBlock;
 
         // Випадково вибираємо клікту з можливих
         int chioce = Random.Range(0, directionChoices.Count);
@@ -139,13 +67,13 @@ public class RegularMovement : IMovement {
         return result;
     }
 
-    private Vector3 MoveLogic(Vector2 to) {
+    protected override Vector3 MoveLogic(Vector2 to) {
         // Оголошуємо змінні, яка повернемо і запамятовуємо поточну позицію
         float   x = this.creature.transform.position.x,
                 y = this.creature.transform.position.y,
                 z = this.creature.transform.position.z;
         // Занульовуємо поточну клітку, щоб залишити її вільною для ходу, т.я. ми вибиремо нову
-        Creature.digitalMap[(int)x, (int)z] = 0;
+        Creature.digitalMap[(int)x, (int)z] = this.movementBlock;
 
         // Випадково вибираємо клікту з можливих
         int chioce = Random.Range(0, directionChoices.Count);
@@ -168,14 +96,14 @@ public class RegularMovement : IMovement {
     }
 
     // Перевірка на відсутність доступих кліток даного напрямку
-    private bool NoAvailableChioces() {
+    protected bool NoAvailableChioces() {
         if(GetAvailableCellsIndexesByDirection().Count < 1)
             return true;
         return false;
     }
 
     // Перевірка клітки, на існування: чи індекси відповідають умовам та типу блока
-    private bool CheckCell(Vector2 cell, int type) {
+    protected bool CheckCell(Vector2 cell, int type) {
         // Якщо індекс Х знаходиться поза межами масиву
         if(cell.x >= 0 && cell.x < Creature.digitalMap.GetLength(0)) {
             // Якщо індекс У знаходиться поза межами масиву
@@ -188,7 +116,7 @@ public class RegularMovement : IMovement {
     }
 
     // Випадково задає клітки даного напрямку
-    private void RandomizeChioces() {
+    protected void RandomizeChioces() {
         this.directionChoices = GetAvailableCellsIndexesByDirection();
     }
 
@@ -212,7 +140,7 @@ public class RegularMovement : IMovement {
     }
     
     // Формування списка доступних кліток за даним напрямком
-    private List<Vector2> GetAvailableCellsIndexesByDirection() {
+    protected List<Vector2> GetAvailableCellsIndexesByDirection() {
         // Формуємо список рузультатів
         List<Vector2> result = new List<Vector2>();
         // Стягуємо можливі клітки по даному напрямку
@@ -221,7 +149,7 @@ public class RegularMovement : IMovement {
         // Пробігаємось по всім можливим кліткам
         foreach(Vector2 chioce in choices) {
             // Якщо клітка відповідає виомгам
-            if(CheckCell(chioce, 0)) {
+            if(CheckCell(chioce, this.movementBlock)) {
                 // Додаємо її в список
                 result.Add(chioce);
             }
@@ -231,16 +159,17 @@ public class RegularMovement : IMovement {
     }
 
     // Формуємання списка доступних кліток за заданим намрямком
-    private List<Vector2> GetAvailableCellsIndexesByDirection(Direction direction) {
+    protected List<Vector2> GetAvailableCellsIndexesByDirection(Direction direction) {
         // Формуємо список рузультатів
         List<Vector2> result = new List<Vector2>();
+
         // Стягуємо можливі клітки по заданому напрямку
         List<Vector2> choices = GetCellsIndexesByDirection(direction);
 
         // Пробігаємось по всім можливим кліткам
         foreach(Vector2 chioce in choices) {
             // Якщо клітка відповідає виомгам
-            if(CheckCell(chioce, 0)) {
+            if(CheckCell(chioce, this.movementBlock)) {
                 // Додаємо її в список
                 result.Add(chioce);
             }
@@ -251,7 +180,7 @@ public class RegularMovement : IMovement {
 
     // Формування списка індексів за даним напрямком
     // Правила обирання кліток, за даним напрямком
-    private List<Vector2> GetCellsIndexesByDirection() {
+    protected List<Vector2> GetCellsIndexesByDirection() {
         List<Vector2> result = new List<Vector2>();
 
         switch(this.moveDirection) {
@@ -298,7 +227,7 @@ public class RegularMovement : IMovement {
 
     // Формування списка індексів за заданим напрямком
     // Правила обирання кліток, за заданим напрямком
-    private List<Vector2> GetCellsIndexesByDirection(Direction direction) {
+    protected List<Vector2> GetCellsIndexesByDirection(Direction direction) {
         List<Vector2> result = new List<Vector2>();
 
         switch(direction) {
@@ -344,7 +273,7 @@ public class RegularMovement : IMovement {
     }
 
     // Вибір випадкового доступного напрямку
-    private Direction GetRandomAvailableDirection() {
+    protected Direction GetRandomAvailableDirection() {
         List<Direction> availableDirections = new List<Direction>();
         for(int i = 0; i < 4; i++) {
             Direction direction = DIRECTIONS[i];
@@ -357,12 +286,12 @@ public class RegularMovement : IMovement {
     }
 
     // Вибір випадкового доступного напрямку (застаріла версія)
-    private Direction GetRandomAvailableDirection_deprecated() {
+    protected Direction GetRandomAvailableDirection_deprecated() {
         for(int i = 0; i < 15; i++) {
             Direction direction = GetRandomDirection();
             List<Vector2> chioces = GetCellsIndexesByDirection(direction);
             foreach(Vector2 chioce in chioces) {
-                if(CheckCell(chioce, 0))
+                if(CheckCell(chioce, movementBlock))
                     return direction;
             }
         }
@@ -370,12 +299,12 @@ public class RegularMovement : IMovement {
     }
 
     // Вибір випадкового напрямку
-    private Direction GetRandomDirection() {
+    protected Direction GetRandomDirection() {
         return DIRECTIONS[Random.Range(0, DIRECTIONS.Length)];
     }
 
     // Повертає список індексів доступних кліток, навколо Юніта
-    private List<Vector2> GetAvailableCellsIndexes(int r, int type) {
+    protected List<Vector2> GetAvailableCellsIndexes(int r, int type) {
         List<Vector2> result = new List<Vector2>();
 
         for(int x = (int)this.creature.transform.position.x - r; x <= this.creature.transform.position.x + r; x++) {

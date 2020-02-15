@@ -23,7 +23,7 @@ public class Creature : MonoBehaviour {
     public static Vector2 DEATH_RANGE = new Vector2(6, 15);
     // Ліміт, при досягненні якого - Юніт буде шукати їжу. Крок, який буде додаватись до загального показника
     // голоду
-    public float HUNGER_LIMIT = .6f, HUNGER_STEP = .0008f;
+    public float HUNGER_LIMIT = .6f, HUNGER_STEP = .0004f;
     // Ліміт, при досягненні якого - Юніт буде шукати воду. Крок, який буде додаватись до загального показника
     // спраги
     // private float THIRST_LIMIT = .4f, THIRST_STEP = .06f;
@@ -45,23 +45,13 @@ public class Creature : MonoBehaviour {
     public float   speed;
     // Маса
     private float   weight;
-    // Відображає чи Юніт рухається
-    // Клітка мапи, до якої прямує Юніт, якщо він відчуває голод або спрагу ((-1, -1), якщо ні до чого не прямує)
-    // private bool isStanding {
-    //     get { 
-    //         return lookingForCell.x == position.x ?
-    //             lookingForCell.y == position.y ? 
-    //                 true : false :
-    //             false;
-    //     }
-    // }
     
     protected int searchRadius;
 
     // Висота Меша. Потрібно для того щоб юніт правильно ставав на блоки по висоті
     public float meshHeight;
     public float scale;
-    private Vector2 speedLimit = new Vector2(0.6f, 2.4f);
+    protected Vector2 speedLimit = new Vector2(0.6f, 2.4f);
 
     // Властивість, що відображає чи відчуває голод Юніт
     private bool isHunger { get { return this.hunger >= this.HUNGER_LIMIT ? true : false; } }
@@ -69,27 +59,23 @@ public class Creature : MonoBehaviour {
     private bool isThirst { get { return this.thirst >= this.THIRST_LIMIT ? true : false; } }
     
 
-    protected IMovement movement;
+    public IMovement movement;
     // Ліміт максимально можливих ходів в даному напрямку
     public int MOVES_LIMIT_MIN = 3;
     public int MOVES_LIMIT_MAX = 12;
 
-    public static GameObject prefab;
+    // public static GameObject prefab;
 
-    public static Creature Create(Vector2 position, int birthDay) {
-        if(Creature.prefab == null) {
-            Creature.prefab = Resources.Load<GameObject>("Creature/CreaturePrefab");
-        }
-        GameObject newObject = Instantiate(Creature.prefab) as GameObject;
-        Creature obj = newObject.GetComponent<Creature>();
+    public static T Create<T>(Vector2 position, int birthDay) {
+        GameObject prefab = Resources.Load<GameObject>($"Creature/{typeof(T).FullName}Prefab");
+        GameObject newObject = Instantiate(prefab) as GameObject;
+        T obj = newObject.GetComponent<T>();
 
         // parameters init here
-        obj.InitProperties(position, birthDay);
+        (obj as Creature).InitProperties(position, birthDay);
         
         // Позначення в глобальному масиві, що дана клітка зайнята
         Creature.digitalMap[(int)position.x, (int)position.y] = 9;
-        // Вибір випадкового напрямку, кліток
-        // ((RegularMovement)obj.movement).RandomizeMove();
 
         return obj;
     }
@@ -98,37 +84,6 @@ public class Creature : MonoBehaviour {
         this.MakeMove();
     }
 
-    /* public Creature(Vector2 position, int birthDay) {
-        // За допомогою стягнутого класу ПрімітівХелпер - стягує меш з куба
-        this.mesh = PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cube);
-        // Фукнція, що додає до геймОбджекта потрібні нам компоненти і правильно інціалізує їх
-        ImplementComponents();
-
-        InitProperties(position, birthDay);
-        
-        // Позначення в глобальному масиві, що дана клітка зайнята
-        Creature.digitalMap[(int)position.x, (int)position.y] = 9;
-        // Вибір випадкового напрямку, кліток
-        RandomizeMove();
-    } */
-    // Додає до геймОбджекта потрібні нам компоненти і правильно інціалізує їх
-    // private void ImplementComponents() {
-    //     // Створює екземпляр ГеймОбджекта
-    //     this.gameObject = new GameObject("Creature");
-
-    //     // Додає компонент МешФільтр, який тримає в собі меш
-    //     this.gameObject.AddComponent<MeshFilter>();
-    //     // Додає компонент МешРендерер, який тримає в собі параметри, потрібні для відображення
-    //     // такі, як матеріал, колір, параметри освітлення і тд.
-    //     this.gameObject.AddComponent<MeshRenderer>();
-        
-    //     // Присвоюю мешу компонента МешФільтра меш Юніта
-    //     this.gameObject.GetComponent<MeshFilter>().mesh = this.mesh;
-    //     // Присвою матеріал компоненту Рендерер
-    //     this.gameObject.GetComponent<Renderer>().materials[0] = Resources.Load("BasicMaterial", typeof(Material)) as Material;
-    //     // this.gameObject.GetComponent<Renderer>().materials[0].color = Color.black;
-    // }
-
     private void InitProperties(Vector2 position, int birthDay) {
         // Ініціалізація полів
         this.id = Creature.ID_COUNTER++;
@@ -136,11 +91,10 @@ public class Creature : MonoBehaviour {
         this.thirst = 0;
         this.birthDay = birthDay;
         this.deathDay = (int)Random.Range(DEATH_RANGE.x, DEATH_RANGE.y);
-        // this.speed = Random.Range(0.7f, 3); 
         this.speed = Random.Range(this.speedLimit.x, this.speedLimit.y); 
         this.weight = 0;
 
-        this.movement = new RegularMovement(this);
+        this.movement = new WaterMovement(this);
         
         this.isAlive = true;
 
@@ -154,60 +108,33 @@ public class Creature : MonoBehaviour {
                                     position.y);
                                     
         this.scale = 1 - this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.3f, 0.7f);
-        // Debug.Log($"{this.speed} = {this.scale}");
         this.transform.localScale = new Vector3(this.scale, this.scale, this.scale);
 
 
         this.gameObject.GetComponent<Renderer>().materials[0].color = new Color(
-            this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.1f, 0.6f),
-            0f,
-            0f);
+            1f,
+            1f,
+            1f);
     }
 
 
     // Логіка руху Юніта
     public void MakeMove() {
-        // Якщо мертвий - нічого не робимо
         if(!this.isAlive)
             return;
-
-        // Якщо Юніт рухається
-        // if(this.pathIndex < this.pathToCell.Count) {
-        //     if(this.pathIndex >= this.pathToCell.Count) {
-        //         this.pathToCell.Clear();
-        //         this.pathIndex = 0;
-        //     } else {
-        //         this.lookingForCell = this.pathToCell[pathIndex++];
-        //         // Debug.Log("my tyt kyezyayem");
-        //     }
-        // } else {
 
         // Якщо голодний - шукаємо їжу
         if(isHunger) {
             FindFood();
             // andrii;
         }
-        // Якщо Юніт відчуває спрагу - шукаємо воду
-        if(isThirst 
-            // && 
-            // Creature.digitalMap[
-            //     (int)lookingForCell.x,
-            //     (int)lookingForCell.y
-            // ] != 1
-        ) {
+        if(isThirst) {
             FindWater();
 
         }
 
-        // }
-        // Виконуємо рух
         this.movement.Jump();
     }
-
-    // Рух, при виконані якого - збільшується голод та спрага
-    
-
-    
 
     private void FindWater() {
         
