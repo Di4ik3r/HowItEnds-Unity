@@ -63,12 +63,14 @@ public class MapGenerator : MonoBehaviour
         Moon.GetComponent<Light>().intensity = 1f;
         //cycle.CreateSphere(Sun,"Sun",Color.yellow,mapSize.x,mapSize.y);
         //cycle.CreateSphere(Moon,"Moon",Color.white, mapSize.x, mapSize.y);
-        creatures = CreateCreatures(13);
+        creatures = CreateCreatures(10);
 
         // creatures = new List<Creature>();
         // creatures.Add(new Creature(new Vector2(0, 0), 0));
         // creatures.Add(new Creature(new Vector2(0, 5), 0));
         // creatures.Add(new Creature(new Vector2(5, 0), 0));
+
+        new PathFinding();
     }
   
     public class Cycle
@@ -127,7 +129,7 @@ public class MapGenerator : MonoBehaviour
         TimeOfDay = GUI.HorizontalSlider(rect, TimeOfDay, 0, 1);
     }
     void Update() {
-        creatureCycle();
+        // creatureCycle();
         MapGenerator.TIME += MapGenerator.TIME_STEP;
         
         
@@ -148,7 +150,8 @@ public class MapGenerator : MonoBehaviour
             var random = Random.Range(0, groundCoordinates.Count-1);
             Vector3 pickedGroundCoordinates = groundCoordinates[random];
             Vector2 position = new Vector2(pickedGroundCoordinates.x, pickedGroundCoordinates.z);
-            Creature creature = new Creature(position, 0);
+            // Creature creature = new Creature(position, 0);
+            var creature = Creature.Create(position, 0);
             result.Add(creature);
         }
 
