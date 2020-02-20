@@ -101,13 +101,14 @@ public class Creature : MonoBehaviour {
         
         this.searchRadius = 3;
 
-        this.meshHeight = 1;
+        this.scale = 1 - this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.3f, 0.7f);
+        this.meshHeight = this.scale;
+        // this.meshHeight = 1;
 
         this.transform.position = new Vector3(position.x, 
                                     Creature.objectMap[(int)position.x, (int)position.y].transform.position.y + this.meshHeight,
                                     position.y);
                                     
-        this.scale = 1 - this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.3f, 0.7f);
         this.transform.localScale = new Vector3(this.scale, this.scale, this.scale);
 
 

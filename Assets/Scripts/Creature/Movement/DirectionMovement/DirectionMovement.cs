@@ -50,8 +50,7 @@ public abstract class DirectionMovement : Movement {
             // Обираємо поточну і запамятовуємо її
             x = directionChoices[chioce].x;
             z = directionChoices[chioce].y;
-            // y = Creature.objectMap[(int)x, (int)z].transform.position.y + this.creature.meshHeight;
-            y = Creature.objectMap[(int)x, (int)z].transform.position.y + this.creature.meshHeight - ((1 - this.creature.scale) / 2);
+            y = GetCubeHeight(x, z);
         }
 
         // Позначаємо нашу позицію в глобальному масиві, щоб ніхто не зміг стати на цю позицію
@@ -80,7 +79,7 @@ public abstract class DirectionMovement : Movement {
         // Якщо немає доступних кліток
         x = to.x;
         z = to.y;
-        y = Creature.objectMap[(int)x, (int)z].transform.position.y + this.creature.meshHeight - ((1 - this.creature.scale) / 2);
+        y = GetCubeHeight(x, z);
 
         // Позначаємо нашу позицію в глобальному масиві, щоб ніхто не зміг стати на цю позицію
         // т.я. вона вже занята
@@ -93,6 +92,10 @@ public abstract class DirectionMovement : Movement {
 
         // Повертаємо результат
         return result;
+    }
+
+    protected virtual float GetCubeHeight(float x, float z) {
+        return Creature.objectMap[(int)x, (int)z].transform.position.y + 1 - ((1 - this.creature.scale) / 2);
     }
 
     // Перевірка на відсутність доступих кліток даного напрямку

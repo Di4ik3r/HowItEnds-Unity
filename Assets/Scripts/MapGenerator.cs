@@ -14,7 +14,7 @@ public class MapGenerator : MonoBehaviour
     public float lacunarity;
     public Vector2 offset;
     public int seed;
-    [Range(0.1f, 15)]
+    [Range(-1.5f, 15)]
     public float heightDifference;
     [Range(0, 100)]
     public float foodPercent;
@@ -65,7 +65,7 @@ public class MapGenerator : MonoBehaviour
         //cycle.CreateSphere(Moon,"Moon",Color.white, mapSize.x, mapSize.y);
         // creatures = CreateCreatures(10);
         creatures = CreateCreatures(5);
-        creatures = CreateCreaturesInWater(6);
+        // creatures = CreateCreaturesInWater(5);
 
         // creatures = new List<Creature>();
         // creatures.Add(new Creature(new Vector2(0, 0), 0));
