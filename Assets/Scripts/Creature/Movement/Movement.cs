@@ -69,6 +69,8 @@ public abstract class Movement : IMovement {
     protected abstract void AnimateMoving();
 
     public void StartMoving() {
+        this.creature.PaintToDefault();
+
         this.moveStartPosition = this.creature.transform.position;
         if(this.pathToCell.Count > 0) {
             this.PaintPath();
@@ -82,6 +84,8 @@ public abstract class Movement : IMovement {
                 this.creature.PaintToDefault();
             }
         } else {
+            this.creature.PaintBlocks(this.creature.GetClosestWaterBlocksByRadius());
+            this.creature.PaintBlock(this.creature.GetClosestWaterBlockByRadius());
             this.moveTargetPosition = MoveLogic();
         }
         this.isMoving = true;
@@ -105,6 +109,8 @@ public abstract class Movement : IMovement {
             new Vector2(this.creature.transform.position.x, this.creature.transform.position.z),
             new Vector2(to.x, to.y)
         );
+
+        Debug.Log(this.pathToCell.Count);
 
         this.creature.isConsuming = true;
     }

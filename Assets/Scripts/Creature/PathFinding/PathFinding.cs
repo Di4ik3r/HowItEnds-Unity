@@ -9,7 +9,7 @@ public class PathFinding {
     public static int WALKABLE_VALUE = 0;
 
     public static int MOVE_COST = 10;
-    public static int MOVE_D_COST = 10;
+    public static int MOVE_D_COST = 14;
 
     public Vector2 from;
     public Vector2 to;
@@ -73,6 +73,7 @@ public class PathFinding {
             if(current.location == endNode.location) {
                 Stack path = new Stack();
                 Node curr = current.parent;
+                // Node curr = current;
 
                 while(curr.location != startingNode.location) {
                     path.Push(new Vector2(curr.location.x, curr.location.y));
@@ -87,9 +88,11 @@ public class PathFinding {
             var neighbours = current.GetNeighbours();
             foreach (var neighbour in neighbours) {
                 // if(!neighbour.isWalkable || close.Contains(neighbour)) {
-                if(close.Contains(neighbour)) {
+                if(!neighbour.isWalkable || close.Contains(neighbour)) {
+                // if(close.Contains(neighbour)) {
                     continue;
                 }
+
 
                 int newMovementCostToNeighbour = current.g + PathFinding.GetDistance(current, neighbour);
 
@@ -123,35 +126,44 @@ public class PathFinding {
         return new Stack();
     }
 
+    // public static int GetDistance(Node a, Node b) {
+    //     int distanceX = Mathf.Abs((int)a.location.x - (int)b.location.x);
+    //     int distanceY = Mathf.Abs((int)a.location.y - (int)b.location.y);
+
+
+    //     var result = 0;
+    //     if(distanceX > distanceY) {
+    //         result = PathFinding.MOVE_D_COST * distanceY + PathFinding.MOVE_COST * (distanceX - distanceY);
+    //     }
+    //     result = PathFinding.MOVE_D_COST * distanceX + PathFinding.MOVE_COST * (distanceY - distanceX);
+
+    //     // Debug.Log($"get Distance: {result}");
+
+    //     return result;
+    // }
+
     public static int GetDistance(Node a, Node b) {
-        int distanceX = Mathf.Abs((int)a.location.x - (int)b.location.x);
-        int distanceY = Mathf.Abs((int)a.location.y - (int)b.location.y);
-
-
-        var result = 0;
-        if(distanceX > distanceY) {
-            result = PathFinding.MOVE_D_COST * distanceY + PathFinding.MOVE_COST * (distanceX - distanceY);
-        }
-        result = PathFinding.MOVE_D_COST * distanceX + PathFinding.MOVE_COST * (distanceY - distanceX);
-
-        // Debug.Log($"get Distance: {result}");
-
-        return result;
+        var dx = Mathf.Abs(a.location.x - b.location.x);
+        var dy = Mathf.Abs(a.location.y - b.location.y);
+        return (int)(PathFinding.MOVE_D_COST * (dx + dy));
     }
 
+    // public static int GetDistance(Vector2 a, Vector2 b) {
+    //     int distanceX = Mathf.Abs((int)a.x - (int)b.x);
+    //     int distanceY = Mathf.Abs((int)a.y - (int)b.y);
+
+
+    //     var result = 0;
+    //     if(distanceX > distanceY)
+    //         result = PathFinding.MOVE_D_COST * distanceY + PathFinding.MOVE_COST * (distanceX - distanceY);
+    //     result = PathFinding.MOVE_D_COST * distanceX + PathFinding.MOVE_COST * (distanceY - distanceX);
+
+    //     return result;
+    // }
+
     public static int GetDistance(Vector2 a, Vector2 b) {
-        int distanceX = Mathf.Abs((int)a.x - (int)b.x);
-        int distanceY = Mathf.Abs((int)a.y - (int)b.y);
-
-
-        var result = 0;
-        if(distanceX > distanceY) {
-            result = PathFinding.MOVE_D_COST * distanceY + PathFinding.MOVE_COST * (distanceX - distanceY);
-        }
-        result = PathFinding.MOVE_D_COST * distanceX + PathFinding.MOVE_COST * (distanceY - distanceX);
-
-        // Debug.Log($"get Distance: {result}");
-
-        return result;
+        var dx = Mathf.Abs(a.x - b.x);
+        var dy = Mathf.Abs(a.y - b.y);
+        return (int)(PathFinding.MOVE_D_COST * (dx + dy));
     }
 }
