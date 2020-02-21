@@ -37,56 +37,50 @@ public abstract class Movement : IMovement {
         this.movementBlock = -1;
     }
 
+    public void Update() {
+        if(!this.creature.isAlive)
+            return;
+
+        this.Jump();
+    }
+
     // Jump logic (almost all the time: if is moving then animate)
     public void Jump() {
         if(this.isMoving)
             AnimateMoving();
         else {
+            // Якщо голодний - шукаємо їжу
+            if(this.creature.isHunger && !this.creature.isConsuming) {
+                // if(this.creature.CheckFoodByReach()) {
+                    
+                // }
+                // if(this.pathToCell.Count == 0) {
+                    this.creature.FindFood();
+                // }
+            }
+            // if(this.creature.isThirst) {
+            //     this.creature.FindWater();
+            // }
+
             StartMoving();
         }
     }
-    // protected void AnimateMoving () {
-    //     moveTime = Mathf.Min (1, moveTime + Time.deltaTime * this.creature.speed);
-    //     this.creature.transform.position = Vector3.Lerp (moveStartPosition, moveTargetPosition, moveTime);
-
-    //     if (moveTime >= 1) {
-    //         moveTime = 0;
-    //         this.isMoving = false;
-    //     }
-    // }
-
-    // protected void AnimateMoving () {
-    //     moveTime = Mathf.Min (1, moveTime + Time.deltaTime * this.creature.speed);
-    //     switch(this.movementType) {
-    //         case MovementType.Air:
-    //             this.creature.transform.position = Vector3.Lerp (moveStartPosition, moveTargetPosition, moveTime);
-    //             break;
-    //         case MovementType.Ground:
-    //             float height = (1 - 4 * (moveTime - .5f) * (moveTime - .5f)) * moveArcHeight;
-    //             break;
-    //         case MovementType.Water:
-    //             this.creature.transform.position = Vector3.Lerp (moveStartPosition, moveTargetPosition - new Vector3(0f, 1f, 0f), moveTime);
-    //             break;
-    //         default:
-    //             this.creature.transform.position = Vector3.Lerp (moveStartPosition, moveTargetPosition, moveTime);
-    //             Debug.Log("unpicked movement type");
-    //             break;
-    //     }
-
-    //     if (moveTime >= 1) {
-    //         moveTime = 0;
-    //         this.isMoving = false;
-    //     }
-    // }
 
     protected abstract void AnimateMoving();
 
     public void StartMoving() {
         this.moveStartPosition = this.creature.transform.position;
         if(this.pathToCell.Count > 0) {
-            Debug.Log("looking for cell");
+            this.PaintPath();
+            // Debug.Log("looking for cell");
             this.lookingForCell = (Vector2)this.pathToCell.Pop();
             this.moveTargetPosition = MoveLogic(this.lookingForCell);
+            if(this.pathToCell.Count <= 0) {
+                Debug.Log(this.pathToCell.Count);
+                this.creature.isConsuming = false;
+                this.creature.hunger = 0;
+                this.creature.PaintToDefault();
+            }
         } else {
             this.moveTargetPosition = MoveLogic();
         }
@@ -104,6 +98,25 @@ public abstract class Movement : IMovement {
     // cuz it how movement system make dicision where to go
     protected abstract Vector3 MoveLogic();
     protected abstract Vector3 MoveLogic(Vector2 to);
+
+
+    public void MoveTo(Vector2 to) {
+        this.pathToCell = new PathFinding().FindPath(
+            new Vector2(this.creature.transform.position.x, this.creature.transform.position.z),
+            new Vector2(to.x, to.y)
+        );
+
+        this.creature.isConsuming = true;
+    }
     
+
+    public void PaintPath() {
+        foreach (Vector2 block in this.pathToCell) {
+            Creature.objectMap[(int)block.x, (int)block.y]
+                .GetComponent<Renderer>()
+                .materials[0]
+                .color = new Color(0.2f, 0.3f, 0.4f);
+        }
+    }
 }
 

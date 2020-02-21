@@ -32,7 +32,7 @@ public class Creature : MonoBehaviour {
     // Ідентифікатор Юніта
     private int     id;
     // Булівське значення, що відображає чи живий Юніт
-    private bool    isAlive;
+    public bool    isAlive;
     // Показник голоду
     public float   hunger;
     // Показник спраги
@@ -51,12 +51,13 @@ public class Creature : MonoBehaviour {
     // Висота Меша. Потрібно для того щоб юніт правильно ставав на блоки по висоті
     public float meshHeight;
     public float scale;
-    protected Vector2 speedLimit = new Vector2(0.6f, 2.4f);
+    protected Vector2 speedLimit = new Vector2(0.6f, 1.4f);
 
     // Властивість, що відображає чи відчуває голод Юніт
-    private bool isHunger { get { return this.hunger >= this.HUNGER_LIMIT ? true : false; } }
+    public bool isHunger { get { return this.hunger >= this.HUNGER_LIMIT ? true : false; } }
     // Властивість, що відображає чи відчуває спрагу Юніт
-    private bool isThirst { get { return this.thirst >= this.THIRST_LIMIT ? true : false; } }
+    public bool isThirst { get { return this.thirst >= this.THIRST_LIMIT ? true : false; } }
+    public bool isConsuming = false;
     
 
     public IMovement movement;
@@ -81,7 +82,8 @@ public class Creature : MonoBehaviour {
     }
 
     public void Update() {
-        this.MakeMove();
+        // this.MakeMove();
+        this.movement.Update();
     }
 
     private void InitProperties(Vector2 position, int birthDay) {
@@ -94,12 +96,12 @@ public class Creature : MonoBehaviour {
         this.speed = Random.Range(this.speedLimit.x, this.speedLimit.y); 
         this.weight = 0;
 
-        this.movement = new WaterMovement(this);
+        this.movement = new GroundMovement(this);
         
         this.isAlive = true;
 
         
-        this.searchRadius = 3;
+        this.searchRadius = 8;
 
         this.scale = 1 - this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.3f, 0.7f);
         this.meshHeight = this.scale;
@@ -120,24 +122,26 @@ public class Creature : MonoBehaviour {
 
 
     // Логіка руху Юніта
-    public void MakeMove() {
-        if(!this.isAlive)
-            return;
+    // public void MakeMove() {
+    //     if(!this.isAlive)
+    //         return;
 
-        // Якщо голодний - шукаємо їжу
-        if(isHunger) {
-            FindFood();
-            // andrii;
-        }
-        if(isThirst) {
-            FindWater();
+    //     // Debug.Log($"{isHunger} : {hunger} <> {HUNGER_LIMIT}");
+    //     // Якщо голодний - шукаємо їжу
+    //     if(isHunger && !isConsuming) {
+    //         FindFood();
+    //         // andrii;
+    //     }
+    //     if(isThirst && !isConsuming) {
+    //         FindWater();
 
-        }
+    //     }
 
-        this.movement.Jump();
-    }
+    //     this.movement.Jump();
+    // }
 
-    private void FindWater() {
+    public void FindWater() {
+        Debug.Log("looking for water");
         
         // PaintToDefault();
 
@@ -162,11 +166,99 @@ public class Creature : MonoBehaviour {
         // }
     }
 
-    private void FindFood() {
-        
+    public void FindFood() {
+        // Debug.Log("looking for eat");
+
+        this.PaintToDefault();
+        this.PaintBlocks(GetBlocksByRadius(this.searchRadius));
+
+        var waterBlock = this.GetClosestWaterBlockByRadius(this.searchRadius);
+        if(waterBlock.x >= 0)
+            this.movement.MoveTo(waterBlock);
     }
 
+    public void Consume(Vector2 block) {
+        // this
+    }
 
+    public bool CheckFoodByReach() {
+        int currentX = (int)(this.transform.position.x);
+        int currentY = (int)(this.transform.position.z);
+
+        for(int y = currentY - 1; y <= currentY + 1; y++) {
+            for(int x = currentX - 1; x <= currentX + 1; x++) {
+                if((x == currentX && y == currentY) ||
+                (x < 0 || x >= Creature.digitalMap.GetLength(0)) ||
+                (y < 0 || y >= Creature.digitalMap.GetLength(1)))
+                    continue;
+
+                if(Creature.digitalMap[x, y] == 1) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public Vector2 GetWaterBlockByReach() {
+        var result = new List<Vector2>();
+
+        int currentX = (int)(this.transform.position.x);
+        int currentY = (int)(this.transform.position.z);
+
+        var minDistance = 999;
+        var minBlock = new Vector2(-1, -1);
+        for(int y = currentY - 1; y <= currentY + 1; y++) {
+            for(int x = currentX - 1; x <= currentX + 1; x++) {
+                if((x == currentX && y == currentY) ||
+                (x < 0 || x >= Creature.digitalMap.GetLength(0)) ||
+                (y < 0 || y >= Creature.digitalMap.GetLength(1)))
+                    continue;
+
+                if(Creature.digitalMap[x, y] == 1) {
+                    var waterBlock = new Vector2(x, y);
+                    var distance = PathFinding.GetDistance(new Vector2(currentX, currentY), waterBlock);
+                    if(distance < minDistance) {
+                        minDistance = distance;
+                        minBlock = waterBlock;
+                    }
+                }
+            }
+        }
+
+        return minBlock;
+    }
+
+    protected Vector2 GetClosestWaterBlockByRadius(int radius) {
+        var result = new List<Vector2>();
+
+        int currentX = (int)(this.transform.position.x);
+        int currentY = (int)(this.transform.position.z);
+
+        var minDistance = 999;
+        var minBlock = new Vector2(-1, -1);
+        for(int y = currentY - radius; y <= currentY + radius; y++) {
+            for(int x = currentX - radius; x <= currentX + radius; x++) {
+                if((x == currentX && y == currentY) ||
+                    (x < 0 || x >= Creature.digitalMap.GetLength(0)) ||
+                    (y < 0 || y >= Creature.digitalMap.GetLength(1)))
+                    continue;
+
+                if(Mathf.Pow(x - currentX, 2) + Mathf.Pow(y - currentY, 2) <= Mathf.Pow(this.searchRadius, 2))
+                    if(Creature.digitalMap[x, y] == 1) {
+                        var waterBlock = new Vector2(x, y);
+                        var distance = PathFinding.GetDistance(new Vector2(currentX, currentY), waterBlock);
+                        if(distance < minDistance) {
+                            minDistance = distance;
+                            minBlock = waterBlock;
+                        }
+                    }
+            }
+        }
+
+        return minBlock;
+    }
 
     protected List<Vector2> GetBlocksByRadius(int radius) {
         var result = new List<Vector2>();
@@ -202,18 +294,26 @@ public class Creature : MonoBehaviour {
         return result;
     }
 
-    private void PaintToDefault(){ 
+    public void PaintToDefault(){ 
         for(int y = 0; y < Creature.objectMap.GetLength(1); y++) {
             for(int x = 0; x < Creature.objectMap.GetLength(0); x++) {
                 Color color = new Color(0f, 0f, 0f);
                 switch(Creature.digitalMap[x, y]) {
                     case 0: {
                         color = new Color(0.2f, 0.5f, 0f);
-                        break;            
+                        break;
                     }
                     case 1: {
                         color = new Color(0f, 0f, 0.7f);
-                        break;            
+                        break;
+                    }
+                    case 2: {
+                        color = new Color(0.7f, 0f, 0f);
+                        break;
+                    }
+                    case 3: {
+                        color = new Color(0.7f, 0.7f, 0.7f);
+                        break;
                     }
                 }
                 Creature.objectMap[x, y]
@@ -223,4 +323,15 @@ public class Creature : MonoBehaviour {
             }
         }
     }
+
+    protected void PaintBlocks(List<Vector2> blocks) {
+        foreach (var block in blocks) {
+            var digitalMapValue = ((float)(Creature.digitalMap[(int)block.x, (int)block.y])).Map(0, 9, 0, 1);
+            Creature.objectMap[(int)block.x, (int)block.y]
+                .GetComponent<Renderer>()
+                .materials[0]
+                .color = new Color(digitalMapValue, digitalMapValue, digitalMapValue);
+        }
+    }
+
 }

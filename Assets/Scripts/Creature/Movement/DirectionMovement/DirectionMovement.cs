@@ -75,7 +75,7 @@ public abstract class DirectionMovement : Movement {
         Creature.digitalMap[(int)x, (int)z] = this.movementBlock;
 
         // Випадково вибираємо клікту з можливих
-        int chioce = Random.Range(0, directionChoices.Count);
+        // int chioce = Random.Range(0, directionChoices.Count);
         // Якщо немає доступних кліток
         x = to.x;
         z = to.y;

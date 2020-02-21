@@ -72,7 +72,7 @@ public class PathFinding {
 
             if(current.location == endNode.location) {
                 Stack path = new Stack();
-                Node curr = current;
+                Node curr = current.parent;
 
                 while(curr.location != startingNode.location) {
                     path.Push(new Vector2(curr.location.x, curr.location.y));
@@ -126,6 +126,22 @@ public class PathFinding {
     public static int GetDistance(Node a, Node b) {
         int distanceX = Mathf.Abs((int)a.location.x - (int)b.location.x);
         int distanceY = Mathf.Abs((int)a.location.y - (int)b.location.y);
+
+
+        var result = 0;
+        if(distanceX > distanceY) {
+            result = PathFinding.MOVE_D_COST * distanceY + PathFinding.MOVE_COST * (distanceX - distanceY);
+        }
+        result = PathFinding.MOVE_D_COST * distanceX + PathFinding.MOVE_COST * (distanceY - distanceX);
+
+        // Debug.Log($"get Distance: {result}");
+
+        return result;
+    }
+
+    public static int GetDistance(Vector2 a, Vector2 b) {
+        int distanceX = Mathf.Abs((int)a.x - (int)b.x);
+        int distanceY = Mathf.Abs((int)a.y - (int)b.y);
 
 
         var result = 0;

@@ -64,7 +64,7 @@ public class MapGenerator : MonoBehaviour
         //cycle.CreateSphere(Sun,"Sun",Color.yellow,mapSize.x,mapSize.y);
         //cycle.CreateSphere(Moon,"Moon",Color.white, mapSize.x, mapSize.y);
         // creatures = CreateCreatures(10);
-        creatures = CreateCreatures(5);
+        creatures = CreateCreatures(1);
         // creatures = CreateCreaturesInWater(5);
 
         // creatures = new List<Creature>();
@@ -153,7 +153,7 @@ public class MapGenerator : MonoBehaviour
             Vector3 pickedGroundCoordinates = groundCoordinates[random];
             Vector2 position = new Vector2(pickedGroundCoordinates.x, pickedGroundCoordinates.z);
             // Creature creature = new Creature(position, 0);
-            var creature = GroundCreature.Create(position, 0);
+            var creature = GroundCreature.Create(position, 26);
             result.Add(creature);
         }
 
@@ -174,11 +174,11 @@ public class MapGenerator : MonoBehaviour
         return result;
     }
 
-    private void creatureCycle() {
-        foreach(Creature creature in creatures) {
-            creature.MakeMove();
-        }
-    }
+    // private void creatureCycle() {
+    //     foreach(Creature creature in creatures) {
+    //         creature.MakeMove();
+    //     }
+    // }
 
     public int[,] getDigitalMap(){ 
         return this.map.digitalMap;
@@ -323,13 +323,13 @@ public class MapGenerator : MonoBehaviour
                             }
                         case 2:
                             {
-                                renderer.material = materials[0];//2
+                                renderer.material = materials[2];//2
                                 fc.Add(objectMap[i, j].transform.position);
                                 break;
                             }
                         case 3:
                             {
-                                renderer.material = materials[0];//3
+                                renderer.material = materials[3];//3
                                 dc.Add(objectMap[i, j].transform.position);
                                 break;
                             }

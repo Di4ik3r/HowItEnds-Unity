@@ -20,8 +20,8 @@ public class Node {
 
         public Node(Vector2 _location) {
             this.location = _location;
-            this.isWalkable = true;
-            // this.isWalkable = Creature.digitalMap[(int)_location.x, (int)_location.y] == PathFinding.WALKABLE_VALUE ? true : false;
+            // this.isWalkable = true;
+            this.isWalkable = Creature.digitalMap[(int)_location.x, (int)_location.y] == PathFinding.WALKABLE_VALUE ? true : false;
         }
 
         public List<Node> GetNeighbours() {
@@ -77,11 +77,4 @@ public class Node {
 
             return result;
         }
-
-        // public bool Equals(Node obj) {
-        //     return this.location.x == obj.location.x ?
-        //         this.location.y == obj.location.y ? 
-        //             true : false 
-        //         : false;
-        // }
     }
