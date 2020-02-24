@@ -1,5 +1,46 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!136 &-8748103248314541980
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634128940523026232}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.03186629
+  m_Height: 0.14372896
+  m_Direction: 1
+  m_Center: {x: 0.0014733365, y: 0.07186448, z: 0.0009881137}
+--- !u!114 &5900173789107315305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634128940523026232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab41d68580536d46b021236ebb5ce4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4862458813273302119, guid: 8415cb0bc91e454408f0ca70df7db950,
+          type: 3}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &8929809025275801137
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7,11 +48,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: -927199367670048503, guid: d4b2f9dbe0593224e80439f2fff6970e,
-        type: 3}
-      propertyPath: m_Name
-      value: TreeUpdate
-      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: d4b2f9dbe0593224e80439f2fff6970e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -77,5 +113,16 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: 46dfdbed7876c34418eec5861eb81aaf, type: 2}
+    - target: {fileID: -927199367670048503, guid: d4b2f9dbe0593224e80439f2fff6970e,
+        type: 3}
+      propertyPath: m_Name
+      value: TreeUpdate
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d4b2f9dbe0593224e80439f2fff6970e, type: 3}
+--- !u!1 &634128940523026232 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: d4b2f9dbe0593224e80439f2fff6970e,
+    type: 3}
+  m_PrefabInstance: {fileID: 8929809025275801137}
+  m_PrefabAsset: {fileID: 0}
