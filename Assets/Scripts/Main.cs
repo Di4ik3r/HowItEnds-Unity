@@ -5,9 +5,9 @@ using UnityEngine;
 public class Main : MonoBehaviour
 {
     private List<Creature> creatures;
-            
+
     void Start()
-    {
+    {        
         //UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
         //Creature.digitalMap = this.map.digitalMap;
         //Creature.objectMap = this.map.objectMap;

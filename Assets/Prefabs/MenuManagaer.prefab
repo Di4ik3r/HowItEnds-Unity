@@ -45,5 +45,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenuHolder: {fileID: 4954505013355984124, guid: b20d04b4861095249a0bc009a27738ed,
     type: 3}
-  optionsMenuHolder: {fileID: 3314850019366606629, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
+  optionsMenuHolder: {fileID: 8045050390909485912, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
     type: 3}
+  backMap: {fileID: 0}
+  widthField: {fileID: 0}
+  lenghtField: {fileID: 0}
