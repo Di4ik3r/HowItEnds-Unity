@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Main : MonoBehaviour
 {
-    private List<Creature> creatures;
+    private List<Creature> creatures;    
 
     void Start()
     {        

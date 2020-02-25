@@ -1,21 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!58 &-4147892528143773683
-CircleCollider2D:
+--- !u!135 &-1184929856635917576
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7684150266876515828}
-  m_Enabled: 1
-  m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.000046011057, y: -0.0129722105}
+  m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.017407848
+  m_Radius: 0.018010935
+  m_Center: {x: 0.000046011057, y: -0.0129722105, z: -0.002785891}
 --- !u!114 &-5714719903458164411
 MonoBehaviour:
   m_ObjectHideFlags: 0
