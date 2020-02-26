@@ -49,6 +49,15 @@ public class Menu : MonoBehaviour
         use24HoursToggle.isOn = timeHolder.Use24Hours;
     }
 
+    void Start()
+    {
+        if (PauseMenu.OptionsBtnIsClicked)
+        {
+            Options();
+            PauseMenu.OptionsBtnIsClicked = false;
+        }
+    }
+
     public void Play()
     {
         Time.timeScale = 1f;

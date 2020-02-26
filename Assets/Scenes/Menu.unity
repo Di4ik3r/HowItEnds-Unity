@@ -2057,6 +2057,36 @@ PrefabInstance:
       propertyPath: m_Name
       value: WaterCreaturesCount
       objectReference: {fileID: 0}
+    - target: {fileID: 7469049476287452398, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7469049476287452398, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7469049476287452398, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7469049476287452398, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8434477901407101290}
+    - target: {fileID: 7469049476287452398, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetUse24Hours
+      objectReference: {fileID: 0}
+    - target: {fileID: 7469049476287452398, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 7534534204345222761, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
         type: 3}
       propertyPath: m_Name
