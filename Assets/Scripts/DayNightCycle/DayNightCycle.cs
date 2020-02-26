@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.DayNightCycle;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +17,10 @@ public class DayNightCycle : MonoBehaviour
             return _targetDayLength;
         }
     }
+    [SerializeField]    
+    private float elapsedTime;
+    [SerializeField]
+    private bool use24Clock = true;
     [SerializeField]
     [Range(0f, 1f)]
     private float _timeOfDay;
@@ -56,7 +61,7 @@ public class DayNightCycle : MonoBehaviour
     }
     public bool pause = false;
     [SerializeField]
-    private AnimationCurve timeCurve;
+    public AnimationCurve timeCurve;
     private float timeCurveNormalization;
 
     [Header("Sun Light")]
@@ -66,11 +71,11 @@ public class DayNightCycle : MonoBehaviour
     private Light sun;
     private float intensity;
     [SerializeField]
-    private float sunBaseIntensity = 1f;
+    public float sunBaseIntensity = 1f;
     [SerializeField]
-    private float sunVariation = 1.5f;
+    public float sunVariation = 1.5f;
     [SerializeField]
-    private Gradient sunColor;
+    public Gradient sunColor = null;
 
     [Header("Seasonal Variables")]
     [SerializeField]
@@ -82,29 +87,57 @@ public class DayNightCycle : MonoBehaviour
     [Header("Modules")]
     private List<DNModuleBase> moduleList = new List<DNModuleBase>();
 
-    private void Start()
+    [Header("Output")]
+    public Text clockText;
+    public Text dayNumberText;
+    public Text yearNumberText;
+
+    private TimeHolder timeHolder = TimeHolder.getInstance();
+
+    void Start()
     {
-       NormalTimeCurve();
+        _targetDayLength = timeHolder.DayLength;
+        _yearLength = timeHolder.YearLength;
+        _dayNumber = timeHolder.DayNumber;
+        _yearNumber = timeHolder.YearNumber;
+        _timeOfDay = timeHolder.TimeOfDay;
+        elapsedTime = timeHolder.ElapsedTime;
+        use24Clock = timeHolder.Use24Hours;
+
+        dayNumberText.text = "Day number: " + _dayNumber;
+        yearNumberText.text = "Year number: " + _yearNumber;
+        NormalTimeCurve();
     }
 
-    private void Update()
+    void Update()
     {
-        if (!pause)
+        if (!PauseMenu.IsGamePaused)
         {
             UpdateTimeScale();
             UpdateTime();
+        }
+        else
+        {
+            timeHolder.DayLength = _targetDayLength;
+            timeHolder.YearLength = _yearLength;
+            timeHolder.DayNumber = _dayNumber;
+            timeHolder.YearNumber = _yearNumber;
+            timeHolder.TimeOfDay = _timeOfDay;
+            timeHolder.ElapsedTime = elapsedTime;
+            timeHolder.Use24Hours = use24Clock;
         }
 
         AdjustSunRotation();
         SunIntensity();
         AdjustSunColor();
+        UpdateClock();
         UpdateModules(); //will update modules each frame
     }
 
     private void UpdateTimeScale()
     {
         _timeScale = 24 / (_targetDayLength / 60);
-        _timeScale *= timeCurve.Evaluate(_timeOfDay);//changes timescale based on time curve
+        _timeScale *= timeCurve.Evaluate(elapsedTime / (targetDayLength * 60));//changes timescale based on time curve
         _timeScale /= timeCurveNormalization; //keeps day length at target value
     }
 
@@ -125,17 +158,51 @@ public class DayNightCycle : MonoBehaviour
     private void UpdateTime()
     {
         _timeOfDay += Time.deltaTime * _timeScale / 86400; // seconds in a day
+        elapsedTime += Time.deltaTime;
         if (_timeOfDay > 1) //new day!!
         {
+            dayNumberText.text = "Day number: " + _dayNumber;
+            elapsedTime = 0;
             _dayNumber++;
             _timeOfDay -= 1;
 
             if (_dayNumber > _yearLength) //new year!
             {
+                yearNumberText.text = "Year number: " + _yearNumber;
                 _yearNumber++;
                 _dayNumber = 0;
             }
         }
+    }
+
+    private void UpdateClock()
+    {
+        float time = elapsedTime / (targetDayLength * 60);
+        float hour = Mathf.FloorToInt(time * 24);
+        float minute = Mathf.FloorToInt(((time * 24) - hour) * 60);
+
+        string hourString;
+        string minuteString;
+
+        if (!use24Clock && hour > 12)
+            hour -= 12;
+
+        if (hour < 10)
+            hourString = "0" + hour.ToString();
+        else
+            hourString = hour.ToString();
+
+        if (minute < 10)
+            minuteString = "0" + minute.ToString();
+        else
+            minuteString = minute.ToString();
+
+        if (use24Clock)
+            clockText.text = "Time: " + hourString + " : " + minuteString;
+        else if (time > 0.5f)
+            clockText.text = "Time: " + hourString + " : " + minuteString + " pm";
+        else
+            clockText.text = "Time: " + hourString + " : " + minuteString + " am";
     }
 
     //rotates the sun daily (and seasonally soon too);
@@ -147,7 +214,7 @@ public class DayNightCycle : MonoBehaviour
         float seasonalAngle = -maxSeasonalTilt * Mathf.Cos(dayNumber / yearLength * 2f * Mathf.PI);
         sunSeasonalRotation.localRotation = Quaternion.Euler(new Vector3(seasonalAngle, 0f, 0f));
     }
-
+    
     private void SunIntensity()
     {
         intensity = Vector3.Dot(sun.transform.forward, Vector3.down);

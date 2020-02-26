@@ -47,6 +47,6 @@ public class MapGenerator : MonoBehaviour
         Transform decorationsPlatform = new GameObject(holderName).transform;
         decorationsPlatform.parent = transform;
 
-        Map.BulidMap(Instantiate, fieldPlatform, decorationsPlatform);
+        Map.BuildMap(Instantiate, fieldPlatform, decorationsPlatform);
     }
 }

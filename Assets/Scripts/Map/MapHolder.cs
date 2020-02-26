@@ -32,7 +32,7 @@ namespace Assets.Scripts.Map
 
         public int[,] DigitalMap { get; set; }
         public GameObject[,] ObjectMap { get; set; }    
-        public float[,] NoiseArray { get; set; }
+        private float[,] NoiseArray { get; set; }
 
         private static MapHolder instance;
         private Renderer renderer;
@@ -46,7 +46,7 @@ namespace Assets.Scripts.Map
             return instance;
         }
 
-        public void BulidMap(Func<GameObject, Vector3, Quaternion, GameObject> instantiate, Transform fieldPlatform, Transform decorPlatform)
+        public void BuildMap(Func<GameObject, Vector3, Quaternion, GameObject> instantiate, Transform fieldPlatform, Transform decorPlatform)
         {
             GroundCoordinates = new List<Vector3>();
             WaterCoordinates = new List<Vector3>();
