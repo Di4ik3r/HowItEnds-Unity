@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class Main : MonoBehaviour
 {
-    private List<Creature> creatures;
+    private List<Creature> groundCreatures;
+    private List<Creature> waterCreatures;
+
     private MapHolder Map = MapHolder.getInstance();
 
     void Start()
@@ -15,11 +17,9 @@ public class Main : MonoBehaviour
         Creature.digitalMap = Map.DigitalMap;
         Creature.objectMap = Map.ObjectMap;
 
-        creatures = CreateCreatures(10);
+        groundCreatures = CreateCreatures(Menu.GroundCreaturesCount);
+        waterCreatures = CreateCreaturesInWater(Menu.WaterCreaturesCount);
         new PathFinding();
-
-        // creatures = CreateCreatures(5);
-        // creatures = CreateCreaturesInWater(5);
 
         // creatures = new List<Creature>();
         // creatures.Add(new Creature(new Vector2(0, 0), 0));
@@ -66,21 +66,21 @@ public class Main : MonoBehaviour
         return result;
     }
 
-    private void creatureCycle()
-    {
-        foreach (Creature creature in creatures)
-        {
-            creature.MakeMove();
-        }
-    }
+    //private void creatureCycle()
+    //{
+    //    foreach (Creature creature in creatures)
+    //    {
+    //        creature.MakeMove();
+    //    }
+    //}
 
-    public int[,] getDigitalMap()
-    {
-        return Map.DigitalMap;
-    }
+    //public int[,] getDigitalMap()
+    //{
+    //    return Map.DigitalMap;
+    //}
 
-    public GameObject[,] getObjectMap()
-    {
-        return Map.ObjectMap;
-    }
+    //public GameObject[,] getObjectMap()
+    //{
+    //    return Map.ObjectMap;
+    //}
 }

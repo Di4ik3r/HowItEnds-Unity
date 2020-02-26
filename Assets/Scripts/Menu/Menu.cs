@@ -31,6 +31,9 @@ public class Menu : MonoBehaviour
     private MapHolder mapHolder = MapHolder.getInstance();
     private TimeHolder timeHolder = TimeHolder.getInstance();
 
+    public static int GroundCreaturesCount = 0;
+    public static int WaterCreaturesCount = 0;
+
     void Awake()
     {
         widthField.text = mapHolder.Width.ToString();
@@ -64,9 +67,20 @@ public class Menu : MonoBehaviour
         SceneManager.LoadScene("Game");
     }
 
-    public void SetGroundCreaturesCount(){}
+    public void LoadGame()
+    {
 
-    public void SetWaterCreaturesCount(){}
+    }
+
+    public void SetGroundCreaturesCount(float value)
+    {
+        GroundCreaturesCount = (int)value;
+    }
+
+    public void SetWaterCreaturesCount(float value)
+    {
+        WaterCreaturesCount = (int)value;
+    }
 
     public void SetUse24Hours()
     {
