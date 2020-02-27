@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.DayNightCycle;
+using Assets.Scripts.Game;
 using Assets.Scripts.Map;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using UnityEngine.UI;
 
 public class OptionsMenu : MonoBehaviour
 {
+    //Map controls
     public InputField widthField;
     public InputField lenghtField;
     public InputField seedField;
@@ -18,19 +20,24 @@ public class OptionsMenu : MonoBehaviour
     public Slider foodPercentSlider;
     public Slider decorationPercentSlider;
 
+    //Time controls
     public InputField dayLengthField;
     public InputField yearLengthField;
     public Toggle use24HoursToggle;
+    public Toggle autosaveToggle;
 
+    //Creatures controls
     public static int GroundCreaturesCount = 0;
     public static int WaterCreaturesCount = 0;
 
+    //UI controls
     public GameObject mainMenuHolder;
     public GameObject optionsMenuHolder;
-
     public GameObject map;
+
+    //Holders
     private MapHolder mapHolder = MapHolder.getInstance();
-    private TimeHolder timeHolder = TimeHolder.getInstance();
+    private TimeHolder timeHolder = TimeHolder.getInstance();    
 
     public static bool IsGameLoaded = false;
 
@@ -64,6 +71,8 @@ public class OptionsMenu : MonoBehaviour
         dayLengthField.text = timeHolder.DayLength.ToString();
         yearLengthField.text = timeHolder.YearLength.ToString();
         use24HoursToggle.isOn = timeHolder.Use24Hours;
+
+        autosaveToggle.isOn = PlayerPrefs.GetInt("autosave") == 1 ? true : false;
     }
 
     public void MainMenu()
@@ -80,6 +89,18 @@ public class OptionsMenu : MonoBehaviour
     public void SetWaterCreaturesCount(float value)
     {
         WaterCreaturesCount = (int)value;
+    }
+
+    public void SetUseAutosave()
+    {
+        if (autosaveToggle.isOn)
+        {
+            PlayerPrefs.SetInt("autosave", 1);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("autosave", 0);
+        }        
     }
 
     public void SetUse24Hours()

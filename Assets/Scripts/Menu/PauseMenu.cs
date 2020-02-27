@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.DayNightCycle;
+using Assets.Scripts.Game;
 using Assets.Scripts.Map;
 using Assets.Scripts.Services;
 using Microsoft.Win32;
@@ -19,8 +20,13 @@ public class PauseMenu : MonoBehaviour
 
     public GameObject mainMenu;
     public GameObject optionsMenu;
+    public GameObject saveDialog;
+
+    public Text errorText;
 
     public Text statusBarText;
+
+    string fileName = "";
 
     void Update()
     {
@@ -51,11 +57,39 @@ public class PauseMenu : MonoBehaviour
         SceneManager.LoadScene("Menu");
     }
 
-    public void SaveGame()
+    public void ShowSaveDialog()
     {
-        IsGameSaved = true;
-        GameService.SaveGame(new GameModel(MapHolder.getInstance(), TimeHolder.getInstance()));
-        statusBarText.text = "Game saved!";
+        saveDialog.SetActive(true);       
+    }
+
+    public void CloseSaveDialog()
+    {
+        saveDialog.SetActive(false);
+    }
+
+    public void FileNameInputTextChanged(string value)
+    {
+        if (value != "" && !value.Contains("/") && !value.Contains(":"))
+        {
+            fileName = value;
+            errorText.text = "Name allowed!";
+        }
+        else
+        {
+            fileName = "";
+            errorText.text = "Empty, '/' & ':' arent allowed!";
+        }
+    }
+
+    public void SaveGame()
+    {       
+        if(fileName != "")
+        {
+            saveDialog.SetActive(false);
+            IsGameSaved = true;
+            GameService.SaveGame(new GameModel(MapHolder.getInstance(), TimeHolder.getInstance()), fileName);
+            statusBarText.text = "Game saved!";
+        }
     }
 
     public void Options()
@@ -67,7 +101,11 @@ public class PauseMenu : MonoBehaviour
 
     public void Quit()
     {
-        GameService.SaveGame(new GameModel(MapHolder.getInstance(), TimeHolder.getInstance()), true);
+        if (PlayerPrefs.GetInt("autosave") == 1)
+        {
+            GameService.SaveGame(new GameModel(MapHolder.getInstance(), TimeHolder.getInstance()), "", true);
+        }
+
         Application.Quit();
     }
 

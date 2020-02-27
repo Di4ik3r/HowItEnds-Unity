@@ -15,7 +15,7 @@ namespace Assets.Scripts.Services
     {
         public static GameModel Game { get; set; }       
 
-        public static void SaveGame(GameModel game, bool autoSave = false)
+        public static void SaveGame(GameModel game, string fileName = "undefined", bool autoSave = false)
         {
             //Convert.ToBase64String
             string saveName;
@@ -26,7 +26,7 @@ namespace Assets.Scripts.Services
             }
             else
             {
-                saveName = Application.persistentDataPath + "/" + DateTime.Now.ToString().Replace("/", "").Replace(" ", "").Replace(":", "") + ".save";
+                saveName = Application.persistentDataPath + "/" + fileName + ".save";
             }
 
             using (FileStream fs = new FileStream(saveName, FileMode.Create))
