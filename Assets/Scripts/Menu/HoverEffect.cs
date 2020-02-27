@@ -32,4 +32,11 @@ public class HoverEffect : MonoBehaviour
         transform.localScale -= new Vector3(20.0f, 20f, 20f);
         IsScaled = false;
     }
+
+    void OnMouseDown()
+    {
+        Renderer.material.color = OriginalColor;
+        transform.localScale -= new Vector3(20.0f, 20f, 20f);
+        IsScaled = false;
+    }
 }

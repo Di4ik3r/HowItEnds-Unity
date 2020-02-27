@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.DayNightCycle
 {
+    [Serializable]
     public class TimeHolder
     {
         public float DayLength { get; set; } = 1f;

@@ -3,16 +3,10 @@ using Assets.Scripts.Map;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Menu : MonoBehaviour
+public class OptionsMenu : MonoBehaviour
 {
-    public GameObject mainMenuHolder;
-    public GameObject optionsMenuHolder;
-    public GameObject map;
-
     public InputField widthField;
     public InputField lenghtField;
     public InputField seedField;
@@ -28,13 +22,33 @@ public class Menu : MonoBehaviour
     public InputField yearLengthField;
     public Toggle use24HoursToggle;
 
-    private MapHolder mapHolder = MapHolder.getInstance();
-    private TimeHolder timeHolder = TimeHolder.getInstance();
-
     public static int GroundCreaturesCount = 0;
     public static int WaterCreaturesCount = 0;
 
+    public GameObject mainMenuHolder;
+    public GameObject optionsMenuHolder;
+
+    public GameObject map;
+    private MapHolder mapHolder = MapHolder.getInstance();
+    private TimeHolder timeHolder = TimeHolder.getInstance();
+
+    public static bool IsGameLoaded = false;
+
     void Awake()
+    {
+        PrefillControls();
+    }
+
+    void Update()
+    {
+        if (IsGameLoaded)
+        {
+            PrefillControls();
+            IsGameLoaded = false;
+        }
+    }
+
+    public void PrefillControls()
     {
         widthField.text = mapHolder.Width.ToString();
         lenghtField.text = mapHolder.Lenght.ToString();
@@ -52,24 +66,10 @@ public class Menu : MonoBehaviour
         use24HoursToggle.isOn = timeHolder.Use24Hours;
     }
 
-    void Start()
+    public void MainMenu()
     {
-        if (PauseMenu.OptionsBtnIsClicked)
-        {
-            Options();
-            PauseMenu.OptionsBtnIsClicked = false;
-        }
-    }
-
-    public void Play()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("Game");
-    }
-
-    public void LoadGame()
-    {
-
+        mainMenuHolder.SetActive(true);
+        optionsMenuHolder.SetActive(false);
     }
 
     public void SetGroundCreaturesCount(float value)
@@ -91,7 +91,7 @@ public class Menu : MonoBehaviour
     {
         if (dayLengthField.text != "")
         {
-            timeHolder.DayLength = int.Parse(dayLengthField.text);            
+            timeHolder.DayLength = int.Parse(dayLengthField.text);
         }
     }
 
@@ -108,7 +108,7 @@ public class Menu : MonoBehaviour
         if (widthField.text != "")
         {
             mapHolder.Width = int.Parse(widthField.text);
-            map.GetComponent<MapGenerator>().GenerateMap();                          
+            map.GetComponent<MapGenerator>().GenerateMap();
         }
     }
 
@@ -131,8 +131,8 @@ public class Menu : MonoBehaviour
     }
 
     public void SetOctaves()
-    {       
-        if(octavesField.text != "")
+    {
+        if (octavesField.text != "")
         {
             mapHolder.Octaves = int.Parse(octavesField.text);
             map.GetComponent<MapGenerator>().GenerateMap();
@@ -182,22 +182,5 @@ public class Menu : MonoBehaviour
     {
         mapHolder.FoodPercent = value;
         map.GetComponent<MapGenerator>().GenerateMap();
-    }
-
-    public void Options()
-    {
-        mainMenuHolder.SetActive(false);
-        optionsMenuHolder.SetActive(true);
-    }
-
-    public void MainMenu()
-    {
-        mainMenuHolder.SetActive(true);
-        optionsMenuHolder.SetActive(false);
-    }
-
-    public void Quit()
-    {
-        Application.Quit();
     }
 }

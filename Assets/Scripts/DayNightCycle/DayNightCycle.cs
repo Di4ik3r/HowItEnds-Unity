@@ -96,6 +96,7 @@ public class DayNightCycle : MonoBehaviour
 
     void Start()
     {
+        Debug.Log(timeHolder.ElapsedTime);
         _targetDayLength = timeHolder.DayLength;
         _yearLength = timeHolder.YearLength;
         _dayNumber = timeHolder.DayNumber;
@@ -161,15 +162,15 @@ public class DayNightCycle : MonoBehaviour
         elapsedTime += Time.deltaTime;
         if (_timeOfDay > 1) //new day!!
         {
-            dayNumberText.text = "Day number: " + _dayNumber;
             elapsedTime = 0;
             _dayNumber++;
+            dayNumberText.text = "Day number: " + _dayNumber;
             _timeOfDay -= 1;
 
             if (_dayNumber > _yearLength) //new year!
             {
-                yearNumberText.text = "Year number: " + _yearNumber;
                 _yearNumber++;
+                yearNumberText.text = "Year number: " + _yearNumber;
                 _dayNumber = 0;
             }
         }

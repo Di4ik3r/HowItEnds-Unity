@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Map
 {
+    [Serializable]
     public class MapHolder
     {
         public int Width { get; set; } = 25;
@@ -21,21 +22,31 @@ namespace Assets.Scripts.Map
         public float HeightDifference { get; set; } = 4f;
         public float FoodPercent { get; set; } = 50f;
         public float DecorationPercent { get; set; } = 50f;
-        public GameObject Cube { get; set; }
-        public Material[] Materials { get; set; }
-        public GameObject[] Decorations { get; set; }
 
-        public List<Vector3> GroundCoordinates { get; set; }
-        public List<Vector3> WaterCoordinates { get; set; }
-        public List<Vector3> FoodCoordinates { get; set; }
-        public List<Vector3> DecorationCoordinates { get; set; }
+        [NonSerialized]
+        public List<Vector3> GroundCoordinates;
+        [NonSerialized]
+        public List<Vector3> WaterCoordinates;
+        [NonSerialized]
+        public List<Vector3> FoodCoordinates;
+        [NonSerialized]
+        public List<Vector3> DecorationCoordinates;
 
         public int[,] DigitalMap { get; set; }
-        public GameObject[,] ObjectMap { get; set; }    
         private float[,] NoiseArray { get; set; }
+       
+        [NonSerialized]
+        public GameObject Cube;
+        [NonSerialized]
+        public Material[] Materials;
+        [NonSerialized]
+        public GameObject[] Decorations;
+        [NonSerialized]
+        public GameObject[,] ObjectMap;
+        [NonSerialized]
+        private Renderer renderer;
 
         private static MapHolder instance;
-        private Renderer renderer;
 
         private MapHolder(){ }
 
