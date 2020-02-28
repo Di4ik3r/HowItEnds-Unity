@@ -52,18 +52,21 @@ public class PauseMenu : MonoBehaviour
     }
 
     public void MainMenu()
-    {
+    {        
+        AudioManager.instance.PlayMusic("MainMenu", 2);
+        AudioManager.instance.PauseMusic("PauseMenu");
+
         IsGamePaused = false;
         SceneManager.LoadScene("Menu");
     }
 
     public void ShowSaveDialog()
-    {
+    {        
         saveDialog.SetActive(true);       
     }
 
     public void CloseSaveDialog()
-    {
+    {        
         saveDialog.SetActive(false);
     }
 
@@ -94,6 +97,9 @@ public class PauseMenu : MonoBehaviour
 
     public void Options()
     {
+        AudioManager.instance.PlayMusic("MainMenu", 2);
+        AudioManager.instance.PauseMusic("PauseMenu");
+
         IsGamePaused = false;
         OptionsBtnIsClicked = true;
         SceneManager.LoadScene("Menu");        
@@ -110,7 +116,10 @@ public class PauseMenu : MonoBehaviour
     }
 
     public void Resume()
-    {        
+    {
+        AudioManager.instance.PauseMusic("PauseMenu");
+        AudioManager.instance.PlayMusic("Game", 2);
+
         pauseMenu.SetActive(false);
         Time.timeScale = 1f;
         IsGamePaused = false;
@@ -118,6 +127,9 @@ public class PauseMenu : MonoBehaviour
 
     private void Pause()
     {
+        AudioManager.instance.PlayMusic("PauseMenu", 2);
+        AudioManager.instance.PauseMusic("Game");
+
         statusBarText.text = "Game paused.";
         pauseMenu.SetActive(true);
         Time.timeScale = 0f;

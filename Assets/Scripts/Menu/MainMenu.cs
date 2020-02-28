@@ -17,6 +17,11 @@ public class MainMenu : MonoBehaviour
 
     public Dropdown filePathDropdown;  
 
+    void Awake()
+    {
+        AudioManager.instance.PlayMusic("MainMenu", 2);        
+    }
+
     void Start()
     {
         if (PauseMenu.OptionsBtnIsClicked)
@@ -54,6 +59,9 @@ public class MainMenu : MonoBehaviour
     public void Play()
     {
         Time.timeScale = 1f;
+        AudioManager.instance.PauseMusic("MainMenu");
+        AudioManager.instance.PlayMusic("Game", 2);        
+
         SceneManager.LoadScene("Game");
     }
 

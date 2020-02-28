@@ -10,6 +10,7 @@ namespace Assets.Scripts.Menu
 
         private void OnMouseDown()
         {
+            AudioManager.instance.PlaySound2D("Click");
             anEvent.Invoke();
         }
     }
