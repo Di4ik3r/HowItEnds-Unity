@@ -86,8 +86,8 @@ public class PathFinding {
 
             var neighbours = current.GetNeighbours();
             foreach (var neighbour in neighbours) {
-                // if(!neighbour.isWalkable || close.Contains(neighbour)) {
-                if(close.Contains(neighbour)) {
+                if(!neighbour.isWalkable || close.Contains(neighbour)) {
+                // if(close.Contains(neighbour)) {
                     continue;
                 }
 

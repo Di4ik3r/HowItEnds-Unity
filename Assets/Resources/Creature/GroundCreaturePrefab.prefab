@@ -106,16 +106,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34169d3c0b7a668fea257d4f4d5a94b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HUNGER_LIMIT: 10
-  HUNGER_STEP: 1
+  HUNGER_LIMIT: 0.6
+  HUNGER_STEP: 0.02
   THIRST_LIMIT: 0.5
   THIRST_STEP: 0.0006
-  isAlive: 0
   hunger: 0
   thirst: 0
   speed: 0
   meshHeight: 0
   scale: 0
-  isConsuming: 0
   MOVES_LIMIT_MIN: 3
   MOVES_LIMIT_MAX: 12
+  action: 2
+  consumeLimit: 1
+  consumeStep: 0.01
+  consumeTime: 0
+  eatingMultiplier: 1
+  drinkingMultiplier: 1

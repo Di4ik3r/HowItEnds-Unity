@@ -32,7 +32,7 @@ public class Creature : MonoBehaviour {
     // Ідентифікатор Юніта
     private int     id;
     // Булівське значення, що відображає чи живий Юніт
-    public bool    isAlive;
+    private bool    isAlive;
     // Показник голоду
     public float   hunger;
     // Показник спраги
@@ -51,13 +51,12 @@ public class Creature : MonoBehaviour {
     // Висота Меша. Потрібно для того щоб юніт правильно ставав на блоки по висоті
     public float meshHeight;
     public float scale;
-    protected Vector2 speedLimit = new Vector2(0.6f, 1.4f);
+    protected Vector2 speedLimit = new Vector2(0.6f, 2.4f);
 
     // Властивість, що відображає чи відчуває голод Юніт
-    public bool isHunger { get { return this.hunger >= this.HUNGER_LIMIT ? true : false; } }
+    private bool isHunger { get { return this.hunger >= this.HUNGER_LIMIT ? true : false; } }
     // Властивість, що відображає чи відчуває спрагу Юніт
-    public bool isThirst { get { return this.thirst >= this.THIRST_LIMIT ? true : false; } }
-    public bool isConsuming = false;
+    private bool isThirst { get { return this.thirst >= this.THIRST_LIMIT ? true : false; } }
     
 
     public IMovement movement;
@@ -66,6 +65,13 @@ public class Creature : MonoBehaviour {
     public int MOVES_LIMIT_MAX = 12;
 
     // public static GameObject prefab;
+    public CreatureAction action = CreatureAction.Walking;
+    public float consumeLimit = 1f;
+    public float consumeStep = 0.01f;
+    public float consumeTime = 0;
+    public float eatingMultiplier = 1f;
+    public float drinkingMultiplier = 1f;
+
 
     public static T Create<T>(Vector2 position, int birthDay) {
         GameObject prefab = Resources.Load<GameObject>($"Creature/{typeof(T).FullName}Prefab");
@@ -82,8 +88,7 @@ public class Creature : MonoBehaviour {
     }
 
     public void Update() {
-        // this.MakeMove();
-        this.movement.Update();
+        this.MakeMove();
     }
 
     private void InitProperties(Vector2 position, int birthDay) {
@@ -96,12 +101,12 @@ public class Creature : MonoBehaviour {
         this.speed = Random.Range(this.speedLimit.x, this.speedLimit.y); 
         this.weight = 0;
 
-        this.movement = new GroundMovement(this);
+        this.movement = new WaterMovement(this);
         
         this.isAlive = true;
 
         
-        this.searchRadius = 8;
+        this.searchRadius = 12;
 
         this.scale = 1 - this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.3f, 0.7f);
         this.meshHeight = this.scale;
@@ -122,26 +127,77 @@ public class Creature : MonoBehaviour {
 
 
     // Логіка руху Юніта
-    // public void MakeMove() {
-    //     if(!this.isAlive)
-    //         return;
+    public void MakeMove() {
+        if(!this.isAlive)
+            return;
 
-    //     // Debug.Log($"{isHunger} : {hunger} <> {HUNGER_LIMIT}");
-    //     // Якщо голодний - шукаємо їжу
-    //     if(isHunger && !isConsuming) {
-    //         FindFood();
-    //         // andrii;
-    //     }
-    //     if(isThirst && !isConsuming) {
-    //         FindWater();
+        
+        switch (this.action) {
+            case CreatureAction.Eating:
+                Eat();
+                break;
+            
+            case CreatureAction.Drinking:
+                Drink();
+                break;
 
-    //     }
+            case CreatureAction.Walking:
+                if(isHunger) {
+                    // var foodBlocks = GetBlocksByNeed(2);
+                    // if(foodBlocks.Count > 0) {
+                    if(IsNeededBlockInTouch(2)) {
+                        Debug.Log("food in touch");
+                        StartEat();
+                    } else {
+                        // FindFood();
+                    }
+                // andrii;
+                } else if(isThirst) {
+                    // var waterBlocks = GetBlocksByNeed(0);
+                    // if(waterBlocks.Count > 0) {
+                    if(IsNeededBlockInTouch(1)) {
+                        Debug.Log("water in touch");
+                        StartDrink();
+                    } else {
+                        FindWater();
+                    }
+                }
+                break;
 
-    //     this.movement.Jump();
-    // }
+            default:
+                break;
+        }
+                this.movement.Jump();
 
-    public void FindWater() {
-        Debug.Log("looking for water");
+    }
+
+    protected void StartEat() {
+        this.action = CreatureAction.Eating;
+        Eat();
+    }
+    protected void Eat() {
+        consumeTime += consumeStep;
+
+        if(consumeTime >= consumeLimit * eatingMultiplier) {
+            this.consumeTime = 0;
+            this.action = CreatureAction.Walking;
+            this.hunger = 0;
+        }
+    }
+
+    protected void StartDrink() {
+        this.action = CreatureAction.Drinking;
+        Drink();
+    }
+    protected void Drink() {
+        consumeTime += consumeStep;
+        if(consumeTime >= consumeLimit * drinkingMultiplier) {
+            this.consumeTime = 0;
+            this.action = CreatureAction.Walking;
+        }
+    }
+
+    private void FindWater() {
         
         // PaintToDefault();
 
@@ -166,33 +222,30 @@ public class Creature : MonoBehaviour {
         // }
     }
 
-    public void FindFood() {
-        // Debug.Log("looking for eat");
-
-        this.PaintToDefault();
-        this.PaintBlocks(GetBlocksByRadius(this.searchRadius));
-
-        var waterBlock = this.GetClosestWaterBlockByRadius(this.searchRadius);
-        if(waterBlock.x >= 0)
-            this.movement.MoveTo(waterBlock);
+    private void FindFood() {
+        if(!this.movement.PathIsExist()) {
+            var foodBlock = GetFoodBlock();
+            if(foodBlock.x != -1)
+                this.movement.MoveTo(foodBlock);
+        }
     }
 
-    public void Consume(Vector2 block) {
-        // this
-    }
 
-    public bool CheckFoodByReach() {
+    protected bool IsNeededBlockInTouch(int block) {
         int currentX = (int)(this.transform.position.x);
         int currentY = (int)(this.transform.position.z);
-
+        
         for(int y = currentY - 1; y <= currentY + 1; y++) {
             for(int x = currentX - 1; x <= currentX + 1; x++) {
                 if((x == currentX && y == currentY) ||
-                (x < 0 || x >= Creature.digitalMap.GetLength(0)) ||
-                (y < 0 || y >= Creature.digitalMap.GetLength(1)))
+                    (x < 0 || x >= Creature.digitalMap.GetLength(0)) ||
+                    (y < 0 || y >= Creature.digitalMap.GetLength(1)))
                     continue;
 
-                if(Creature.digitalMap[x, y] == 1) {
+                if(Creature.digitalMap[x, y] == block) {
+                    Debug.Log("tyt");
+                    Debug.Log($"{currentX} {currentY}");
+                    Debug.Log($"{x} {y}");
                     return true;
                 }
             }
@@ -200,64 +253,50 @@ public class Creature : MonoBehaviour {
 
         return false;
     }
-
-    public Vector2 GetWaterBlockByReach() {
+    // 0 ground
+    // 1 water
+    // 2 food
+    // 3 decoration
+    protected List<Vector2> GetBlocksByNeed(int block) {
         var result = new List<Vector2>();
-
+        
         int currentX = (int)(this.transform.position.x);
         int currentY = (int)(this.transform.position.z);
-
-        var minDistance = 999;
-        var minBlock = new Vector2(-1, -1);
+        
         for(int y = currentY - 1; y <= currentY + 1; y++) {
             for(int x = currentX - 1; x <= currentX + 1; x++) {
-                if((x == currentX && y == currentY) ||
-                (x < 0 || x >= Creature.digitalMap.GetLength(0)) ||
-                (y < 0 || y >= Creature.digitalMap.GetLength(1)))
-                    continue;
-
-                if(Creature.digitalMap[x, y] == 1) {
-                    var waterBlock = new Vector2(x, y);
-                    var distance = PathFinding.GetDistance(new Vector2(currentX, currentY), waterBlock);
-                    if(distance < minDistance) {
-                        minDistance = distance;
-                        minBlock = waterBlock;
-                    }
-                }
-            }
-        }
-
-        return minBlock;
-    }
-
-    protected Vector2 GetClosestWaterBlockByRadius(int radius) {
-        var result = new List<Vector2>();
-
-        int currentX = (int)(this.transform.position.x);
-        int currentY = (int)(this.transform.position.z);
-
-        var minDistance = 999;
-        var minBlock = new Vector2(-1, -1);
-        for(int y = currentY - radius; y <= currentY + radius; y++) {
-            for(int x = currentX - radius; x <= currentX + radius; x++) {
                 if((x == currentX && y == currentY) ||
                     (x < 0 || x >= Creature.digitalMap.GetLength(0)) ||
                     (y < 0 || y >= Creature.digitalMap.GetLength(1)))
                     continue;
 
-                if(Mathf.Pow(x - currentX, 2) + Mathf.Pow(y - currentY, 2) <= Mathf.Pow(this.searchRadius, 2))
-                    if(Creature.digitalMap[x, y] == 1) {
-                        var waterBlock = new Vector2(x, y);
-                        var distance = PathFinding.GetDistance(new Vector2(currentX, currentY), waterBlock);
-                        if(distance < minDistance) {
-                            minDistance = distance;
-                            minBlock = waterBlock;
-                        }
-                    }
+                if(Creature.digitalMap[currentX, currentY] == block)
+                    result.Add(new Vector2(x, y));
             }
         }
 
-        return minBlock;
+        return result;
+    }
+
+
+    protected Vector2 GetFoodBlock() {
+        var blocks = GetBlocksByRadius(this.searchRadius);
+        var foodBlocks = new List<Vector2>();
+        int currentX = (int)(this.transform.position.x);
+        int currentY = (int)(this.transform.position.z);
+        var currentPos = new Vector2(currentX, currentY);
+
+        foreach (var block in blocks) {
+            if(Creature.digitalMap[(int)block.x, (int)block.y] == 2)
+                foodBlocks.Add(block);
+        }
+
+        foodBlocks.Sort( (a, b) => 
+            PathFinding.GetDistance(currentPos, a) <
+            PathFinding.GetDistance(currentPos, b) ? 1 : 0
+        );
+
+        return foodBlocks.Count == 0 ? new Vector2(-1, -1) : foodBlocks[0];
     }
 
     protected List<Vector2> GetBlocksByRadius(int radius) {
@@ -294,26 +333,18 @@ public class Creature : MonoBehaviour {
         return result;
     }
 
-    public void PaintToDefault(){ 
+    public void PaintToDefault() { 
         for(int y = 0; y < Creature.objectMap.GetLength(1); y++) {
             for(int x = 0; x < Creature.objectMap.GetLength(0); x++) {
                 Color color = new Color(0f, 0f, 0f);
                 switch(Creature.digitalMap[x, y]) {
                     case 0: {
                         color = new Color(0.2f, 0.5f, 0f);
-                        break;
+                        break;            
                     }
                     case 1: {
                         color = new Color(0f, 0f, 0.7f);
-                        break;
-                    }
-                    case 2: {
-                        color = new Color(0.7f, 0f, 0f);
-                        break;
-                    }
-                    case 3: {
-                        color = new Color(0.7f, 0.7f, 0.7f);
-                        break;
+                        break;            
                     }
                 }
                 Creature.objectMap[x, y]
@@ -323,15 +354,4 @@ public class Creature : MonoBehaviour {
             }
         }
     }
-
-    protected void PaintBlocks(List<Vector2> blocks) {
-        foreach (var block in blocks) {
-            var digitalMapValue = ((float)(Creature.digitalMap[(int)block.x, (int)block.y])).Map(0, 9, 0, 1);
-            Creature.objectMap[(int)block.x, (int)block.y]
-                .GetComponent<Renderer>()
-                .materials[0]
-                .color = new Color(digitalMapValue, digitalMapValue, digitalMapValue);
-        }
-    }
-
 }

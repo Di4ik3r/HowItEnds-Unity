@@ -12,12 +12,13 @@ public class Main : MonoBehaviour
 
     void Start()
     {
-        //UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
+        UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
 
         Creature.digitalMap = Map.DigitalMap;
         Creature.objectMap = Map.ObjectMap;
 
-        groundCreatures = CreateCreatures(OptionsMenu.GroundCreaturesCount);
+        // groundCreatures = CreateCreatures(OptionsMenu.GroundCreaturesCount);
+        groundCreatures = CreateCreatures(1);
         waterCreatures = CreateCreaturesInWater(OptionsMenu.WaterCreaturesCount);
         new PathFinding();
 

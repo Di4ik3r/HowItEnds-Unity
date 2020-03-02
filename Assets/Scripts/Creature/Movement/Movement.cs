@@ -9,7 +9,7 @@ public abstract class Movement : IMovement {
     protected int movementBlock;
 
     protected int pathIndex;
-    protected Stack pathToCell;
+    public Stack pathToCell;
     protected Vector2 lookingForCell;
     public bool isMoving;
 
@@ -38,9 +38,6 @@ public abstract class Movement : IMovement {
     }
 
     public void Update() {
-        if(!this.creature.isAlive)
-            return;
-
         this.Jump();
     }
 
@@ -49,24 +46,11 @@ public abstract class Movement : IMovement {
         if(this.isMoving)
             AnimateMoving();
         else {
-            // Якщо голодний - шукаємо їжу
-            if(this.creature.isHunger && !this.creature.isConsuming) {
-                // if(this.creature.CheckFoodByReach()) {
-                    
-                // }
-                // if(this.pathToCell.Count == 0) {
-                    this.creature.FindFood();
-                // }
-            }
-            // if(this.creature.isThirst) {
-            //     this.creature.FindWater();
-            // }
-
             StartMoving();
         }
     }
 
-    protected abstract void AnimateMoving();
+    public abstract void AnimateMoving();
 
     public void StartMoving() {
         this.moveStartPosition = this.creature.transform.position;
@@ -77,12 +61,21 @@ public abstract class Movement : IMovement {
             this.moveTargetPosition = MoveLogic(this.lookingForCell);
             if(this.pathToCell.Count <= 0) {
                 Debug.Log(this.pathToCell.Count);
-                this.creature.isConsuming = false;
-                this.creature.hunger = 0;
-                this.creature.PaintToDefault();
+                // this.creature.isConsuming = false;
+                // this.creature.hunger = 0;
+                // this.creature.PaintToDefault();
             }
         } else {
-            this.moveTargetPosition = MoveLogic();
+            switch(this.creature.action) {
+                case CreatureAction.Drinking:
+                case CreatureAction.Eating:
+                    this.moveTargetPosition = this.moveStartPosition;
+                    break;
+                default:
+                    this.moveTargetPosition = MoveLogic();
+                    break;
+            }
+            // this.moveTargetPosition = MoveLogic();
         }
         this.isMoving = true;
 
@@ -106,7 +99,14 @@ public abstract class Movement : IMovement {
             new Vector2(to.x, to.y)
         );
 
-        this.creature.isConsuming = true;
+        // Debug.Log($"{to} {Creature.digitalMap[(int)to.x, (int)to.y]}");
+        // foreach (var block in pathToCell) {
+        //     Debug.Log(block);
+        // }
+
+        // Debug.Log(this.pathToCell.Count);
+
+        // this.creature.isConsuming = true;
     }
     
 
@@ -118,5 +118,8 @@ public abstract class Movement : IMovement {
                 .color = new Color(0.2f, 0.3f, 0.4f);
         }
     }
-}
 
+    public bool PathIsExist() {
+        return this.pathToCell.Count == 0 ? false: true;
+    }
+}
