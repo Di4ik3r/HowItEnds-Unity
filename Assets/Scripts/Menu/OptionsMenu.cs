@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.DayNightCycle;
-using Assets.Scripts.Game;
 using Assets.Scripts.Map;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,7 +23,6 @@ public class OptionsMenu : MonoBehaviour
     public InputField dayLengthField;
     public InputField yearLengthField;
     public Toggle use24HoursToggle;
-    public Toggle autosaveToggle;
 
     //Creatures controls
     public static int GroundCreaturesCount = 0;
@@ -38,6 +36,12 @@ public class OptionsMenu : MonoBehaviour
     //Holders
     private MapHolder mapHolder = MapHolder.getInstance();
     private TimeHolder timeHolder = TimeHolder.getInstance();    
+
+    //Game controls
+    public Toggle autosaveToggle;
+    public Slider masterVolumeSlider;
+    public Slider musicVolumeSlider;
+    public Slider sfxVolumeSlider;
 
     public static bool IsGameLoaded = false;
 
@@ -73,12 +77,30 @@ public class OptionsMenu : MonoBehaviour
         use24HoursToggle.isOn = timeHolder.Use24Hours;
 
         autosaveToggle.isOn = PlayerPrefs.GetInt("autosave") == 1 ? true : false;
+        masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVol");
+        musicVolumeSlider.value = PlayerPrefs.GetFloat("MusicVol");
+        sfxVolumeSlider.value = PlayerPrefs.GetFloat("SfxVol");
     }
 
     public void MainMenu()
     {
         mainMenuHolder.SetActive(true);
         optionsMenuHolder.SetActive(false);
+    }
+
+    public void SetMasterVolume(float value)
+    {
+        AudioManager.instance.SetVolume(value, AudioManager.AudioChannel.Master);
+    }
+
+    public void SetMusicVolume(float value)
+    {
+        AudioManager.instance.SetVolume(value, AudioManager.AudioChannel.Music);
+    }
+
+    public void SetSfxVolume(float value)
+    {
+        AudioManager.instance.SetVolume(value, AudioManager.AudioChannel.Sfx);
     }
 
     public void SetGroundCreaturesCount(float value)

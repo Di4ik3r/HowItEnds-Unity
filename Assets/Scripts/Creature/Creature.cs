@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-
-
+using UnityEngine.UI;
 
 public class Creature : MonoBehaviour {
 
@@ -23,11 +21,14 @@ public class Creature : MonoBehaviour {
     public static Vector2 DEATH_RANGE = new Vector2(6, 15);
     // Ліміт, при досягненні якого - Юніт буде шукати їжу. Крок, який буде додаватись до загального показника
     // голоду
-    public float HUNGER_LIMIT = .6f, HUNGER_STEP = .0004f;
+    public float HUNGER_LIMIT = 1f, HUNGER_STEP = .112f;
     // Ліміт, при досягненні якого - Юніт буде шукати воду. Крок, який буде додаватись до загального показника
     // спраги
     // private float THIRST_LIMIT = .4f, THIRST_STEP = .06f;
-    public float THIRST_LIMIT = .5f, THIRST_STEP = .0006f;
+    public float THIRST_LIMIT = 1f, THIRST_STEP = .126f;
+
+    public float hungerMultiplier = 1f;
+    public float thirstMultiplier = 1f;
 
     // Ідентифікатор Юніта
     public int     id;
@@ -72,6 +73,27 @@ public class Creature : MonoBehaviour {
     public float eatingMultiplier = 1f;
     public float drinkingMultiplier = 1f;
 
+
+    ///CHANGES MADE BY ILLUHA
+    ///CHANGES MADE BY ILLUHA
+    [Header("Creatures stats UI")]
+    public GameObject statsCanvas;
+    public Image foodBar;
+    public Image waterBar;
+
+    public void RefreshStatus() {
+        this.foodBar.fillAmount = 1 - this.hunger;
+        this.waterBar.fillAmount = 1 - this.thirst;
+    }
+
+    void OnMouseDown()
+    {
+        // foodBar.fillAmount += 0.1f;
+        // waterBar.fillAmount += 0.1f;
+        statsCanvas.SetActive(true);
+    }
+    ///CHANGES MADE BY ILLUHA
+    ///CHANGES MADE BY ILLUHA
 
     public static T Create<T>(Vector2 position, int birthDay) {
         GameObject prefab = Resources.Load<GameObject>($"Creature/{typeof(T).FullName}Prefab");

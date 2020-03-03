@@ -182,8 +182,8 @@ namespace Assets.Scripts.Map
             for (int i = 0; i < DecorationCoordinates.Count; i++)
             {
                 int rnd = UnityEngine.Random.Range(0, Decorations.Length);
-                instantiate(Decorations[rnd], new Vector3(DecorationCoordinates[i].x, DecorationCoordinates[i].y + additionalHeight, DecorationCoordinates[i].z), 
-                    Quaternion.identity).transform.parent = decoratinonsPlatform;
+                instantiate(Decorations[rnd], new Vector3(DecorationCoordinates[i].x, DecorationCoordinates[i].y + additionalHeight, DecorationCoordinates[i].z),
+                    /*Quaternion.identity*/Decorations[rnd].transform.rotation).transform.parent = decoratinonsPlatform;
             }
         }
 

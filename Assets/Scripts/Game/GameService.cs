@@ -17,7 +17,6 @@ namespace Assets.Scripts.Services
 
         public static void SaveGame(GameModel game, string fileName = "undefined", bool autoSave = false)
         {
-            //Convert.ToBase64String
             string saveName;
             
             if (autoSave)
@@ -55,20 +54,6 @@ namespace Assets.Scripts.Services
             MapHolder mapHolder = MapHolder.getInstance();
 
             PropertyCopier<MapHolder, MapHolder>.Copy(Game.Map, mapHolder);
-
-            //mapHolder.Width = Game.Map.Width;
-            //mapHolder.Lenght = Game.Map.Lenght;
-            //mapHolder.DecorationPercent = Game.Map.Lenght;
-            //mapHolder.DigitalMap = Game.Map.DigitalMap;
-            //mapHolder.FoodPercent = Game.Map.FoodPercent;
-            //mapHolder.HeightDifference = Game.Map.HeightDifference;
-            //mapHolder.Lacunarity = Game.Map.Lacunarity;
-            //mapHolder.NoiseScale = Game.Map.NoiseScale;
-            //mapHolder.Octaves = Game.Map.Octaves;
-            //mapHolder.OffsetX = Game.Map.OffsetX;
-            //mapHolder.OffsetY = Game.Map.OffsetY;
-            //mapHolder.Persistence = Game.Map.Persistence;
-            //mapHolder.Seed = Game.Map.Seed;
         }
 
         private static void FillTimeHolder()
@@ -76,14 +61,6 @@ namespace Assets.Scripts.Services
             TimeHolder timeHolder = TimeHolder.getInstance();
 
             PropertyCopier<TimeHolder, TimeHolder>.Copy(Game.Time, timeHolder);         
-
-            //timeHolder.DayLength = Game.Time.DayLength;
-            //timeHolder.DayNumber = Game.Time.DayNumber;
-            //timeHolder.ElapsedTime = Game.Time.ElapsedTime;
-            //timeHolder.TimeOfDay = Game.Time.TimeOfDay;
-            //timeHolder.Use24Hours = Game.Time.Use24Hours;
-            //timeHolder.YearLength = Game.Time.YearLength;
-            //timeHolder.YearNumber = Game.Time.YearNumber;
         }        
     }
 }

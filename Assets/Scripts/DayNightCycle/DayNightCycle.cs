@@ -96,7 +96,6 @@ public class DayNightCycle : MonoBehaviour
 
     void Start()
     {
-        Debug.Log(timeHolder.ElapsedTime);
         _targetDayLength = timeHolder.DayLength;
         _yearLength = timeHolder.YearLength;
         _dayNumber = timeHolder.DayNumber;
