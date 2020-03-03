@@ -107,9 +107,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HUNGER_LIMIT: 0.6
-  HUNGER_STEP: 0.0004
+  HUNGER_STEP: 0.03
   THIRST_LIMIT: 0.5
-  THIRST_STEP: 0.0006
+  THIRST_STEP: 0.01
+  id: 0
   hunger: 0
   thirst: 0
   speed: 0

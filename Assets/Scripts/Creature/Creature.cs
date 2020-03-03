@@ -12,7 +12,7 @@ public class Creature : MonoBehaviour {
     
     // Статичне поле даного класу, яке дозволяє відслідковувати і обробляти ідентифікатори для кожного
     // юніта
-    public static int ID_COUNTER = 0;
+    public static int ID_COUNTER = 50;
     // Статичне поле даного класу, яке дозволяє тримати ІНТовський масив карти
     public static int[,] digitalMap;
     // Статичне поле даного класу, яке дозволяє тримати масив кубів карти    
@@ -30,7 +30,7 @@ public class Creature : MonoBehaviour {
     public float THIRST_LIMIT = .5f, THIRST_STEP = .0006f;
 
     // Ідентифікатор Юніта
-    private int     id;
+    public int     id;
     // Булівське значення, що відображає чи живий Юніт
     private bool    isAlive;
     // Показник голоду
@@ -59,7 +59,7 @@ public class Creature : MonoBehaviour {
     private bool isThirst { get { return this.thirst >= this.THIRST_LIMIT ? true : false; } }
     
 
-    public IMovement movement;
+    public Movement movement;
     // Ліміт максимально можливих ходів в даному напрямку
     public int MOVES_LIMIT_MIN = 3;
     public int MOVES_LIMIT_MAX = 12;
@@ -106,11 +106,9 @@ public class Creature : MonoBehaviour {
         this.isAlive = true;
 
         
-        this.searchRadius = 20;
+        this.searchRadius = 9;
 
         this.scale = 1 - this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.3f, 0.7f);
-        this.meshHeight = this.scale;
-        // this.meshHeight = 1;
 
         this.transform.position = new Vector3(position.x, 
                                     Creature.objectMap[(int)position.x, (int)position.y].transform.position.y + this.meshHeight,
@@ -143,20 +141,14 @@ public class Creature : MonoBehaviour {
 
             case CreatureAction.Walking:
                 if(isHunger) {
-                    // var foodBlocks = GetBlocksByNeed(2);
-                    // if(foodBlocks.Count > 0) {
                     if(IsNeededBlockInTouch(2)) {
-                        Debug.Log("food in touch");
                         StartEat();
                     } else {
                         FindFood();
                     }
                 // andrii;
                 } else if(isThirst) {
-                    // var waterBlocks = GetBlocksByNeed(0);
-                    // if(waterBlocks.Count > 0) {
                     if(IsNeededBlockInTouch(1)) {
-                        Debug.Log("water in touch");
                         StartDrink();
                     } else {
                         FindWater();
@@ -227,9 +219,6 @@ public class Creature : MonoBehaviour {
                     continue;
 
                 if(Creature.digitalMap[x, y] == block) {
-                    Debug.Log("tyt");
-                    Debug.Log($"{currentX} {currentY}");
-                    Debug.Log($"{x} {y}");
                     return true;
                 }
             }
@@ -244,7 +233,8 @@ public class Creature : MonoBehaviour {
     protected List<Vector2> GetBlocksByNeed(int block) {
         var result = new List<Vector2>();
         
-        int currentX = (int)(this.transform.position.x);
+        int currentX = (int
+        )(this.transform.position.x);
         int currentY = (int)(this.transform.position.z);
         
         for(int y = currentY - 1; y <= currentY + 1; y++) {
@@ -295,22 +285,6 @@ public class Creature : MonoBehaviour {
     protected List<Vector2> GetNeighboursBlocks(Vector2 block) {
         var result = new List<Vector2>();
 
-        // int yStart = (int)this.transform.position.y - radius;
-        // yStart = yStart < 0 ? 0 : yStart;
-
-        // int yEnd = (int)this.transform.position.y + radius;
-        // yEnd = yEnd >= Creature.digitalMap.GetLength(1) ? Creature.digitalMap.GetLength(1) : yEnd;
-
-        // int xStart = (int)this.transform.position.x - radius;
-        // xStart = xStart < 0 ? 0 : xStart;
-
-        // int xEnd = (int)this.transform.position.x + radius;
-        // xEnd = xEnd >= Creature.digitalMap.GetLength(0) ? Creature.digitalMap.GetLength(0) : xEnd;
-
-        // int currentX = (int)(this.transform.position.x);
-        // int currentY = (int)(this.transform.position.z);
-        // Debug.Log($"{currentX} : {this.transform.position.x}");
-        // Debug.Log($"{currentY} : {this.transform.position.z}");
         for(int y = (int)block.y - 1; y <= (int)block.y + 1; y++) {
             for(int x = (int)block.x - 1; x <= (int)block.x + 1; x++) {
                 if((x == block.x && y == block.y) ||
@@ -318,8 +292,7 @@ public class Creature : MonoBehaviour {
                     (y < 0 || y >= Creature.digitalMap.GetLength(1)))
                     continue;
 
-                // if(Mathf.Pow(x - currentX, 2) + Mathf.Pow(y - currentY, 2) <= Mathf.Pow(this.searchRadius, 2))
-                    result.Add(new Vector2(x, y));
+                result.Add(new Vector2(x, y));
             }
         }
 
@@ -329,22 +302,9 @@ public class Creature : MonoBehaviour {
     protected List<Vector2> GetBlocksByRadius(int radius) {
         var result = new List<Vector2>();
 
-        // int yStart = (int)this.transform.position.y - radius;
-        // yStart = yStart < 0 ? 0 : yStart;
-
-        // int yEnd = (int)this.transform.position.y + radius;
-        // yEnd = yEnd >= Creature.digitalMap.GetLength(1) ? Creature.digitalMap.GetLength(1) : yEnd;
-
-        // int xStart = (int)this.transform.position.x - radius;
-        // xStart = xStart < 0 ? 0 : xStart;
-
-        // int xEnd = (int)this.transform.position.x + radius;
-        // xEnd = xEnd >= Creature.digitalMap.GetLength(0) ? Creature.digitalMap.GetLength(0) : xEnd;
 
         int currentX = (int)(this.transform.position.x);
         int currentY = (int)(this.transform.position.z);
-        // Debug.Log($"{currentX} : {this.transform.position.x}");
-        // Debug.Log($"{currentY} : {this.transform.position.z}");
         for(int y = currentY - radius; y <= currentY + radius; y++) {
             for(int x = currentX - radius; x <= currentX + radius; x++) {
                 if((x == currentX && y == currentY) ||
@@ -358,27 +318,5 @@ public class Creature : MonoBehaviour {
         }
 
         return result;
-    }
-
-    public void PaintToDefault() { 
-        for(int y = 0; y < Creature.objectMap.GetLength(1); y++) {
-            for(int x = 0; x < Creature.objectMap.GetLength(0); x++) {
-                Color color = new Color(0f, 0f, 0f);
-                switch(Creature.digitalMap[x, y]) {
-                    case 0: {
-                        color = new Color(0.2f, 0.5f, 0f);
-                        break;            
-                    }
-                    case 1: {
-                        color = new Color(0f, 0f, 0.7f);
-                        break;            
-                    }
-                }
-                Creature.objectMap[x, y]
-                    .GetComponent<Renderer>()
-                    .materials[0]
-                    .color = color;
-            }
-        }
     }
 }

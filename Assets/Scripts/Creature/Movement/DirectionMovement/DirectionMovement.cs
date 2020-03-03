@@ -27,6 +27,7 @@ public abstract class DirectionMovement : Movement {
 
     // Логіка вибору клітки, на яку ступить Юніт
     protected override Vector3 MoveLogic() {
+        this.moveArcHeight = this.arcHeight;
         // Якщо кількість кроків на даний напрямок не вичерпана або на даниий напрямок немає
         // доступних кліток
         if(this.currentMoveCount >= this.limitMoveCount || NoAvailableChioces()) {
@@ -55,7 +56,7 @@ public abstract class DirectionMovement : Movement {
 
         // Позначаємо нашу позицію в глобальному масиві, щоб ніхто не зміг стати на цю позицію
         // т.я. вона вже занята
-        Creature.digitalMap[(int)x, (int)z] = 9;
+        Creature.digitalMap[(int)x, (int)z] = this.creature.id;
         // Збільшуємо індексер кроків в даному напрямку
         this.currentMoveCount++;
 
@@ -67,6 +68,8 @@ public abstract class DirectionMovement : Movement {
     }
 
     protected override Vector3 MoveLogic(Vector2 to) {
+        this.moveArcHeight = this.arcHeight;
+
         // Оголошуємо змінні, яка повернемо і запамятовуємо поточну позицію
         float   x = this.creature.transform.position.x,
                 y = this.creature.transform.position.y,
@@ -83,7 +86,7 @@ public abstract class DirectionMovement : Movement {
 
         // Позначаємо нашу позицію в глобальному масиві, щоб ніхто не зміг стати на цю позицію
         // т.я. вона вже занята
-        Creature.digitalMap[(int)x, (int)z] = 9;
+        Creature.digitalMap[(int)x, (int)z] = this.creature.id;
         // Збільшуємо індексер кроків в даному напрямку
         this.currentMoveCount++;
 

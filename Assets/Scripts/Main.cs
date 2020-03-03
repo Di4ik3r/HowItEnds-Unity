@@ -18,7 +18,7 @@ public class Main : MonoBehaviour
         Creature.objectMap = Map.ObjectMap;
 
         // groundCreatures = CreateCreatures(OptionsMenu.GroundCreaturesCount);
-        groundCreatures = CreateCreatures(1);
+        groundCreatures = CreateCreatures(20);
         waterCreatures = CreateCreaturesInWater(OptionsMenu.WaterCreaturesCount);
         new PathFinding();
         new Grid();

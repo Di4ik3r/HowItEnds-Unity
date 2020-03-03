@@ -17,6 +17,7 @@ public abstract class Movement : IMovement {
     // Змінні які потрібні для анімованого руху
     public float moveTime;
     public float moveArcHeight = 1f;
+    public float arcHeight = 1f;
     public Vector3 moveStartPosition;
     public Vector3 moveTargetPosition;
 
@@ -62,9 +63,11 @@ public abstract class Movement : IMovement {
             switch(this.creature.action) {
                 case CreatureAction.Drinking:
                 case CreatureAction.Eating:
+                    this.moveArcHeight = 0;
                     this.moveTargetPosition = this.moveStartPosition;
                     break;
                 default:
+                    this.moveArcHeight = this.arcHeight;
                     this.moveTargetPosition = MoveLogic();
                     break;
             }
@@ -75,8 +78,6 @@ public abstract class Movement : IMovement {
         // При кожному ході - збільшення показників відчуття голоду та спраги
         this.creature.hunger += this.creature.HUNGER_STEP;
         this.creature.thirst += this.creature.THIRST_STEP;
-
-        // Debug.Log($"Hunger: {this.creature.hunger}; Thirst: {this.creature.thirst}");
     }
 
 
@@ -105,5 +106,9 @@ public abstract class Movement : IMovement {
 
     public bool PathIsExist() {
         return this.pathToCell.Count == 0 ? false: true;
+    }
+
+    public void RefreshAnimVariables() {
+        this.moveArcHeight = this.arcHeight;
     }
 }

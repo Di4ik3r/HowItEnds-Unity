@@ -20,7 +20,6 @@ public class PathFinding {
 			closedSet.Add(currentNode);
 
 			if (currentNode == targetNode) {
-				Debug.Log("retr");
 				return RetracePath(startNode,targetNode);
 			}
 
