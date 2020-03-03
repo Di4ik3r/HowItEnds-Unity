@@ -55,17 +55,9 @@ public abstract class Movement : IMovement {
     public void StartMoving() {
         this.moveStartPosition = this.creature.transform.position;
         if(this.pathToCell.Count > 0) {
-            this.PaintPath();
-            // Debug.Log("looking for cell");
+            // this.PaintPath();
             this.lookingForCell = (Vector2)this.pathToCell.Pop();
             this.moveTargetPosition = MoveLogic(this.lookingForCell);
-            if(this.pathToCell.Count <= 0) {
-                // this.creature.PaintToDefault();
-                // Debug.Log(this.pathToCell.Count);
-                // this.creature.isConsuming = false;
-                // this.creature.hunger = 0;
-                // this.creature.PaintToDefault();
-            }
         } else {
             switch(this.creature.action) {
                 case CreatureAction.Drinking:
@@ -99,15 +91,6 @@ public abstract class Movement : IMovement {
             new Vector2(this.creature.transform.position.x, this.creature.transform.position.z),
             new Vector2(to.x, to.y)
         );
-
-        // Debug.Log($"{to} {Creature.digitalMap[(int)to.x, (int)to.y]}");
-        // foreach (var block in pathToCell) {
-        //     Debug.Log(block);
-        // }
-
-        // Debug.Log(this.pathToCell.Count);
-
-        // this.creature.isConsuming = true;
     }
     
 
