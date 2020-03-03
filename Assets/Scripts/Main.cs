@@ -21,6 +21,7 @@ public class Main : MonoBehaviour
         groundCreatures = CreateCreatures(1);
         waterCreatures = CreateCreaturesInWater(OptionsMenu.WaterCreaturesCount);
         new PathFinding();
+        new Grid();
 
         // creatures = new List<Creature>();
         // creatures.Add(new Creature(new Vector2(0, 0), 0));

@@ -60,7 +60,8 @@ public abstract class Movement : IMovement {
             this.lookingForCell = (Vector2)this.pathToCell.Pop();
             this.moveTargetPosition = MoveLogic(this.lookingForCell);
             if(this.pathToCell.Count <= 0) {
-                Debug.Log(this.pathToCell.Count);
+                // this.creature.PaintToDefault();
+                // Debug.Log(this.pathToCell.Count);
                 // this.creature.isConsuming = false;
                 // this.creature.hunger = 0;
                 // this.creature.PaintToDefault();
