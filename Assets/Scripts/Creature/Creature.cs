@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-
-
+using UnityEngine.UI;
 
 public class Creature : MonoBehaviour {
 
@@ -65,6 +63,22 @@ public class Creature : MonoBehaviour {
     public int MOVES_LIMIT_MAX = 12;
 
     // public static GameObject prefab;
+
+    ///CHANGES MADE BY ILLUHA
+    ///CHANGES MADE BY ILLUHA
+    [Header("Creatures stats UI")]
+    public GameObject statsCanvas;
+    public Image foodBar;
+    public Image waterBar;
+
+    void OnMouseDown()
+    {
+        foodBar.fillAmount += 0.1f;
+        waterBar.fillAmount += 0.1f;
+        statsCanvas.SetActive(true);
+    }
+    ///CHANGES MADE BY ILLUHA
+    ///CHANGES MADE BY ILLUHA
 
     public static T Create<T>(Vector2 position, int birthDay) {
         GameObject prefab = Resources.Load<GameObject>($"Creature/{typeof(T).FullName}Prefab");

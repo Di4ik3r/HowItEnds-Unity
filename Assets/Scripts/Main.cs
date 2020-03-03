@@ -17,8 +17,8 @@ public class Main : MonoBehaviour
         Creature.digitalMap = Map.DigitalMap;
         Creature.objectMap = Map.ObjectMap;
 
-        groundCreatures = CreateCreatures(OptionsMenu.GroundCreaturesCount);
-        waterCreatures = CreateCreaturesInWater(OptionsMenu.WaterCreaturesCount);
+        groundCreatures = CreateCreatures(10);//CreateCreatures(OptionsMenu.GroundCreaturesCount);
+        //waterCreatures = CreateCreaturesInWater(OptionsMenu.WaterCreaturesCount);
         new PathFinding();
 
         // creatures = new List<Creature>();
