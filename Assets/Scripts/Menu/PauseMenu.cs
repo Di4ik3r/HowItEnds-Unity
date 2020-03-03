@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.DayNightCycle;
-using Assets.Scripts.Game;
 using Assets.Scripts.Map;
 using Assets.Scripts.Services;
 using Microsoft.Win32;
