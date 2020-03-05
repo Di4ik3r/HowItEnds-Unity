@@ -115,8 +115,7 @@ public class AudioManager : MonoBehaviour
 	public void UnPauseMusic(string musicName, float fadeDuration = 1)
 	{
 		int id = Music[musicName];
-		activeMusicSourceIndex = id;
-		Debug.Log(musicName + " - " + activeMusicSourceIndex + " - " + musicSources[id].volume);
+		activeMusicSourceIndex = id;		
 		musicSources[id].UnPause();
 
 		StartCoroutine(AnimateActiveMusic(fadeDuration));

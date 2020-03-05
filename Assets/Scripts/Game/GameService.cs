@@ -33,8 +33,6 @@ namespace Assets.Scripts.Services
                 BinaryFormatter bf = new BinaryFormatter();
                 bf.Serialize(fs, game);                
             }
-
-            Debug.Log("Game saved, path: " + saveName);
         }
 
         public static void LoadGame(string fileName)

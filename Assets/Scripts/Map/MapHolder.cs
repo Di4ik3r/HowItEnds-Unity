@@ -132,7 +132,7 @@ namespace Assets.Scripts.Map
         //Randomly placing decoration on the map
         public void PlaceDecoration()
         {
-            System.Random rnd = new System.Random();
+            System.Random rnd = new System.Random(Seed);
             for (int i = 0; i < Width; i++)
             {
                 for (int j = 0; j < Lenght; j++)

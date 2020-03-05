@@ -1,14 +1,8 @@
 fileFormatVersion: 2
-guid: 472c85bfc75669146817596965170753
+guid: f6268b29640ca874f8896770086cef9b
 ModelImporter:
   serializedVersion: 19300
-  internalIDToNameTable:
-  - first:
-      74: -2468831193937690519
-    second: "\u0434\u0435\u0440\u0435\u0432\u0430.001|Icosphere.195Action.001"
-  - first:
-      74: 2023471490139252709
-    second: "\u0434\u0435\u0440\u0435\u0432\u0430.001|\u0434\u0435\u0440\u0435\u0432\u0430Action.001"
+  internalIDToNameTable: []
   externalObjects: {}
   materials:
     materialImportMode: 1
