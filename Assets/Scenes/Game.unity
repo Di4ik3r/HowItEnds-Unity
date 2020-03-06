@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1788294944}
-  m_IndirectSpecularColor: {r: 0.6689071, g: 0.7994695, b: 0.8952538, a: 1}
+  m_IndirectSpecularColor: {r: 0.2763157, g: 0.36634806, b: 0.47094375, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -672,6 +672,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3422151567604320363, guid: 163925155cd0d094d837b9b596759ebf,
+        type: 3}
+      propertyPath: materials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4eeb2162275613045978ee230d646d2c, type: 2}
     - target: {fileID: 3422151567604320364, guid: 163925155cd0d094d837b9b596759ebf,
         type: 3}
       propertyPath: m_Name
@@ -1479,6 +1484,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7381a275a515d4d40960cdd23ec9c241, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraOffset: {x: -3.23, y: 2, z: 1.78}
+  smoothFactor: 0.096
 --- !u!1 &997470373
 GameObject:
   m_ObjectHideFlags: 0
@@ -3285,7 +3292,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 7.211792, y: -108}
+  m_AnchoredPosition: {x: 7.21167, y: -108}
   m_SizeDelta: {x: -1197.6, y: -673.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1885933752

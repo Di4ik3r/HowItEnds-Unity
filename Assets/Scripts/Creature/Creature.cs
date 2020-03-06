@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.CameraControlls;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -88,9 +89,9 @@ public class Creature : MonoBehaviour {
 
     void OnMouseDown()
     {
-        // foodBar.fillAmount += 0.1f;
-        // waterBar.fillAmount += 0.1f;
         statsCanvas.SetActive(true);
+        CameraController.ShouldFollowCreature = true;        
+        CameraController.creature = transform;
     }
     ///CHANGES MADE BY ILLUHA
     ///CHANGES MADE BY ILLUHA
@@ -111,6 +112,12 @@ public class Creature : MonoBehaviour {
 
     public void Update() {
         this.MakeMove();
+
+        if (!CameraController.ShouldFollowCreature)
+        {
+            statsCanvas.SetActive(false);
+            CameraController.creature = null;
+        }
     }
 
     private void InitProperties(Vector2 position, int birthDay) {

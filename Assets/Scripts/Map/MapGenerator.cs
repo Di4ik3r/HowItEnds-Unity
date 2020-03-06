@@ -16,10 +16,6 @@ public class MapGenerator : MonoBehaviour
         Map.Cube = cube;
         Map.Decorations = decorations;
         Map.Materials = materials;
-    }
-
-    void Start()
-    {        
         GenerateMap();
     }
 

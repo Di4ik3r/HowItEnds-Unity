@@ -8,7 +8,7 @@ public class Main : MonoBehaviour
     private List<Creature> groundCreatures;
     private List<Creature> waterCreatures;
 
-    private MapHolder Map = MapHolder.getInstance();
+    private MapHolder Map = MapHolder.getInstance();            
 
     void Start()
     {
@@ -21,29 +21,20 @@ public class Main : MonoBehaviour
         //waterCreatures = CreateCreaturesInWater(OptionsMenu.WaterCreaturesCount);
         new PathFinding();
         new Grid();
-
-        // creatures = new List<Creature>();
-        // creatures.Add(new Creature(new Vector2(0, 0), 0));
-        // creatures.Add(new Creature(new Vector2(0, 5), 0));
-        // creatures.Add(new Creature(new Vector2(5, 0), 0));
-
-    }
-  
-    void Update() {
-
-    }
+    } 
 
     private List<Creature> CreateCreatures(int amount)
     {
         List<Creature> result = new List<Creature>();
-
+        
         for (int i = 0; i < amount; i++)
-        {
+        {            
             var random = Random.Range(0, Map.GroundCoordinates.Count - 1);
             Vector3 pickedGroundCoordinates = Map.GroundCoordinates[random];
             Vector2 position = new Vector2(pickedGroundCoordinates.x, pickedGroundCoordinates.z);
             // Creature creature = new Creature(position, 0);
             var creature = GroundCreature.Create(position, 0);
+            creature.transform.parent = transform;
             result.Add(creature);
         }
 
@@ -66,22 +57,4 @@ public class Main : MonoBehaviour
 
         return result;
     }
-
-    //private void creatureCycle()
-    //{
-    //    foreach (Creature creature in creatures)
-    //    {
-    //        creature.MakeMove();
-    //    }
-    //}
-
-    //public int[,] getDigitalMap()
-    //{
-    //    return Map.DigitalMap;
-    //}
-
-    //public GameObject[,] getObjectMap()
-    //{
-    //    return Map.ObjectMap;
-    //}
 }
