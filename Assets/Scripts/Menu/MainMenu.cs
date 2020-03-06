@@ -14,16 +14,17 @@ public class MainMenu : MonoBehaviour
     public GameObject optionsMenuHolder;
     public GameObject loadMenuHolder;
     public GameObject map;
+    public Dropdown filePathDropdown;
 
-    public Dropdown filePathDropdown;  
-
+    public GameObject sceneLoader;
+    
     void Awake()
     {
-        AudioManager.instance.PlayMusic("MainMenu", 2);        
+        AudioManager.instance.PlayMusic("MainMenu", 2);
     }
 
     void Start()
-    {
+    {      
         if (PauseMenu.OptionsBtnIsClicked)
         {
             Options();
@@ -44,7 +45,6 @@ public class MainMenu : MonoBehaviour
 
     private void FillFilePathDropdown()
     {
-
         DirectoryInfo directoryInfo = new DirectoryInfo(Application.persistentDataPath);
         FileInfo[] fileInfo = directoryInfo.GetFiles("*.save", SearchOption.AllDirectories);
 
@@ -60,10 +60,12 @@ public class MainMenu : MonoBehaviour
     {
         Time.timeScale = 1f;
         AudioManager.instance.PauseMusic("MainMenu");
-        AudioManager.instance.PlayMusic("Game", 2);        
+        AudioManager.instance.PlayMusic("Game", 2);
 
-        SceneManager.LoadScene("Game");
+        sceneLoader.GetComponent<SceneLoader>().LoadNewScene("Game");
     }
+
+
 
     public void ShowLoadMenu()
     {

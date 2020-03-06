@@ -22,8 +22,9 @@ public class PauseMenu : MonoBehaviour
     public GameObject saveDialog;
 
     public Text errorText;
-
     public Text statusBarText;
+
+    public GameObject sceneLoader;
 
     string fileName = "";
 
@@ -50,13 +51,15 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-    public void MainMenu()
+    public void LoadMainMenu()
     {        
         AudioManager.instance.PlayMusic("MainMenu", 2);
-        AudioManager.instance.PauseMusic("PauseMenu");
+        AudioManager.instance.PauseMusic("PauseMenu");        
 
         IsGamePaused = false;
-        SceneManager.LoadScene("Menu");
+        sceneLoader.GetComponent<SceneLoader>().LoadNewScene("Menu");                
+        Resume();
+        AudioManager.instance.PauseMusic("Game");
     }
 
     public void ShowSaveDialog()
@@ -101,7 +104,9 @@ public class PauseMenu : MonoBehaviour
 
         IsGamePaused = false;
         OptionsBtnIsClicked = true;
-        SceneManager.LoadScene("Menu");        
+        sceneLoader.GetComponent<SceneLoader>().LoadNewScene("Menu");
+        Resume();
+        AudioManager.instance.PauseMusic("Game");
     }
 
     public void Quit()

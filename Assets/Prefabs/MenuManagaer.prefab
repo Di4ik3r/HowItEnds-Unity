@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3621249142740806253}
-  - component: {fileID: 4862458813273302119}
+  - component: {fileID: 906805293}
+  - component: {fileID: 906805294}
   m_Layer: 0
   m_Name: MenuManagaer
   m_TagString: Untagged
@@ -31,7 +32,39 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4862458813273302119
+--- !u!114 &906805293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256241624329746212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b8655a1b8e977d4cab3e73e19598b00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  widthField: {fileID: 0}
+  lenghtField: {fileID: 0}
+  seedField: {fileID: 0}
+  noiseScaleField: {fileID: 0}
+  octavesField: {fileID: 0}
+  offsetXField: {fileID: 0}
+  offsetYField: {fileID: 0}
+  highDifferenceSlider: {fileID: 0}
+  foodPercentSlider: {fileID: 0}
+  decorationPercentSlider: {fileID: 0}
+  dayLengthField: {fileID: 0}
+  yearLengthField: {fileID: 0}
+  use24HoursToggle: {fileID: 0}
+  mainMenuHolder: {fileID: 0}
+  optionsMenuHolder: {fileID: 0}
+  map: {fileID: 0}
+  autosaveToggle: {fileID: 0}
+  masterVolumeSlider: {fileID: 0}
+  musicVolumeSlider: {fileID: 0}
+  sfxVolumeSlider: {fileID: 0}
+--- !u!114 &906805294
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,10 +76,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98e6acdc291b47d449c0bd63e583b249, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenuHolder: {fileID: 4954505013355984124, guid: b20d04b4861095249a0bc009a27738ed,
-    type: 3}
-  optionsMenuHolder: {fileID: 8045050390909485912, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
-    type: 3}
-  backMap: {fileID: 0}
-  widthField: {fileID: 0}
-  lenghtField: {fileID: 0}
+  mainMenuHolder: {fileID: 0}
+  optionsMenuHolder: {fileID: 0}
+  loadMenuHolder: {fileID: 0}
+  map: {fileID: 0}
+  filePathDropdown: {fileID: 0}
+  sceneLoader: {fileID: 0}
