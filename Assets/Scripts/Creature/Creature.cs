@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Assets.Scripts.DayNightCycle;
 
 public class Creature : MonoBehaviour {
 
@@ -18,7 +19,9 @@ public class Creature : MonoBehaviour {
 
     // Статичне поле даного класу, яке дозволяє визначити мінімальну і максимальну кількість днів в межах
     // якої буде обиратись скільки Юніт проживе (в днях)
-    public static Vector2 DEATH_RANGE = new Vector2(6, 15);
+    // public static Vector2 DEATH_RANGE = new Vector2(6, 15);
+    public static Vector2 DEATH_RANGE = new Vector2(2, 2);
+    public int amountOfChilds;
     // Ліміт, при досягненні якого - Юніт буде шукати їжу. Крок, який буде додаватись до загального показника
     // голоду
     public float HUNGER_LIMIT = 1f, HUNGER_STEP = .112f;
@@ -26,6 +29,8 @@ public class Creature : MonoBehaviour {
     // спраги
     // private float THIRST_LIMIT = .4f, THIRST_STEP = .06f;
     public float THIRST_LIMIT = 1f, THIRST_STEP = .126f;
+    public float hungerBorder = 3.2f;
+    public float thirstBorder = 3.4f;
 
     public float hungerMultiplier = 1f;
     public float thirstMultiplier = 1f;
@@ -39,11 +44,12 @@ public class Creature : MonoBehaviour {
     // Показник спраги
     public float   thirst;
     // День, коли Юніт був створений
-    protected int     birthDay;
+    public int     birthDay;
     // День, коли юніт помре природньою смертю (День народження + Рандом.Рендж(ДЕАД_РЕНДЖ.х, ДЕАД_РЕНДЖ.у))
-    protected int     deathDay;
+    public int     deathDay;
     // Швидкість
     public float   speed;
+    public float adrenalin;
     // Маса
     protected float   weight;
     
@@ -107,7 +113,24 @@ public class Creature : MonoBehaviour {
         (obj as Creature).InitProperties(position, birthDay);
         
         // Позначення в глобальному масиві, що дана клітка зайнята
-        Creature.digitalMap[(int)position.x, (int)position.y] = 9;
+        Creature.digitalMap[(int)position.x, (int)position.y] = (obj as Creature).id;
+
+        (obj as Creature).statsCanvas.SetActive(true);
+
+        return obj;
+    }
+
+    public static T Create<T>(Creature parent, int birthDay) {
+        GameObject prefab = Resources.Load<GameObject>($"Creature/{typeof(T).FullName}Prefab");
+        GameObject newObject = Instantiate(prefab) as GameObject;
+        T obj = newObject.GetComponent<T>();
+
+        // parameters init here
+        (obj as Creature).InitProperties(parent, birthDay);
+
+        var position = new Vector2(parent.transform.position.x, parent.transform.position.z);
+        // Позначення в глобальному масиві, що дана клітка зайнята
+        Creature.digitalMap[(int)position.x, (int)position.y] = (obj as Creature).id;
 
         (obj as Creature).statsCanvas.SetActive(true);
 
@@ -124,8 +147,9 @@ public class Creature : MonoBehaviour {
         this.hunger = 0;
         this.thirst = 0;
         this.birthDay = birthDay;
-        this.deathDay = (int)Random.Range(DEATH_RANGE.x, DEATH_RANGE.y);
+        this.deathDay = birthDay + (int)Random.Range(DEATH_RANGE.x, DEATH_RANGE.y);
         this.speed = Random.Range(this.speedLimit.x, this.speedLimit.y); 
+        this.adrenalin = this.speed / 100 * 20;
         this.weight = 0;
 
         this.movement = new GroundMovement(this);
@@ -136,10 +160,50 @@ public class Creature : MonoBehaviour {
         this.searchRadius = 9;
 
         this.scale = 1 - this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.3f, 0.7f);
+        this.amountOfChilds = (int)this.scale.Map(0.3f, 0.7f, 1, 3);
+
 
         this.transform.position = new Vector3(position.x, 
-                                    Creature.objectMap[(int)position.x, (int)position.y].transform.position.y + this.meshHeight,
+                                    Creature.objectMap[(int)position.x, (int)position.y].transform.position.y + this.scale,
                                     position.y);
+                                    
+        this.transform.localScale = new Vector3(this.scale, this.scale, this.scale);
+
+
+        this.gameObject.GetComponent<Renderer>().materials[0].color = new Color(
+            1f,
+            1f,
+            1f);
+    }
+
+    private void InitProperties(Creature parent, int birthDay) {
+        // Ініціалізація полів
+        this.id = Creature.ID_COUNTER++;
+        this.hunger = 0;
+        this.thirst = 0;
+        this.birthDay = birthDay;
+        this.deathDay = birthDay + (int)Random.Range(DEATH_RANGE.x, DEATH_RANGE.y);
+        // this.deathDay = birthDay;
+        // this.speed = Random.Range(this.speedLimit.x, this.speedLimit.y); 
+        this.speed = parent.speed + (Random.Range(-0.2f, 0.2f));
+        this.adrenalin = this.speed / 100 * 20;
+        this.weight = 0;
+
+        this.movement = new GroundMovement(this);
+        
+        this.isAlive = true;
+
+        
+        this.searchRadius = parent.searchRadius + ((int)Random.Range(-1, 1));
+
+        this.scale = 1 - this.speed.Map(this.speedLimit.x, this.speedLimit.y, 0.3f, 0.7f);
+        this.amountOfChilds = (int)this.scale.Map(0.3f, 0.7f, 1, 3);
+
+
+        this.transform.position = parent.transform.position;
+        // this.transform.position = new Vector3(parent.transform.position.x, 
+        //                             Creature.objectMap[(int)parent.transform.position.x, (int)parent.transform.position.z].transform.position.y + this.scale,
+        //                             parent.transform.position.z);
                                     
         this.transform.localScale = new Vector3(this.scale, this.scale, this.scale);
 
@@ -157,7 +221,6 @@ public class Creature : MonoBehaviour {
             this.movement.DeadMove();
             return;
         }
-
         
         switch (this.action) {
             case CreatureAction.Eating:
@@ -167,9 +230,19 @@ public class Creature : MonoBehaviour {
             case CreatureAction.Drinking:
                 Drink();
                 break;
+            
+            case CreatureAction.Escaping:
+                if(!PredatorIsClose()) {
+                    EndEscape();
+                } else {
+                    Escape();
+                }
+                break;
 
             case CreatureAction.Walking:
-                if(isHunger) {
+                if(PredatorIsClose()) {
+                    StartEscape();
+                } else if(isHunger) {
                     // if(IsNeededBlockInTouch()) {
                     // if(IsNeededBlockInTouch(Creature.digitalMap[(int)foodBlock.x, (int)foodBlock.y])) {
                     if(IsNeededBlockInTouch(2)) {
@@ -190,8 +263,88 @@ public class Creature : MonoBehaviour {
             default:
                 break;
         }
-                this.movement.Jump();
+        this.movement.Jump();
+    }
 
+    public void Check() {
+        if(this.hunger >= this.hungerBorder || this.thirst >= this.thirstBorder) {
+            CreatureManager.Instance.KillCreature(this);
+        }
+    }
+
+    public void Check(int day) {
+        if(this.hunger >= this.hungerBorder || this.thirst >= this.thirstBorder) {
+            CreatureManager.Instance.KillCreature(this);
+        }
+        if(this.deathDay == day) {
+            NaturalDeath(day);
+        }
+    }
+
+    public void NaturalDeath(int day) {
+        CreatureManager.Instance.BirthCreature(this, day);
+    }
+
+    protected void Escape() {
+        // Debug.Log("escaping");
+        int currentX = (int)(this.transform.position.x);
+        int currentY = (int)(this.transform.position.z);
+        var currentPos = new Vector2(currentX, currentY);
+
+        var blocks = GetBlocksByRadius(this.searchRadius);
+        var predators = new List<Vector2>();
+        foreach (var block in blocks) {
+            if(CreatureManager.Instance.IsPredator(block)) {
+                predators.Add(block);
+            }
+        }
+
+        if(predators.Count < 1)
+            return;
+        predators.Sort( (a, b) => 
+            PathFinding.GetDistance(currentPos, a) -
+            PathFinding.GetDistance(currentPos, b) 
+        );
+        
+        var predator = predators[0];
+        var avaiableBlocks = new List<Vector2>();
+        foreach (var block in blocks) {
+            if(Creature.digitalMap[(int)Mathf.Floor(block.x), (int)Mathf.Floor(block.y)] == 0)
+                avaiableBlocks.Add(block);
+        }
+
+        if(avaiableBlocks.Count < 1)
+            return;
+        avaiableBlocks.Sort( (a, b) => 
+            PathFinding.GetDistance(predator, a) -
+            PathFinding.GetDistance(predator, b) 
+        );
+
+        this.movement.MoveTo(avaiableBlocks[avaiableBlocks.Count - 1]);
+    }
+
+    protected void EndEscape() {
+        this.action = CreatureAction.Walking;
+        // Debug.Log("escaping ended");
+        this.speed -= this.adrenalin;
+    }
+
+    protected void StartEscape() {
+        // Debug.Log("Started Escape");
+        this.action = CreatureAction.Escaping;
+        this.speed += this.adrenalin;
+    }
+
+    protected bool PredatorIsClose() {
+        var blocks = GetBlocksByRadius(this.searchRadius);
+        var predators = new List<Vector2>();
+        foreach (var block in blocks) {
+            if(CreatureManager.Instance.IsPredator(block)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected void StartEat() {

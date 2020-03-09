@@ -15,6 +15,14 @@ public class VegetarianCreature : GroundCreature {
         return creature;
     }
 
+    public static VegetarianCreature Create(Creature parent, int birthDay) {
+        var creature = Creature.Create<VegetarianCreature>(parent, birthDay);
+
+        creature.InitProperties();
+
+        return creature;
+    }
+
     protected void InitProperties() {
         this.type = CreatureType.Vegetarian;
 

@@ -81,6 +81,7 @@ public abstract class Movement : IMovement {
         this.creature.hunger += this.creature.HUNGER_STEP * this.creature.hungerMultiplier / TimeHolder.getInstance().DayLength;
         this.creature.thirst += this.creature.THIRST_STEP * this.creature.thirstMultiplier / TimeHolder.getInstance().DayLength;
         this.creature.RefreshStatus();
+        this.creature.Check();
     }
 
     public void DeadMove() {
@@ -89,7 +90,7 @@ public abstract class Movement : IMovement {
 
     public void Borrow() {
         this.moveStartPosition = this.moveTargetPosition;
-        this.moveTargetPosition += Vector3.up * 10;
+        this.moveTargetPosition += Vector3.up * 20;
         moveTime = 0;
         this.isMoving = false;
         this.creature.speed = 0.5f;

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Scripts.DayNightCycle;
 
 public class CreatureManager {
 
@@ -23,21 +24,64 @@ public class CreatureManager {
 
     private CreatureManager() {
         creatures = new List<Creature>();
+        
     }
 
-    public void Borrow(Vector2 coord) {
+    public void CheckDeath(int day) {
+        for(var i = 0; i < creatures.Count; i++) {
+            creatures[i].Check(day);
+        }
+        // foreach (var creature in creatures) {
+        //     creature.Check(day);
+        // }
+    }
+
+    public void BirthCreature(Creature parent, int day) {
+        Creature creature;
+        var position = new Vector2(parent.transform.position.x, parent.transform.position.z);
+
+        for(var i = 0; i < parent.amountOfChilds; i++) {
+            switch(parent.type) {
+                case CreatureType.Vegetarian:
+                    creature = VegetarianCreature.Create(parent, day);
+                    break;
+
+                case CreatureType.Predatory:
+                    creature = PredatoryCreature.Create(parent, day);
+                    break;
+            }
+        }
+
+        KillCreature(parent);
+    }
+
+    public bool IsPredator(Vector2 coord) {
         var creature = GetCreature(coord);
         if(creature != null) {
-            creature.movement.Borrow();
+            if(creature.type == CreatureType.Predatory)            
+                return true;
         }
+
+        return false;
+    }
+
+    public void Borrow(Creature creature) {
+        creature.movement.Borrow();
+        creatures.Remove(creature);
+    }
+
+    public void KillCreature(Creature creature) {
+        creature.isAlive = false;
+        Borrow(creature);
     }
 
     public void KillCreature(Vector2 coord) {
         var creature = GetCreature(coord);
-        Debug.Log($"gonna kill {coord} - {Creature.digitalMap[(int)coord.x, (int)coord.y]}");
         if(creature != null) {
-            Debug.Log("killed");
+            Debug.Log($"Killed {coord}");
             creature.isAlive = false;
+        } else {
+            Debug.Log($"Not killed {coord}");
         }
     }
 

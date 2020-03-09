@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Scripts.DayNightCycle;
 
 public class Main : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class Main : MonoBehaviour
         Creature.objectMap = Map.ObjectMap;
 
         // groundCreatures = CreateCreatures(10);//CreateCreatures(OptionsMenu.GroundCreaturesCount);
-        groundCreatures = CreateCreatures(15, CreatureType.Vegetarian);
+        groundCreatures = CreateCreatures(13, CreatureType.Vegetarian);
         groundCreatures.AddRange(CreateCreatures(3, CreatureType.Predatory));
         CreatureManager.Instance.AddCreatures(groundCreatures);
         // groundCreatures.AddRange(CreateCreatures(5, CreatureType.Predatory));
@@ -50,13 +51,13 @@ public class Main : MonoBehaviour
             Creature creature;
             switch(type) {
                 case CreatureType.Vegetarian:
-                    creature = VegetarianCreature.Create(position, 0);
+                    creature = VegetarianCreature.Create(position, 2);
                     break;
                 case CreatureType.Predatory:
-                    creature = PredatoryCreature.Create(position, 0);
+                    creature = PredatoryCreature.Create(position, 2);
                     break;
                 default:
-                    creature = VegetarianCreature.Create(position, 0);
+                    creature = VegetarianCreature.Create(position, 2);
                     break;
             }
             result.Add(creature);

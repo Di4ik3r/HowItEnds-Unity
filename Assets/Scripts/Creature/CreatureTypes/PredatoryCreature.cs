@@ -7,10 +7,18 @@ using UnityEngine;
 
 public class PredatoryCreature : Creature {
 
-    public Vector2 consumedCreature;
+    public Creature consumedCreature;
 
     public static PredatoryCreature Create(Vector2 position, int birthDay) {
         var creature = Creature.Create<PredatoryCreature>(position, birthDay);
+
+        creature.InitProperties();
+
+        return creature;
+    }
+
+        public static PredatoryCreature Create(Creature parent, int birthDay) {
+        var creature = Creature.Create<PredatoryCreature>(parent, birthDay);
 
         creature.InitProperties();
 
@@ -46,10 +54,10 @@ public class PredatoryCreature : Creature {
             case CreatureAction.Walking:
                 if(isHunger) {
                     var weakCreature = GetWeakCreature();
-                    if(weakCreature.x != -1)
-                        Debug.Log(weakCreature);
+                    // if(weakCreature.x != -1)
+                    //     Debug.Log(weakCreature);
                     if(IsNeededBlockInTouch(weakCreature)) {
-                        this.consumedCreature = weakCreature;
+                        this.consumedCreature = CreatureManager.Instance.GetCreature(weakCreature);
                         CreatureManager.Instance.KillCreature(weakCreature);
                         StartEat();
                     } else {
