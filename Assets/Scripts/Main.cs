@@ -17,7 +17,11 @@ public class Main : MonoBehaviour
         Creature.digitalMap = Map.DigitalMap;
         Creature.objectMap = Map.ObjectMap;
 
-        groundCreatures = CreateCreatures(10);//CreateCreatures(OptionsMenu.GroundCreaturesCount);
+        // groundCreatures = CreateCreatures(10);//CreateCreatures(OptionsMenu.GroundCreaturesCount);
+        groundCreatures = CreateCreatures(15, CreatureType.Vegetarian);
+        groundCreatures.AddRange(CreateCreatures(3, CreatureType.Predatory));
+        CreatureManager.Instance.AddCreatures(groundCreatures);
+        // groundCreatures.AddRange(CreateCreatures(5, CreatureType.Predatory));
         //waterCreatures = CreateCreaturesInWater(OptionsMenu.WaterCreaturesCount);
         new PathFinding();
         new Grid();
@@ -33,7 +37,7 @@ public class Main : MonoBehaviour
 
     }
 
-    private List<Creature> CreateCreatures(int amount)
+    private List<Creature> CreateCreatures(int amount, CreatureType type)
     {
         List<Creature> result = new List<Creature>();
 
@@ -43,7 +47,18 @@ public class Main : MonoBehaviour
             Vector3 pickedGroundCoordinates = Map.GroundCoordinates[random];
             Vector2 position = new Vector2(pickedGroundCoordinates.x, pickedGroundCoordinates.z);
             // Creature creature = new Creature(position, 0);
-            var creature = GroundCreature.Create(position, 0);
+            Creature creature;
+            switch(type) {
+                case CreatureType.Vegetarian:
+                    creature = VegetarianCreature.Create(position, 0);
+                    break;
+                case CreatureType.Predatory:
+                    creature = PredatoryCreature.Create(position, 0);
+                    break;
+                default:
+                    creature = VegetarianCreature.Create(position, 0);
+                    break;
+            }
             result.Add(creature);
         }
 

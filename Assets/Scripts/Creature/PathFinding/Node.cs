@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,7 +27,11 @@ public class Node : IHeapItem<Node> {
 	}
 
 	public void Refresh() {
-		this.walkable = Creature.digitalMap[gridX, gridY] == PathFinding.WALKABLE_VALUE ? true : false;
+		try {
+			this.walkable = Creature.digitalMap[gridX, gridY] == PathFinding.WALKABLE_VALUE ? true : false;
+		} catch(Exception ex) {
+			Debug.Log($"{gridX}, {gridY}");
+		}
 	}
 
 	public int fCost {

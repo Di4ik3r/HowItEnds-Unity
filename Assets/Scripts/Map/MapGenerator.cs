@@ -23,6 +23,16 @@ public class MapGenerator : MonoBehaviour
         GenerateMap();
     }
 
+    // private void OnDrawGizmos() {
+    //     Gizmos.color = new Color(1, 0, 0, 0.5f);
+    //     for(var i = 0; i < Creature.digitalMap.GetLength(0); i++) {
+    //         for(var j = 0; j < Creature.digitalMap.GetLength(1); j++) {
+    //             if(Creature.digitalMap[i, j] == 0)
+    //                 Gizmos.DrawCube(new Vector3(i, 10, j), Vector3.one);
+    //         }
+    //     }
+    // }
+
     public void GenerateMap()
     {
         Map.Cube = cube;

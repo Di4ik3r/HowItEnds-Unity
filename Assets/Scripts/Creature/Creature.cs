@@ -33,19 +33,19 @@ public class Creature : MonoBehaviour {
     // Ідентифікатор Юніта
     public int     id;
     // Булівське значення, що відображає чи живий Юніт
-    private bool    isAlive;
+    public bool    isAlive;
     // Показник голоду
     public float   hunger;
     // Показник спраги
     public float   thirst;
     // День, коли Юніт був створений
-    private int     birthDay;
+    protected int     birthDay;
     // День, коли юніт помре природньою смертю (День народження + Рандом.Рендж(ДЕАД_РЕНДЖ.х, ДЕАД_РЕНДЖ.у))
-    private int     deathDay;
+    protected int     deathDay;
     // Швидкість
     public float   speed;
     // Маса
-    private float   weight;
+    protected float   weight;
     
     protected int searchRadius;
 
@@ -55,9 +55,9 @@ public class Creature : MonoBehaviour {
     protected Vector2 speedLimit = new Vector2(0.6f, 2.4f);
 
     // Властивість, що відображає чи відчуває голод Юніт
-    private bool isHunger { get { return this.hunger >= this.HUNGER_LIMIT ? true : false; } }
+    protected bool isHunger { get { return this.hunger >= this.HUNGER_LIMIT ? true : false; } }
     // Властивість, що відображає чи відчуває спрагу Юніт
-    private bool isThirst { get { return this.thirst >= this.THIRST_LIMIT ? true : false; } }
+    protected bool isThirst { get { return this.thirst >= this.THIRST_LIMIT ? true : false; } }
     
 
     public Movement movement;
@@ -72,6 +72,9 @@ public class Creature : MonoBehaviour {
     public float consumeTime = 0;
     public float eatingMultiplier = 1f;
     public float drinkingMultiplier = 1f;
+
+    public CreatureType type;
+    public Vector2 foodBlock;
 
 
     ///CHANGES MADE BY ILLUHA
@@ -106,6 +109,8 @@ public class Creature : MonoBehaviour {
         // Позначення в глобальному масиві, що дана клітка зайнята
         Creature.digitalMap[(int)position.x, (int)position.y] = 9;
 
+        (obj as Creature).statsCanvas.SetActive(true);
+
         return obj;
     }
 
@@ -123,7 +128,7 @@ public class Creature : MonoBehaviour {
         this.speed = Random.Range(this.speedLimit.x, this.speedLimit.y); 
         this.weight = 0;
 
-        this.movement = new WaterMovement(this);
+        this.movement = new GroundMovement(this);
         
         this.isAlive = true;
 
@@ -147,9 +152,11 @@ public class Creature : MonoBehaviour {
 
 
     // Логіка руху Юніта
-    public void MakeMove() {
-        if(!this.isAlive)
+    public virtual void MakeMove() {
+        if(!this.isAlive) {
+            this.movement.DeadMove();
             return;
+        }
 
         
         switch (this.action) {
@@ -163,6 +170,8 @@ public class Creature : MonoBehaviour {
 
             case CreatureAction.Walking:
                 if(isHunger) {
+                    // if(IsNeededBlockInTouch()) {
+                    // if(IsNeededBlockInTouch(Creature.digitalMap[(int)foodBlock.x, (int)foodBlock.y])) {
                     if(IsNeededBlockInTouch(2)) {
                         StartEat();
                     } else {
@@ -189,7 +198,7 @@ public class Creature : MonoBehaviour {
         this.action = CreatureAction.Eating;
         Eat();
     }
-    protected void Eat() {
+    protected virtual void Eat() {
         consumeTime += consumeStep;
 
         if(consumeTime >= consumeLimit * eatingMultiplier) {
@@ -212,7 +221,7 @@ public class Creature : MonoBehaviour {
         }
     }
 
-    private void FindWater() {
+    protected void FindWater() {
         if(!this.movement.PathIsExist()) {
             var waterBlock = GetBlock(1);
             if(waterBlock.x != -1)
@@ -220,12 +229,123 @@ public class Creature : MonoBehaviour {
         }
     }
 
-    private void FindFood() {
-        if(!this.movement.PathIsExist()) {
-            var foodBlock = GetBlock(2);
-            if(foodBlock.x != -1)
-                this.movement.MoveTo(foodBlock);
+    protected virtual void FindFood() {
+        // var foodBlock = GetBlock(2);
+        // switch(this.type) {
+        //     case CreatureType.Vegetarian:
+                if(!this.movement.PathIsExist()) {
+                    foodBlock = GetBlock(2);
+                    if(foodBlock.x != -1) {
+                        this.foodBlock = foodBlock;
+                        this.movement.MoveTo(foodBlock);
+                    }
+                }
+                // break;
+            
+            // case CreatureType.Predatory:
+            //     foodBlock = GetWeakCreature();
+            //     if(foodBlock.x != -1) {
+            //         this.foodBlock = foodBlock;
+            //         this.movement.MoveTo(foodBlock);
+            //     }
+            //     break;
+        // }
+        
+    }
+
+    protected Vector2 GetWeakCreature(int radius) {
+        var weakCreatures = new List<Vector2>();
+        
+        int currentX = (int)(this.transform.position.x);
+        int currentY = (int)(this.transform.position.z);
+        var currentPos = new Vector2(currentX, currentY);
+        
+        for(int y = currentY - radius; y <= currentY + radius; y++) {
+            for(int x = currentX - radius; x <= currentX + radius; x++) {
+                if((x == currentX && y == currentY) ||
+                    (x < 0 || x >= Creature.digitalMap.GetLength(0)) ||
+                    (y < 0 || y >= Creature.digitalMap.GetLength(1)))
+                    continue;
+
+                if(Mathf.Pow(x - currentX, 2) + Mathf.Pow(y - currentY, 2) <= Mathf.Pow(radius, 2)) {
+                    var isVegeterian = CreatureManager.Instance.IsVegeterian(Creature.digitalMap[x, y]);
+                    
+                    if(Creature.digitalMap[currentX, currentY] >= 50 && this.id != Creature.digitalMap[x, y]) {
+                    // if(isVegeterian) {
+                        var creature = CreatureManager.Instance.GetCreature(x, y);
+                        if(creature != null) {
+                            // if(this.IsWeaker(creature))
+                                weakCreatures.Add(new Vector2(x, y));
+                        }
+                    }
+                }
+            }
         }
+
+        weakCreatures.Sort( (a, b) => 
+            PathFinding.GetDistance(currentPos, a) -
+            PathFinding.GetDistance(currentPos, b) 
+        );
+
+        var searchedCreature = weakCreatures.Count == 0 ? new Vector2(-1, -1) : weakCreatures[0];
+        if(searchedCreature.x == -1)
+            return new Vector2(-1, -1);
+        var searchedNeighbours = GetNeighboursBlocks(searchedCreature);
+        searchedNeighbours.Sort( (a, b) => 
+            PathFinding.GetDistance(currentPos, a) -
+            PathFinding.GetDistance(currentPos, b) 
+        );
+
+
+        return searchedNeighbours[0];
+    }
+
+    protected Vector2 GetWeakCreature() {
+        var weakCreatures = new List<Vector2>();
+        
+        int currentX = (int)(this.transform.position.x);
+        int currentY = (int)(this.transform.position.z);
+        var currentPos = new Vector2(currentX, currentY);
+        
+        for(int y = currentY - 1; y <= currentY + 1; y++) {
+            for(int x = currentX - 1; x <= currentX + 1; x++) {
+                if((x == currentX && y == currentY) ||
+                    (x < 0 || x >= Creature.digitalMap.GetLength(0)) ||
+                    (y < 0 || y >= Creature.digitalMap.GetLength(1)))
+                    continue;
+
+                var isVegeterian = CreatureManager.Instance.IsVegeterian(Creature.digitalMap[x, y]);
+                if(Creature.digitalMap[currentX, currentY] >= 50 && this.id != Creature.digitalMap[x, y]) {
+                // if(isVegeterian) {
+                    var creature = CreatureManager.Instance.GetCreature(x, y);
+                    if(creature != null) {
+                        // if(this.IsWeaker(creature))
+                        weakCreatures.Add(new Vector2(x, y));
+                    }
+                }
+            }
+        }
+
+        if(weakCreatures.Count > 0)
+            return weakCreatures[0];
+        else return new Vector2(-1, -1);
+
+        // weakCreatures.Sort( (a, b) => 
+        //     PathFinding.GetDistance(currentPos, a) -
+        //     PathFinding.GetDistance(currentPos, b) 
+        // );
+
+        // var searchedCreature = weakCreatures.Count == 0 ? new Vector2(-1, -1) : weakCreatures[0];
+        // if(searchedCreature.x == -1)
+        //     return new Vector2(-1, -1);
+        // var searchedNeighbours = GetNeighboursBlocks(searchedCreature);
+        // searchedNeighbours.Sort( (a, b) => 
+        //     PathFinding.GetDistance(currentPos, a) -
+        //     PathFinding.GetDistance(currentPos, b) 
+        // );
+
+        // Debug.Log($"lmfo: {searchedNeighbours[1]}");
+        // return new Vector2[] { searchedNeighbours[0], searchedNeighbours[1] };
     }
 
 
@@ -248,6 +368,36 @@ public class Creature : MonoBehaviour {
 
         return false;
     }
+
+    protected bool IsNeededBlockInTouch(Vector2 block) {
+        if(block.x == -1)
+            return false;
+        int currentX = (int)(this.transform.position.x);
+        int currentY = (int)(this.transform.position.z);
+        
+        for(int y = currentY - 1; y <= currentY + 1; y++) {
+            for(int x = currentX - 1; x <= currentX + 1; x++) {
+                if((x == currentX && y == currentY) ||
+                    (x < 0 || x >= Creature.digitalMap.GetLength(0)) ||
+                    (y < 0 || y >= Creature.digitalMap.GetLength(1)))
+                    continue;
+            
+                // var temp = new Vector2(x, y);
+
+                // if(temp.x == block.x && temp.y == block.y) {
+                    // Debug.Log($"{x} {y}");
+                    // Debug.Log($"{Mathf.Floor(block.x)} {Mathf.Floor(block.y)}");
+                if(x == Mathf.Floor(block.x) && y == Mathf.Floor(block.y)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+
     // 0 ground
     // 1 water
     // 2 food
@@ -255,8 +405,7 @@ public class Creature : MonoBehaviour {
     protected List<Vector2> GetBlocksByNeed(int block) {
         var result = new List<Vector2>();
         
-        int currentX = (int
-        )(this.transform.position.x);
+        int currentX = (int)(this.transform.position.x);
         int currentY = (int)(this.transform.position.z);
         
         for(int y = currentY - 1; y <= currentY + 1; y++) {
@@ -340,5 +489,10 @@ public class Creature : MonoBehaviour {
         }
 
         return result;
+    }
+
+
+    public bool IsWeaker(Creature creature) {
+        return this.speed < creature.speed;
     }
 }

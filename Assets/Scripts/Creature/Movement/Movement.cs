@@ -21,6 +21,7 @@ public abstract class Movement : IMovement {
     public float arcHeight = 1f;
     public Vector3 moveStartPosition;
     public Vector3 moveTargetPosition;
+    public float timeLimit = 1f;
 
 
 
@@ -80,6 +81,20 @@ public abstract class Movement : IMovement {
         this.creature.hunger += this.creature.HUNGER_STEP * this.creature.hungerMultiplier / TimeHolder.getInstance().DayLength;
         this.creature.thirst += this.creature.THIRST_STEP * this.creature.thirstMultiplier / TimeHolder.getInstance().DayLength;
         this.creature.RefreshStatus();
+    }
+
+    public void DeadMove() {
+        this.AnimateMoving();
+    }
+
+    public void Borrow() {
+        this.moveStartPosition = this.moveTargetPosition;
+        this.moveTargetPosition += Vector3.up * 10;
+        moveTime = 0;
+        this.isMoving = false;
+        this.creature.speed = 0.5f;
+
+        Creature.digitalMap[(int)Mathf.Floor(this.creature.transform.position.x), (int)Mathf.Floor(this.creature.transform.position.z)] = 0;
     }
 
 

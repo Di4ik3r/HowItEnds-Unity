@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,7 +6,7 @@ using System.Collections.Generic;
 public class Grid {
 
 	public static float nodeRadius = 2;
-    public static Node[,] grid = Grid.CreateGrid();
+    	public static Node[,] grid = Grid.CreateGrid();
 
 	static float nodeDiameter;
 	static int  gridSizeX, gridSizeY;
@@ -58,6 +59,14 @@ public class Grid {
 	
 
 	public static Node NodeFromWorldPoint(Vector2 worldPosition) {
-		return grid[(int)worldPosition.x, (int)worldPosition.y];
+		Node result = grid[0, 0];
+		try {
+			result = grid[(int)worldPosition.x, (int)worldPosition.y];
+		} catch(Exception ex) {	
+			Debug.Log($"{worldPosition}");
+			Debug.Log(ex);
+		}
+
+		return result;
 	}
 }
