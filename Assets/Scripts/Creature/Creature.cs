@@ -115,8 +115,6 @@ public class Creature : MonoBehaviour {
         // Позначення в глобальному масиві, що дана клітка зайнята
         Creature.digitalMap[(int)position.x, (int)position.y] = (obj as Creature).id;
 
-        (obj as Creature).statsCanvas.SetActive(true);
-
         return obj;
     }
 
@@ -131,8 +129,6 @@ public class Creature : MonoBehaviour {
         var position = new Vector2(parent.transform.position.x, parent.transform.position.z);
         // Позначення в глобальному масиві, що дана клітка зайнята
         Creature.digitalMap[(int)position.x, (int)position.y] = (obj as Creature).id;
-
-        (obj as Creature).statsCanvas.SetActive(true);
 
         return obj;
     }
@@ -264,6 +260,10 @@ public class Creature : MonoBehaviour {
                 break;
         }
         this.movement.Jump();
+    }
+
+    public void DestroyGameObject() {
+        Destroy(this.gameObject, 6);
     }
 
     public void Check() {

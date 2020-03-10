@@ -14,7 +14,11 @@ public class GroundMovement : DirectionMovement {
         float height = (1 - 4 * (moveTime - .5f) * (moveTime - .5f)) * moveArcHeight;
         this.creature.transform.position = Vector3.Lerp (moveStartPosition, moveTargetPosition, moveTime) + Vector3.up * height;
 
-        if (moveTime >= this.timeLimit && this.creature.isAlive) {
+        if (moveTime >= this.timeLimit) {
+            if(!this.creature.isAlive) {
+                this.creature.DestroyGameObject();
+                return;
+            }
             moveTime = 0;
             this.isMoving = false;
         }

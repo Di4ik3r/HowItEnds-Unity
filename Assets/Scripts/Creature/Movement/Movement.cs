@@ -90,7 +90,8 @@ public abstract class Movement : IMovement {
 
     public void Borrow() {
         this.moveStartPosition = this.moveTargetPosition;
-        this.moveTargetPosition += Vector3.up * 20;
+        // this.moveTargetPosition += Vector3.up * (-5);
+        this.moveTargetPosition = new Vector3(moveTargetPosition.x, -2, moveTargetPosition.z);
         moveTime = 0;
         this.isMoving = false;
         this.creature.speed = 0.5f;
