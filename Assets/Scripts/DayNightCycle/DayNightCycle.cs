@@ -107,6 +107,8 @@ public class DayNightCycle : MonoBehaviour
         dayNumberText.text = "Day number: " + _dayNumber;
         yearNumberText.text = "Year number: " + _yearNumber;
         NormalTimeCurve();
+
+        CreatureManager.Instance.CheckDeath(2);
     }
 
     void Update()
@@ -165,6 +167,7 @@ public class DayNightCycle : MonoBehaviour
             _dayNumber++;
             dayNumberText.text = "Day number: " + _dayNumber;
             _timeOfDay -= 1;
+            CreatureManager.Instance.CheckDeath(_dayNumber);
 
             if (_dayNumber > _yearLength) //new year!
             {

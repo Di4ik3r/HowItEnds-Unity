@@ -10,11 +10,15 @@ public class GroundMovement : DirectionMovement {
     }
 
     public override void AnimateMoving () {
-        moveTime = Mathf.Min (1, moveTime + Time.deltaTime * this.creature.speed);
+        moveTime = Mathf.Min (this.timeLimit, moveTime + Time.deltaTime * this.creature.speed);
         float height = (1 - 4 * (moveTime - .5f) * (moveTime - .5f)) * moveArcHeight;
         this.creature.transform.position = Vector3.Lerp (moveStartPosition, moveTargetPosition, moveTime) + Vector3.up * height;
 
-        if (moveTime >= 1) {
+        if (moveTime >= this.timeLimit) {
+            if(!this.creature.isAlive) {
+                this.creature.DestroyGameObject();
+                return;
+            }
             moveTime = 0;
             this.isMoving = false;
         }
