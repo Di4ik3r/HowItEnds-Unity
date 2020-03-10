@@ -22,6 +22,8 @@ public abstract class Movement : IMovement {
     public Vector3 moveStartPosition;
     public Vector3 moveTargetPosition;
     public float timeLimit = 1f;
+    public Quaternion lookRotation;
+    public float rotationSpeed = 10f;
 
 
 
