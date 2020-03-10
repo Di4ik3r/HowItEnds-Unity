@@ -42,6 +42,8 @@ namespace Assets.Scripts.Map
         [NonSerialized]
         public GameObject[] Decorations;
         [NonSerialized]
+        public GameObject[] Food;
+        [NonSerialized]
         public GameObject[,] ObjectMap;
         [NonSerialized]
         private Renderer renderer;
@@ -57,14 +59,15 @@ namespace Assets.Scripts.Map
             return instance;
         }
 
-        public void BuildMap(Func<GameObject, Vector3, Quaternion, GameObject> instantiate, Transform fieldPlatform, Transform decorPlatform)
+        public void BuildMap(Func<GameObject, Vector3, Quaternion, GameObject> instantiate, 
+            Transform fieldPlatform, Transform decorPlatform, Transform foodPlatform)
         {
             GroundCoordinates = new List<Vector3>();
             WaterCoordinates = new List<Vector3>();
             FoodCoordinates = new List<Vector3>();
             DecorationCoordinates = new List<Vector3>();
 
-            if (Cube && Materials.Length >= 4  && Decorations.Length >= 3)
+            if (Cube && Materials.Length >= 4  && Decorations.Length >= 3 && Food.Length >= 1)
             {
                 NoiseArray = Noise.GenerateNoiseMap(Width, Lenght, Seed, NoiseScale, Octaves, Persistence, Lacunarity, new Vector2(OffsetX, OffsetY));
                 CreateGameObjectMap(instantiate, fieldPlatform);
@@ -72,6 +75,7 @@ namespace Assets.Scripts.Map
                 PlaceDecoration();
                 PaintMap();
                 LocateDecorations(instantiate, decorPlatform);
+                LocateFood(instantiate, foodPlatform);
             }
         }
 
@@ -184,6 +188,21 @@ namespace Assets.Scripts.Map
                 int rnd = UnityEngine.Random.Range(0, Decorations.Length);
                 instantiate(Decorations[rnd], new Vector3(DecorationCoordinates[i].x, DecorationCoordinates[i].y + additionalHeight, DecorationCoordinates[i].z),
                     /*Quaternion.identity*/Decorations[rnd].transform.rotation).transform.parent = decoratinonsPlatform;
+            }
+        }
+
+        public void LocateFood(Func<GameObject, Vector3, Quaternion, GameObject> instantiate, Transform foodPlatform)
+        {
+            float additionalHeight = 0;
+
+            Renderer renderer = Cube.GetComponent<Renderer>();
+            additionalHeight += renderer.bounds.size.y / 2;
+
+            for (int i = 0; i < FoodCoordinates.Count; i++)
+            {
+                int rnd = UnityEngine.Random.Range(0, Food.Length);
+                instantiate(Food[rnd], new Vector3(FoodCoordinates[i].x, FoodCoordinates[i].y + additionalHeight, FoodCoordinates[i].z),
+                    /*Quaternion.identity*/Food[rnd].transform.rotation).transform.parent = foodPlatform;
             }
         }
 

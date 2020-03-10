@@ -1,8 +1,11 @@
 fileFormatVersion: 2
-guid: d4b2f9dbe0593224e80439f2fff6970e
+guid: e7c3366e40367934abf38bc545e98c1c
 ModelImporter:
   serializedVersion: 19300
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      74: 1735227565418911331
+    second: Tree|TreeAction
   externalObjects: {}
   materials:
     materialImportMode: 1

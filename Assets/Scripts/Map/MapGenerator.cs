@@ -8,6 +8,7 @@ public class MapGenerator : MonoBehaviour
     public GameObject cube;
     public Material[] materials;
     public GameObject[] decorations;
+    public GameObject[] food;
 
     MapHolder Map = MapHolder.getInstance();
 
@@ -16,6 +17,7 @@ public class MapGenerator : MonoBehaviour
         Map.Cube = cube;
         Map.Decorations = decorations;
         Map.Materials = materials;
+        Map.Food = food;
         GenerateMap();
     }
 
@@ -24,6 +26,7 @@ public class MapGenerator : MonoBehaviour
         Map.Cube = cube;
         Map.Decorations = decorations;
         Map.Materials = materials;
+        Map.Food = food;
 
         string holderName = "Field";
         if (transform.Find(holderName))
@@ -43,6 +46,15 @@ public class MapGenerator : MonoBehaviour
         Transform decorationsPlatform = new GameObject(holderName).transform;
         decorationsPlatform.parent = transform;
 
-        Map.BuildMap(Instantiate, fieldPlatform, decorationsPlatform);
+        holderName = "Food";
+        if (transform.Find(holderName))
+        {
+            DestroyImmediate(transform.Find(holderName).gameObject);
+        }
+
+        Transform foodPlatfrom = new GameObject(holderName).transform;
+        foodPlatfrom.parent = transform;
+
+        Map.BuildMap(Instantiate, fieldPlatform, decorationsPlatform, foodPlatfrom);
     }
 }
