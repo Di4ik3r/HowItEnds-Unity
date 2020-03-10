@@ -34,8 +34,8 @@ public class OptionsMenu : MonoBehaviour
     public GameObject map;
 
     //Holders
-    private MapHolder mapHolder = MapHolder.getInstance();
-    private TimeHolder timeHolder = TimeHolder.getInstance();    
+    private MapHolder mapHolder = MapHolder.Instance;
+    private TimeHolder timeHolder = TimeHolder.Instance;    
 
     //Game controls
     public Toggle autosaveToggle;

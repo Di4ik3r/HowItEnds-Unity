@@ -78,8 +78,8 @@ public abstract class Movement : IMovement {
         this.isMoving = true;
 
         // При кожному ході - збільшення показників відчуття голоду та спраги
-        this.creature.hunger += this.creature.HUNGER_STEP * this.creature.hungerMultiplier / TimeHolder.getInstance().DayLength;
-        this.creature.thirst += this.creature.THIRST_STEP * this.creature.thirstMultiplier / TimeHolder.getInstance().DayLength;
+        this.creature.hunger += this.creature.HUNGER_STEP * this.creature.hungerMultiplier / TimeHolder.Instance.DayLength;
+        this.creature.thirst += this.creature.THIRST_STEP * this.creature.thirstMultiplier / TimeHolder.Instance.DayLength;
         this.creature.RefreshStatus();
         this.creature.Check();
     }

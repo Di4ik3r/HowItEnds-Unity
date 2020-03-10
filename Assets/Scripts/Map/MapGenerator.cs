@@ -10,7 +10,7 @@ public class MapGenerator : MonoBehaviour
     public GameObject[] decorations;
     public GameObject[] food;
 
-    MapHolder Map = MapHolder.getInstance();
+    MapHolder Map = MapHolder.Instance;
 
     void Awake()
     {

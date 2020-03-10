@@ -49,14 +49,14 @@ namespace Assets.Scripts.Services
 
         private static void FillMapHolder()
         {
-            MapHolder mapHolder = MapHolder.getInstance();
+            MapHolder mapHolder = MapHolder.Instance;
 
             PropertyCopier<MapHolder, MapHolder>.Copy(Game.Map, mapHolder);
         }
 
         private static void FillTimeHolder()
         {
-            TimeHolder timeHolder = TimeHolder.getInstance();
+            TimeHolder timeHolder = TimeHolder.Instance;
 
             PropertyCopier<TimeHolder, TimeHolder>.Copy(Game.Time, timeHolder);         
         }        

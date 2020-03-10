@@ -7,58 +7,9 @@ using UnityEngine.UI;
 public class DayNightCycle : MonoBehaviour
 {
     [Header("Time")]
-    [Tooltip("Day Length in Minutes")]
     [SerializeField]
-    private float _targetDayLength = 0.5f; //length of day in minutes
-    public float targetDayLength
-    {
-        get
-        {
-            return _targetDayLength;
-        }
-    }
-    [SerializeField]    
-    private float elapsedTime;
-    [SerializeField]
-    private bool use24Clock = true;
-    [SerializeField]
-    [Range(0f, 1f)]
-    private float _timeOfDay;
-    public float timeOfDay
-    {
-        get
-        {
-            return _timeOfDay;
-        }
-    }
-    [SerializeField]
-    private int _dayNumber = 0; //tracks the days passed
-    public int dayNumber
-    {
-        get
-        {
-            return _dayNumber;
-        }
-    }
-    [SerializeField]
-    private int _yearNumber = 0;
-    public int yearNumber
-    {
-        get
-        {
-            return _yearNumber;
-        }
-    }
     private float _timeScale = 100f;
     [SerializeField]
-    private int _yearLength = 100;
-    public float yearLength
-    {
-        get
-        {
-            return _yearLength;
-        }
-    }
     public bool pause = false;
     [SerializeField]
     public AnimationCurve timeCurve;
@@ -92,20 +43,12 @@ public class DayNightCycle : MonoBehaviour
     public Text dayNumberText;
     public Text yearNumberText;
 
-    private TimeHolder timeHolder = TimeHolder.getInstance();
+    private TimeHolder timeHolder = TimeHolder.Instance;
 
     void Start()
     {
-        _targetDayLength = timeHolder.DayLength;
-        _yearLength = timeHolder.YearLength;
-        _dayNumber = timeHolder.DayNumber;
-        _yearNumber = timeHolder.YearNumber;
-        _timeOfDay = timeHolder.TimeOfDay;
-        elapsedTime = timeHolder.ElapsedTime;
-        use24Clock = timeHolder.Use24Hours;
-
-        dayNumberText.text = "Day number: " + _dayNumber;
-        yearNumberText.text = "Year number: " + _yearNumber;
+        dayNumberText.text = "Day number: " + timeHolder.DayNumber;
+        yearNumberText.text = "Year number: " + timeHolder.YearNumber;
         NormalTimeCurve();
 
         CreatureManager.Instance.CheckDeath(2);
@@ -118,16 +61,6 @@ public class DayNightCycle : MonoBehaviour
             UpdateTimeScale();
             UpdateTime();
         }
-        else
-        {
-            timeHolder.DayLength = _targetDayLength;
-            timeHolder.YearLength = _yearLength;
-            timeHolder.DayNumber = _dayNumber;
-            timeHolder.YearNumber = _yearNumber;
-            timeHolder.TimeOfDay = _timeOfDay;
-            timeHolder.ElapsedTime = elapsedTime;
-            timeHolder.Use24Hours = use24Clock;
-        }
 
         AdjustSunRotation();
         SunIntensity();
@@ -138,8 +71,8 @@ public class DayNightCycle : MonoBehaviour
 
     private void UpdateTimeScale()
     {
-        _timeScale = 24 / (_targetDayLength / 60);
-        _timeScale *= timeCurve.Evaluate(elapsedTime / (targetDayLength * 60));//changes timescale based on time curve
+        _timeScale = 24 / (timeHolder.DayLength / 60);
+        _timeScale *= timeCurve.Evaluate(timeHolder.ElapsedTime / (timeHolder.DayLength * 60));//changes timescale based on time curve
         _timeScale /= timeCurveNormalization; //keeps day length at target value
     }
 
@@ -159,35 +92,35 @@ public class DayNightCycle : MonoBehaviour
 
     private void UpdateTime()
     {
-        _timeOfDay += Time.deltaTime * _timeScale / 86400; // seconds in a day
-        elapsedTime += Time.deltaTime;
-        if (_timeOfDay > 1) //new day!!
+        timeHolder.TimeOfDay += Time.deltaTime * _timeScale / 86400; // seconds in a day
+        timeHolder.ElapsedTime += Time.deltaTime;
+        if (timeHolder.TimeOfDay > 1) //new day!!
         {
-            elapsedTime = 0;
-            _dayNumber++;
-            dayNumberText.text = "Day number: " + _dayNumber;
-            _timeOfDay -= 1;
-            CreatureManager.Instance.CheckDeath(_dayNumber);
+            timeHolder.ElapsedTime = 0;
+            timeHolder.DayNumber++;
+            dayNumberText.text = "Day number: " + timeHolder.DayNumber;
+            timeHolder.TimeOfDay -= 1;
+            CreatureManager.Instance.CheckDeath(timeHolder.DayNumber);
 
-            if (_dayNumber > _yearLength) //new year!
+            if (timeHolder.DayNumber > timeHolder.YearLength) //new year!
             {
-                _yearNumber++;
-                yearNumberText.text = "Year number: " + _yearNumber;
-                _dayNumber = 0;
+                timeHolder.YearNumber++;
+                yearNumberText.text = "Year number: " + timeHolder.YearNumber;
+                timeHolder.DayNumber = 0;
             }
         }
     }
 
     private void UpdateClock()
     {
-        float time = elapsedTime / (targetDayLength * 60);
+        float time = timeHolder.ElapsedTime / (timeHolder.DayLength * 60);
         float hour = Mathf.FloorToInt(time * 24);
         float minute = Mathf.FloorToInt(((time * 24) - hour) * 60);
 
         string hourString;
         string minuteString;
 
-        if (!use24Clock && hour > 12)
+        if (!timeHolder.Use24Hours && hour > 12)
             hour -= 12;
 
         if (hour < 10)
@@ -200,7 +133,7 @@ public class DayNightCycle : MonoBehaviour
         else
             minuteString = minute.ToString();
 
-        if (use24Clock)
+        if (timeHolder.Use24Hours)
             clockText.text = "Time: " + hourString + " : " + minuteString;
         else if (time > 0.5f)
             clockText.text = "Time: " + hourString + " : " + minuteString + " pm";
@@ -211,10 +144,10 @@ public class DayNightCycle : MonoBehaviour
     //rotates the sun daily (and seasonally soon too);
     private void AdjustSunRotation()
     {
-        float sunAngle = timeOfDay * 360f;
+        float sunAngle = timeHolder.TimeOfDay * 360f;
         dailyRotation.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, sunAngle));
 
-        float seasonalAngle = -maxSeasonalTilt * Mathf.Cos(dayNumber / yearLength * 2f * Mathf.PI);
+        float seasonalAngle = -maxSeasonalTilt * Mathf.Cos(timeHolder.DayNumber / timeHolder.YearLength * 2f * Mathf.PI);
         sunSeasonalRotation.localRotation = Quaternion.Euler(new Vector3(seasonalAngle, 0f, 0f));
     }
     

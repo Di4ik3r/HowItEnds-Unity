@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Assets.Scripts.DayNightCycle;
+using Assets.Scripts.Map;
 
 public class Creature : MonoBehaviour {
 
@@ -358,7 +359,9 @@ public class Creature : MonoBehaviour {
     protected void StartEat() {
         this.action = CreatureAction.Eating;
         Eat();
+        MapHolder.Instance.SwapFoodWithDecor(this.foodBlock);
     }
+
     protected virtual void Eat() {
         consumeTime += consumeStep;
 

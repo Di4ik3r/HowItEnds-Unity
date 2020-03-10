@@ -9,7 +9,7 @@ public class Main : MonoBehaviour
     private List<Creature> groundCreatures;
     private List<Creature> waterCreatures;
 
-    private MapHolder Map = MapHolder.getInstance();
+    private MapHolder Map = MapHolder.Instance;
 
     void Start()
     {

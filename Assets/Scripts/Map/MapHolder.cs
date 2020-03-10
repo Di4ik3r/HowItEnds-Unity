@@ -49,14 +49,16 @@ namespace Assets.Scripts.Map
         private Renderer renderer;
 
         private static MapHolder instance;
-
-        private MapHolder(){ }
-
-        public static MapHolder getInstance()
+        public static MapHolder Instance
         {
-            if (instance == null)
-                instance = new MapHolder();
-            return instance;
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new MapHolder();
+                }
+                return instance;
+            }
         }
 
         public void BuildMap(Func<GameObject, Vector3, Quaternion, GameObject> instantiate, 
@@ -204,6 +206,11 @@ namespace Assets.Scripts.Map
                 instantiate(Food[rnd], new Vector3(FoodCoordinates[i].x, FoodCoordinates[i].y + additionalHeight, FoodCoordinates[i].z),
                     /*Quaternion.identity*/Food[rnd].transform.rotation).transform.parent = foodPlatform;
             }
+        }
+
+        public void SwapFoodWithDecor(Vector2 foodBlock)
+        {
+            Debug.Log("foodBlock.x + foodBlock.y: " + foodBlock.x + foodBlock.y);
         }
 
         private float GetMinNoise(float[,] noiseArray)

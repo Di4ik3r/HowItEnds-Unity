@@ -92,7 +92,7 @@ public class PauseMenu : MonoBehaviour
         {
             saveDialog.SetActive(false);
             IsGameSaved = true;
-            GameService.SaveGame(new GameModel(MapHolder.getInstance(), TimeHolder.getInstance()), fileName);
+            GameService.SaveGame(new GameModel(MapHolder.Instance, TimeHolder.Instance), fileName);
             statusBarText.text = "Game saved!";
         }
     }
@@ -113,7 +113,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (PlayerPrefs.GetInt("autosave") == 1)
         {
-            GameService.SaveGame(new GameModel(MapHolder.getInstance(), TimeHolder.getInstance()), "", true);
+            GameService.SaveGame(new GameModel(MapHolder.Instance, TimeHolder.Instance), "", true);
         }
 
         Application.Quit();
