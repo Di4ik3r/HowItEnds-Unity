@@ -567,16 +567,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cab088d065576b61dbb27412f1ad906c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  amountOfChilds: 0
   HUNGER_LIMIT: 1
   HUNGER_STEP: 0.112
   THIRST_LIMIT: 1
   THIRST_STEP: 0.126
+  hungerBorder: 3.2
+  thirstBorder: 3.4
   hungerMultiplier: 1
   thirstMultiplier: 1
   id: 0
+  isAlive: 0
   hunger: 0
   thirst: 0
+  birthDay: 0
+  deathDay: 0
   speed: 0
+  adrenalin: 0
   meshHeight: 0
   scale: 0
   MOVES_LIMIT_MIN: 3
@@ -599,6 +606,61 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2910129722184390205, guid: b43d286bc86ecd190bc38f093f74b838,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2910129722184390205, guid: b43d286bc86ecd190bc38f093f74b838,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.4438049
+      objectReference: {fileID: 0}
+    - target: {fileID: 2910129722184390205, guid: b43d286bc86ecd190bc38f093f74b838,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.16642903
+      objectReference: {fileID: 0}
+    - target: {fileID: 2910129722184390205, guid: b43d286bc86ecd190bc38f093f74b838,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.22028777
+      objectReference: {fileID: 0}
+    - target: {fileID: 2910129722184390205, guid: b43d286bc86ecd190bc38f093f74b838,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2910129722184390205, guid: b43d286bc86ecd190bc38f093f74b838,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2910129722184390205, guid: b43d286bc86ecd190bc38f093f74b838,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2910129722184390205, guid: b43d286bc86ecd190bc38f093f74b838,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2910129722184390205, guid: b43d286bc86ecd190bc38f093f74b838,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2910129722184390205, guid: b43d286bc86ecd190bc38f093f74b838,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2910129722184390205, guid: b43d286bc86ecd190bc38f093f74b838,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.725
+      objectReference: {fileID: 0}
     - target: {fileID: 3517511996697537466, guid: b43d286bc86ecd190bc38f093f74b838,
         type: 3}
       propertyPath: statsCanvas
