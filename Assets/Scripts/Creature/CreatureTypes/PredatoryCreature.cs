@@ -17,7 +17,7 @@ public class PredatoryCreature : Creature {
         return creature;
     }
 
-        public static PredatoryCreature Create(Creature parent, int birthDay) {
+    public static PredatoryCreature Create(Creature parent, int birthDay) {
         var creature = Creature.Create<PredatoryCreature>(parent, birthDay);
 
         creature.InitProperties();
