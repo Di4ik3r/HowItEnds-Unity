@@ -34,8 +34,8 @@ public class Creature : MonoBehaviour {
     public float hungerBorder = 3.2f;
     public float thirstBorder = 3.4f;
 
-    public float hungerMultiplier = 1f;
-    public float thirstMultiplier = 1f;
+    public float hungerMultiplier = 2.3f;
+    public float thirstMultiplier = 2.5f;
 
     // Ідентифікатор Юніта
     public int     id;
@@ -82,6 +82,7 @@ public class Creature : MonoBehaviour {
     public float drinkingMultiplier = 1f;
 
     public CreatureType type;
+    public Vector2 foodNeighbour;
     public Vector2 foodBlock;
 
 
@@ -249,7 +250,7 @@ public class Creature : MonoBehaviour {
                     StartEscape();
                 } else if(isHunger) {
                     // if(IsNeededBlockInTouch()) {
-                    // if(IsNeededBlockInTouch(Creature.digitalMap[(int)foodBlock.x, (int)foodBlock.y])) {
+                    // if(IsNeededBlockInTouch(Creature.digitalMap[(int)foodNeighbour.x, (int)foodNeighbour.y])) {
                     if(IsNeededBlockInTouch(2)) {
                         StartEat();
                     } else {
@@ -300,7 +301,7 @@ public class Creature : MonoBehaviour {
         int currentY = (int)(this.transform.position.z);
         var currentPos = new Vector2(currentX, currentY);
 
-        var blocks = GetBlocksByRadius(this.searchRadius);
+        var blocks = GetNeighbourBlocksByRadius(this.searchRadius);
         var predators = new List<Vector2>();
         foreach (var block in blocks) {
             if(CreatureManager.Instance.IsPredator(block)) {
@@ -345,7 +346,7 @@ public class Creature : MonoBehaviour {
     }
 
     protected bool PredatorIsClose() {
-        var blocks = GetBlocksByRadius(this.searchRadius);
+        var blocks = GetNeighbourBlocksByRadius(this.searchRadius);
         var predators = new List<Vector2>();
         foreach (var block in blocks) {
             if(CreatureManager.Instance.IsPredator(block)) {
@@ -359,7 +360,6 @@ public class Creature : MonoBehaviour {
     protected void StartEat() {
         this.action = CreatureAction.Eating;
         Eat();
-        MapHolder.Instance.SwapFoodWithDecor(this.foodBlock);
     }
 
     protected virtual void Eat() {
@@ -369,6 +369,9 @@ public class Creature : MonoBehaviour {
             this.consumeTime = 0;
             this.action = CreatureAction.Walking;
             this.hunger = 0;
+            
+            Creature.digitalMap[(int)this.foodBlock.x, (int)this.foodBlock.y] = 4;
+            MapHolder.Instance.SwapFoodWithDecor(this.foodBlock);
         }
     }
 
@@ -387,30 +390,30 @@ public class Creature : MonoBehaviour {
 
     protected void FindWater() {
         if(!this.movement.PathIsExist()) {
-            var waterBlock = GetBlock(1);
+            var waterBlock = GetNeighbourBlock(1);
             if(waterBlock.x != -1)
                 this.movement.MoveTo(waterBlock);
         }
     }
 
     protected virtual void FindFood() {
-        // var foodBlock = GetBlock(2);
+        // var foodNeighbour = GetNeighbourBlock(2);
         // switch(this.type) {
         //     case CreatureType.Vegetarian:
                 if(!this.movement.PathIsExist()) {
-                    foodBlock = GetBlock(2);
-                    if(foodBlock.x != -1) {
-                        this.foodBlock = foodBlock;
-                        this.movement.MoveTo(foodBlock);
+                    var foodNeighbour = GetNeighbourBlock(2);
+                    if(foodNeighbour.x != -1) {
+                        this.foodNeighbour = foodNeighbour;
+                        this.movement.MoveTo(foodNeighbour);
                     }
                 }
                 // break;
             
             // case CreatureType.Predatory:
-            //     foodBlock = GetWeakCreature();
-            //     if(foodBlock.x != -1) {
-            //         this.foodBlock = foodBlock;
-            //         this.movement.MoveTo(foodBlock);
+            //     foodNeighbour = GetWeakCreature();
+            //     if(foodNeighbour.x != -1) {
+            //         this.foodNeighbour = foodNeighbour;
+            //         this.movement.MoveTo(foodNeighbour);
             //     }
             //     break;
         // }
@@ -566,7 +569,7 @@ public class Creature : MonoBehaviour {
     // 1 water
     // 2 food
     // 3 decoration
-    protected List<Vector2> GetBlocksByNeed(int block) {
+    protected List<Vector2> GetNeighbourBlocksByNeed(int block) {
         var result = new List<Vector2>();
         
         int currentX = (int)(this.transform.position.x);
@@ -588,7 +591,7 @@ public class Creature : MonoBehaviour {
     }
 
     protected Vector2 GetBlock(int type) {
-        var blocks = GetBlocksByRadius(this.searchRadius);
+        var blocks = GetNeighbourBlocksByRadius(this.searchRadius);
         var searchedBlocks = new List<Vector2>();
         int currentX = (int)(this.transform.position.x);
         int currentY = (int)(this.transform.position.z);
@@ -607,6 +610,30 @@ public class Creature : MonoBehaviour {
         var searchedBlock = searchedBlocks.Count == 0 ? new Vector2(-1, -1) : searchedBlocks[0];
         if(searchedBlock.x == -1)
             return new Vector2(-1, -1);
+
+        return searchedBlock;
+    }
+    protected Vector2 GetNeighbourBlock(int type) {
+        var blocks = GetNeighbourBlocksByRadius(this.searchRadius);
+        var searchedBlocks = new List<Vector2>();
+        int currentX = (int)(this.transform.position.x);
+        int currentY = (int)(this.transform.position.z);
+        var currentPos = new Vector2(currentX, currentY);
+
+        foreach (var block in blocks) {
+            if(Creature.digitalMap[(int)block.x, (int)block.y] == type)
+                searchedBlocks.Add(block);
+        }
+
+        searchedBlocks.Sort( (a, b) => 
+            PathFinding.GetDistance(currentPos, a) -
+            PathFinding.GetDistance(currentPos, b) 
+        );
+
+        var searchedBlock = searchedBlocks.Count == 0 ? new Vector2(-1, -1) : searchedBlocks[0];
+        if(searchedBlock.x == -1)
+            return new Vector2(-1, -1);
+        this.foodBlock = new Vector2(searchedBlock.x, searchedBlock.y);
         var searchedNeighbours = GetNeighboursBlocks(searchedBlock);
         searchedNeighbours.Sort( (a, b) => 
             PathFinding.GetDistance(currentPos, a) -
@@ -634,7 +661,7 @@ public class Creature : MonoBehaviour {
         return result;
     }
 
-    protected List<Vector2> GetBlocksByRadius(int radius) {
+    protected List<Vector2> GetNeighbourBlocksByRadius(int radius) {
         var result = new List<Vector2>();
 
 

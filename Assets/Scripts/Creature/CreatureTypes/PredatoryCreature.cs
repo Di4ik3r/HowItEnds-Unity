@@ -93,12 +93,12 @@ public class PredatoryCreature : Creature {
 
 
     protected override void FindFood() {
-        // var foodBlock = GetBlock(2);
+        // var foodNeighbour = GetBlock(2);
       
-        var foodBlock = GetWeakCreature(this.searchRadius);
-        if(foodBlock.x != -1) {
-            this.foodBlock = foodBlock;
-            this.movement.MoveTo(foodBlock);
+        var foodNeighbour = GetWeakCreature(this.searchRadius);
+        if(foodNeighbour.x != -1) {
+            this.foodNeighbour = foodNeighbour;
+            this.movement.MoveTo(foodNeighbour);
         }
     }
 }

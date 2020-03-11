@@ -17,7 +17,7 @@ namespace Assets.Scripts.CameraControlls
         void LateUpdate()
         {
             if (ShouldFollowCreature)
-            {                
+            {
                 Vector3 newPosition = creature.position + cameraOffset;
                 transform.position = Vector3.Lerp(transform.position, newPosition, smoothFactor);                
                 transform.LookAt(creature.position);
