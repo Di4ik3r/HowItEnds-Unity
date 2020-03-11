@@ -19,14 +19,17 @@ public class OptionsMenu : MonoBehaviour
     public Slider foodPercentSlider;
     public Slider decorationPercentSlider;
 
+    public Slider vegetarianCreaturesCount;
+    public Slider predatoryCreaturesCount;
+
     //Time controls
     public InputField dayLengthField;
     public InputField yearLengthField;
     public Toggle use24HoursToggle;
 
     //Creatures controls
-    public static int GroundCreaturesCount = 0;
-    public static int WaterCreaturesCount = 0;
+    public static int VegetarianCreaturesCount = 0;
+    public static int PredatoryCreaturesCount = 0;
 
     //UI controls
     public GameObject mainMenuHolder;
@@ -80,6 +83,9 @@ public class OptionsMenu : MonoBehaviour
         masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVol");
         musicVolumeSlider.value = PlayerPrefs.GetFloat("MusicVol");
         sfxVolumeSlider.value = PlayerPrefs.GetFloat("SfxVol");
+
+        vegetarianCreaturesCount.value = PlayerPrefs.GetInt("VegetarianCreaturesCount");
+        predatoryCreaturesCount.value = PlayerPrefs.GetInt("PredatoryCreaturesCount");
     }
 
     public void MainMenu()
@@ -105,12 +111,14 @@ public class OptionsMenu : MonoBehaviour
 
     public void SetGroundCreaturesCount(float value)
     {
-        GroundCreaturesCount = (int)value;
+        VegetarianCreaturesCount = (int)value;
+        PlayerPrefs.SetInt("VegetarianCreaturesCount", VegetarianCreaturesCount);
     }
 
     public void SetWaterCreaturesCount(float value)
     {
-        WaterCreaturesCount = (int)value;
+        PredatoryCreaturesCount = (int)value;
+        PlayerPrefs.SetInt("PredatoryCreaturesCount", PredatoryCreaturesCount);
     }
 
     public void SetUseAutosave()

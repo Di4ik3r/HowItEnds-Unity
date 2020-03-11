@@ -219,7 +219,7 @@ namespace Assets.Scripts.Map
             additionalHeight += renderer.bounds.size.y / 2;
 
             Debug.Log("foodBlock.x + foodBlock.y: " + foodBlock.x + foodBlock.y);
-            Instantiate(Decorations[1], new Vector3(foodBlock.x, foodBlock.y + additionalHeight + 10f, foodBlock.y),
+            Instantiate(Decorations[1], new Vector3(foodBlock.x, additionalHeight, foodBlock.y),
                   Decorations[1].transform.rotation);
         }
 

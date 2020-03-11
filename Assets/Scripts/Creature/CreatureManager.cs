@@ -67,7 +67,6 @@ public class CreatureManager {
     }
 
     public void Borrow(Creature creature) {
-        CameraController.ShouldFollowCreature = false;
         creature.movement.Borrow();
         creatures.Remove(creature);
     }

@@ -112,7 +112,7 @@ public class Creature : MonoBehaviour {
         GameObject prefab = Resources.Load<GameObject>($"Creature/{typeof(T).FullName}Prefab");
         GameObject newObject = Instantiate(prefab) as GameObject;
         T obj = newObject.GetComponent<T>();
-        Debug.Log("Debug.Log(position); " + position);
+        
         // parameters init here
         (obj as Creature).InitProperties(position, birthDay);
         

@@ -2167,6 +2167,8 @@ MonoBehaviour:
   highDifferenceSlider: {fileID: 1131190585}
   foodPercentSlider: {fileID: 1843850165}
   decorationPercentSlider: {fileID: 1705305196}
+  vegetarianCreaturesCount: {fileID: 2040909068}
+  predatoryCreaturesCount: {fileID: 1490222910}
   dayLengthField: {fileID: 2883894169798625959}
   yearLengthField: {fileID: 2282087488363537535}
   use24HoursToggle: {fileID: 7148025188475448334}
@@ -4083,6 +4085,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &1490222910 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3931969819357972120, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
+    type: 3}
+  m_PrefabInstance: {fileID: 330319563007850720}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1524606078
 GameObject:
   m_ObjectHideFlags: 0
@@ -5093,6 +5107,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2020334495}
   m_CullTransparentMesh: 0
+--- !u!114 &2040909068 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8243245934081251026, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
+    type: 3}
+  m_PrefabInstance: {fileID: 330319563007850720}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2114700836
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6514,7 +6540,7 @@ PrefabInstance:
     - target: {fileID: 4407667654016801235, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
         type: 3}
       propertyPath: m_Text
-      value: 'Ground cretures count
+      value: 'Vegetarians cretures count
 
 '
       objectReference: {fileID: 0}
@@ -6876,7 +6902,7 @@ PrefabInstance:
     - target: {fileID: 8100965557812290055, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
         type: 3}
       propertyPath: m_Text
-      value: Water creatures count
+      value: Predatory creatures count
       objectReference: {fileID: 0}
     - target: {fileID: 8118517746895117027, guid: 15cd1241a67c4ea4181bb46858c9d1b7,
         type: 3}
