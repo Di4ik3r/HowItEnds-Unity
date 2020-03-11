@@ -75,13 +75,17 @@ public class MainMenu : MonoBehaviour
 
     public void LoadGame()
     {
-        string fileName = filePathDropdown.options[filePathDropdown.value].text;
-        GameService.LoadGame(fileName);
+        if (filePathDropdown.options.Count != 0)
+        {
+            string fileName = filePathDropdown.options[filePathDropdown.value].text;
+        
+            GameService.LoadGame(fileName);
 
-        OptionsMenu.IsGameLoaded = true;
-        map.GetComponent<MapGenerator>().GenerateMap();
+            OptionsMenu.IsGameLoaded = true;
+            map.GetComponent<MapGenerator>().GenerateMap();
 
-        loadMenuHolder.SetActive(false);
+            loadMenuHolder.SetActive(false);
+        }
     }
 
     public void Options()
