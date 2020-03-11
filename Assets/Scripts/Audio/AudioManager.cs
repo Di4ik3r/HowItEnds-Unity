@@ -9,7 +9,6 @@ public class AudioManager : MonoBehaviour
 
 	private Dictionary<string, int> Music = new Dictionary<string, int>();
 
-
 	float masterVolumePercent = 1f;
 	float sfxVolumePercent = 1;
 	float musicVolumePercent = 0.1f;

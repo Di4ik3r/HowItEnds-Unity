@@ -61,9 +61,12 @@ namespace Assets.Scripts.Map
             }
         }
 
+        private Func<GameObject, Vector3, Quaternion, GameObject> Instantiate;
+
         public void BuildMap(Func<GameObject, Vector3, Quaternion, GameObject> instantiate, 
             Transform fieldPlatform, Transform decorPlatform, Transform foodPlatform)
         {
+            Instantiate = instantiate;
             GroundCoordinates = new List<Vector3>();
             WaterCoordinates = new List<Vector3>();
             FoodCoordinates = new List<Vector3>();
@@ -210,7 +213,14 @@ namespace Assets.Scripts.Map
 
         public void SwapFoodWithDecor(Vector2 foodBlock)
         {
+            float additionalHeight = 0;
+
+            Renderer renderer = Cube.GetComponent<Renderer>();
+            additionalHeight += renderer.bounds.size.y / 2;
+
             Debug.Log("foodBlock.x + foodBlock.y: " + foodBlock.x + foodBlock.y);
+            Instantiate(Decorations[1], new Vector3(foodBlock.x, foodBlock.y + additionalHeight + 10f, foodBlock.y),
+                  Decorations[1].transform.rotation);
         }
 
         private float GetMinNoise(float[,] noiseArray)
