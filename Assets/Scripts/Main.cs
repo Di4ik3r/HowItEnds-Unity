@@ -14,12 +14,9 @@ public class Main : MonoBehaviour
     void Start()
     {
         // UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
-
-        
-
-        // groundCreatures = CreateCreatures(10);//CreateCreatures(OptionsMenu.GroundCreaturesCount);
-        groundCreatures = CreateCreatures(13, CreatureType.Vegetarian);
-        groundCreatures.AddRange(CreateCreatures(3, CreatureType.Predatory));
+               
+        groundCreatures = CreateCreatures(OptionsMenu.VegetarianCreaturesCount, CreatureType.Vegetarian);
+        groundCreatures.AddRange(CreateCreatures(OptionsMenu.PredatoryCreaturesCount, CreatureType.Predatory));
         CreatureManager.Instance.AddCreatures(groundCreatures);
         // groundCreatures.AddRange(CreateCreatures(5, CreatureType.Predatory));
         //waterCreatures = CreateCreaturesInWater(OptionsMenu.WaterCreaturesCount);

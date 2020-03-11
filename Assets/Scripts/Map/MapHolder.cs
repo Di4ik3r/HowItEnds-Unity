@@ -48,17 +48,32 @@ namespace Assets.Scripts.Map
         [NonSerialized]
         private Renderer renderer;
 
+        //private static MapHolder instance;
+        //public static MapHolder Instance
+        //{
+        //    get
+        //    {
+        //        if (instance == null)
+        //        {
+        //            instance = new MapHolder();
+        //        }
+        //        return instance;
+        //    }
+        //    set
+        //    {
+        //        MapHolder.instance = value;
+        //    }
+        //}
+
         private static MapHolder instance;
-        public static MapHolder Instance
+
+        private MapHolder() { }
+
+        public static MapHolder getInstance()
         {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new MapHolder();
-                }
-                return instance;
-            }
+            if (instance == null)
+                instance = new MapHolder();
+            return instance;
         }
 
         private Func<GameObject, Vector3, Quaternion, GameObject> Instantiate;

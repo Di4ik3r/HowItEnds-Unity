@@ -20,17 +20,32 @@ namespace Assets.Scripts.DayNightCycle
 
         public bool Use24Hours { get; set; }
 
+        //private static TimeHolder instance;
+        //public static TimeHolder Instance
+        //{
+        //    get
+        //    {
+        //        if (instance == null)
+        //        {
+        //            instance = new TimeHolder();
+        //        }
+        //        return instance;
+        //    }
+        //    set
+        //    {
+        //        TimeHolder.instance = value;
+        //    }
+        //}
+
         private static TimeHolder instance;
-        public static TimeHolder Instance
+
+        private TimeHolder() { }
+
+        public static TimeHolder getInstance()
         {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new TimeHolder();
-                }
-                return instance;
-            }
+            if (instance == null)
+                instance = new TimeHolder();
+            return instance;
         }
     }
 }
