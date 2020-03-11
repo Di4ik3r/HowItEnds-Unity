@@ -12,6 +12,11 @@ public class Grid {
 	static int  gridSizeX, gridSizeY;
 	public static int MaxSize;
 
+	public static void RefreshGrid()
+	{
+		grid = Grid.CreateGrid();
+	}
+
 	static Node[,] CreateGrid() {
 		gridSizeX = Creature.digitalMap.GetLength(0);
 		gridSizeY = Creature.digitalMap.GetLength(1);
@@ -57,15 +62,14 @@ public class Grid {
 		return neighbours;
 	}
 	
-
-	public static Node NodeFromWorldPoint(Vector2 worldPosition) {
+	public static Node NodeFromWorldPoint(Vector2 worldPosition) {		
 		Node result = grid[0, 0];
-		try {
+		//try {
 			result = grid[(int)worldPosition.x, (int)worldPosition.y];
-		} catch(Exception ex) {	
-			Debug.Log($"{worldPosition}");
-			Debug.Log(ex);
-		}
+		//} catch(Exception ex) {	
+			//Debug.Log($"{worldPosition}");
+			//Debug.Log(ex);
+		//}
 
 		return result;
 	}

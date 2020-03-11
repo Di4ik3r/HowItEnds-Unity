@@ -19,17 +19,7 @@ public class MapGenerator : MonoBehaviour
         Map.Materials = materials;
         Map.Food = food;
         GenerateMap();
-    }
-
-    // private void OnDrawGizmos() {
-    //     Gizmos.color = new Color(1, 0, 0, 0.5f);
-    //     for(var i = 0; i < Creature.digitalMap.GetLength(0); i++) {
-    //         for(var j = 0; j < Creature.digitalMap.GetLength(1); j++) {
-    //             if(Creature.digitalMap[i, j] == 0)
-    //                 Gizmos.DrawCube(new Vector3(i, 10, j), Vector3.one);
-    //         }
-    //     }
-    // }
+    }  
 
     public void GenerateMap()
     {
@@ -69,5 +59,6 @@ public class MapGenerator : MonoBehaviour
         
         Creature.digitalMap = Map.DigitalMap;
         Creature.objectMap = Map.ObjectMap;
+        Grid.RefreshGrid();
     }
 }
