@@ -34,8 +34,8 @@ public class Creature : MonoBehaviour {
     public float hungerBorder = 3.2f;
     public float thirstBorder = 3.4f;
 
-    public float hungerMultiplier = 2.3f;
-    public float thirstMultiplier = 2.5f;
+    public float hungerMultiplier = 0.4f;
+    public float thirstMultiplier = 0.3f;
 
     // Ідентифікатор Юніта
     public int     id;
@@ -108,11 +108,11 @@ public class Creature : MonoBehaviour {
     ///CHANGES MADE BY ILLUHA
 
     public static T Create<T>(Vector2 position, int birthDay) {
-        Debug.Log(typeof(T).FullName);
+        // Debug.Log(typeof(T).FullName);
         GameObject prefab = Resources.Load<GameObject>($"Creature/{typeof(T).FullName}Prefab");
         GameObject newObject = Instantiate(prefab) as GameObject;
         T obj = newObject.GetComponent<T>();
-        
+        // Debug.Log("Debug.Log(position); " + position);
         // parameters init here
         (obj as Creature).InitProperties(position, birthDay);
         
@@ -370,8 +370,8 @@ public class Creature : MonoBehaviour {
             this.action = CreatureAction.Walking;
             this.hunger = 0;
             
-            Creature.digitalMap[(int)this.foodBlock.x, (int)this.foodBlock.y] = 4;
-            MapHolder.Instance.SwapFoodWithDecor(this.foodBlock);
+            // Creature.digitalMap[(int)this.foodBlock.x, (int)this.foodBlock.y] = 4;
+            // MapHolder.Instance.SwapFoodWithDecor(this.foodBlock);
         }
     }
 
