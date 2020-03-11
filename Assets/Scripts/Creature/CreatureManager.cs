@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.DayNightCycle;
+using Assets.Scripts.CameraControlls;
 
 public class CreatureManager {
 
@@ -66,6 +67,7 @@ public class CreatureManager {
     }
 
     public void Borrow(Creature creature) {
+        CameraController.ShouldFollowCreature = false;
         creature.movement.Borrow();
         creatures.Remove(creature);
     }
@@ -78,10 +80,10 @@ public class CreatureManager {
     public void KillCreature(Vector2 coord) {
         var creature = GetCreature(coord);
         if(creature != null) {
-            Debug.Log($"Killed {coord}");
+            // Debug.Log($"Killed {coord}");
             creature.isAlive = false;
         } else {
-            Debug.Log($"Not killed {coord}");
+            // Debug.Log($"Not killed {coord}");
         }
     }
 

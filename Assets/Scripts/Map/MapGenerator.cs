@@ -66,5 +66,8 @@ public class MapGenerator : MonoBehaviour
         foodPlatfrom.parent = transform;
 
         Map.BuildMap(Instantiate, fieldPlatform, decorationsPlatform, foodPlatfrom);
+        
+        Creature.digitalMap = Map.DigitalMap;
+        Creature.objectMap = Map.ObjectMap;
     }
 }

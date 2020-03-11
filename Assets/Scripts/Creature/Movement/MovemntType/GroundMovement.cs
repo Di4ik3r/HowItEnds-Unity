@@ -10,11 +10,17 @@ public class GroundMovement : DirectionMovement {
     }
 
     public override void AnimateMoving () {
-        this.lookRotation = lookRotation = Quaternion.LookRotation((this.moveTargetPosition - this.moveStartPosition).normalized);
         moveTime = Mathf.Min (this.timeLimit, moveTime + Time.deltaTime * this.creature.speed);
         float height = (1 - 4 * (moveTime - .5f) * (moveTime - .5f)) * moveArcHeight;
         this.creature.transform.position = Vector3.Lerp (moveStartPosition, moveTargetPosition, moveTime) + Vector3.up * height;
-        this.creature.transform.rotation = Quaternion.Slerp(this.creature.transform.rotation, this.lookRotation, Time.deltaTime * rotationSpeed);
+
+        var rizn = this.moveTargetPosition - this.moveStartPosition;
+        rizn.y = 0;
+        if(rizn != Vector3.zero) {
+            this.lookRotation = lookRotation = Quaternion.LookRotation((rizn).normalized);
+            this.creature.transform.rotation = Quaternion.Slerp(this.creature.transform.rotation, this.lookRotation, Time.deltaTime * rotationSpeed);
+        }
+        
 
         if (moveTime >= this.timeLimit) {
             if(!this.creature.isAlive) {

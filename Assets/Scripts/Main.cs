@@ -15,8 +15,7 @@ public class Main : MonoBehaviour
     {
         // UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
 
-        Creature.digitalMap = Map.DigitalMap;
-        Creature.objectMap = Map.ObjectMap;
+        
 
         // groundCreatures = CreateCreatures(10);//CreateCreatures(OptionsMenu.GroundCreaturesCount);
         groundCreatures = CreateCreatures(13, CreatureType.Vegetarian);
